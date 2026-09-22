@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette — charcoal, cream, wood, ember, brick, sage, gold */
+  --color-charcoal-950: #0f0d0b;
+  --color-charcoal-900: #161311;
+  --color-charcoal-800: #1f1a17;
+  --color-charcoal-700: #2b2420;
+  --color-charcoal-600: #3a312b;
+  --color-charcoal-500: #55483f;
+
+  --color-cream-50: #fbf8f1;
+  --color-cream-100: #f5eee1;
+  --color-cream-200: #ebe0cc;
+  --color-cream-300: #dccbb0;
+  --color-cream-400: #c5ae8d;
+
+  --color-wood-400: #a8703f;
+  --color-wood-500: #8a5a34;
+  --color-wood-600: #6e4527;
+  --color-wood-700: #52321c;
+
+  --color-ember-300: #f0a06a;
+  --color-ember-400: #e07a3a;
+  --color-ember-500: #c8642a;
+  --color-ember-600: #a54f1f;
+
+  --color-brick-500: #a3282b;
+  --color-brick-600: #8b1e1e;
+  --color-brick-700: #6e1616;
+
+  --color-sage-400: #7c8a67;
+  --color-sage-500: #5b6b4a;
+  --color-sage-600: #465238;
+  --color-sage-700: #3f4c33;
+
+  --color-gold-300: #e2c48f;
+  --color-gold-400: #d4a862;
+  --color-gold-500: #c9a26b;
+  --color-gold-600: #a8834f;
+
+  --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
+  --font-label: var(--font-bebas), "Oswald", Impact, sans-serif;
+
+  --shadow-card: 0 1px 2px rgb(15 13 11 / 0.06), 0 10px 30px -12px rgb(15 13 11 / 0.25);
+  --shadow-lift: 0 2px 4px rgb(15 13 11 / 0.08), 0 24px 48px -16px rgb(15 13 11 / 0.35);
+  --shadow-glow: 0 0 0 1px rgb(224 122 58 / 0.35), 0 12px 40px -10px rgb(224 122 58 / 0.45);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-drift-a: drift-a 46s ease-in-out infinite alternate;
+  --animate-drift-b: drift-b 58s ease-in-out infinite alternate;
+  --animate-drift-c: drift-c 70s ease-in-out infinite alternate;
+  --animate-rise: rise 14s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-ember: ember 3.2s ease-in-out infinite;
+
+  @keyframes drift-a {
+    0% { transform: translate3d(-6%, 4%, 0) scale(1); }
+    100% { transform: translate3d(8%, -6%, 0) scale(1.15); }
+  }
+  @keyframes drift-b {
+    0% { transform: translate3d(10%, -2%, 0) scale(1.1); }
+    100% { transform: translate3d(-8%, 6%, 0) scale(0.95); }
+  }
+  @keyframes drift-c {
+    0% { transform: translate3d(0, 8%, 0) scale(1); }
+    100% { transform: translate3d(4%, -10%, 0) scale(1.2); }
+  }
+  @keyframes rise {
+    0% { transform: translateY(0) scaleX(1); opacity: 0; }
+    15% { opacity: 0.55; }
+    100% { transform: translateY(-140%) scaleX(1.6); opacity: 0; }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  @keyframes ember {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+  body {
+    @apply bg-cream-100 text-charcoal-900 font-sans antialiased;
+  }
+  ::selection {
+    background: var(--color-ember-400);
+    color: var(--color-cream-50);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ember-400);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  img { @apply select-none; }
+  button, [role="button"] { cursor: pointer; }
+  input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.6; }
+}
+
+@utility display-wonk {
+  font-variation-settings: "WONK" 1, "SOFT" 60, "opsz" 144;
+}
+@utility display-soft {
+  font-variation-settings: "WONK" 0, "SOFT" 100, "opsz" 72;
+}
+@utility display-sharp {
+  font-variation-settings: "WONK" 0, "SOFT" 0, "opsz" 144;
+  letter-spacing: -0.028em;
+}
+@utility nav-label {
+  @apply font-label uppercase tracking-[0.2em] text-[16px] leading-none;
+}
+@utility eyebrow {
+  @apply font-label uppercase tracking-[0.22em] text-[0.8rem] leading-none;
+}
+@utility container-site {
+  @apply mx-auto w-full max-w-[1320px] px-5 sm:px-8 lg:px-12;
+}
+@utility grain {
+  position: relative;
+  isolation: isolate;
+}
+@utility grain-after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.09;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+}
+@utility hairline-x {
+  background-image: linear-gradient(to right, transparent, color-mix(in oklab, currentColor 30%, transparent), transparent);
+  height: 1px;
+}
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+@utility skeleton {
+  background: linear-gradient(90deg, rgb(0 0 0 / 0.05) 25%, rgb(0 0 0 / 0.1) 37%, rgb(0 0 0 / 0.05) 63%);
+  background-size: 400% 100%;
+  animation: var(--animate-shimmer);
+}
+@utility text-shadow-hero {
+  text-shadow: 0 2px 24px rgb(0 0 0 / 0.45), 0 1px 2px rgb(0 0 0 / 0.5);
+}
+@utility mask-fade-b {
+  mask-image: linear-gradient(to bottom, black 70%, transparent);
+}
+@utility mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+
+/* Smoke layers — pure CSS, GPU transforms only, disabled for reduced motion / small screens */
+.smoke-layer {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  will-change: transform;
+  filter: blur(48px);
+  opacity: 0.55;
+}
+.smoke-a {
+  background: radial-gradient(40% 35% at 30% 60%, rgb(255 236 214 / 0.32), transparent 70%);
+  animation: var(--animate-drift-a);
+}
+.smoke-b {
+  background: radial-gradient(35% 45% at 70% 40%, rgb(232 196 150 / 0.22), transparent 70%);
+  animation: var(--animate-drift-b);
+}
+.smoke-c {
+  background: radial-gradient(50% 30% at 50% 80%, rgb(200 100 42 / 0.16), transparent 70%);
+  animation: var(--animate-drift-c);
+}
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .smoke-layer { animation: none; filter: blur(32px); }
+}
+
+.grain::after { @apply grain-after; }
+
+/* Admin base */
+.admin-body {
+  @apply bg-[#f4f4f2] text-[#1b1b1a];
+  font-feature-settings: "tnum", "cv11";
+}

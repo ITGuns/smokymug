@@ -1,0 +1,52 @@
+import type { DietaryTag } from "@/db/schema";
+import type { AvailabilityInfo } from "@/lib/availability";
+import { DIETARY_FILTERS, type DietaryFilterKey } from "@/lib/constants";
+import type { CategoryNode, ItemNode, SectionNode } from "@/lib/data/menu";
+
+export type MenuFilters = {
+  query: string;
+  dietary: DietaryFilterKey[];
+  availableNow: boolean;
+  featured: boolean;
+};
+
+export const EMPTY_FILTERS: MenuFilters = { query: "", dietary: [], availableNow: false, featured: false };
+
+export function hasActiveFilters(f: MenuFilters): boolean {
+  return Boolean(f.query.trim()) || f.dietary.length > 0 || f.availableNow || f.featured;
+}
+
+export function matchesDietary(tags: DietaryTag[], keys: DietaryFilterKey[]): boolean {
+  return keys.every((k) => {
+    const def = DIETARY_FILTERS.find((d) => d.key === k)!;
+    return tags.some((t) => (def.matches as readonly DietaryTag[]).includes(t));
+  });
+}
+
+export function itemMatches(item: ItemNode, f: MenuFilters, availability: Record<number, AvailabilityInfo>): boolean {
+  if (f.featured && !item.featured) return false;
+  if (f.dietary.length && !matchesDietary(item.dietaryTags, f.dietary)) return false;
+  if (f.availableNow && !availability[item.id]?.availableNow) return false;
+  const q = f.query.trim().toLowerCase();
+  if (q) {
+    const hay = [item.name, item.description, item.sectionName, item.categoryName, item.notes, ...item.modifierGroups.flatMap((g) => g.modifiers.map((m) => m.name))]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    if (!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+export type FilteredSection = SectionNode & { items: ItemNode[] };
+export type FilteredCategory = CategoryNode & { sections: FilteredSection[]; itemCount: number };
+
+export function applyFilters(categories: CategoryNode[], f: MenuFilters, availability: Record<number, AvailabilityInfo>): FilteredCategory[] {
+  const active = hasActiveFilters(f);
+  return categories.map((c) => {
+    const sections = c.sections
+      .map((s) => ({ ...s, items: active ? s.items.filter((i) => itemMatches(i, f, availability)) : s.items }))
+      .filter((s) => s.items.length > 0 || (!active && s.sectionType === "addons" && s.linkedGroup));
+    return { ...c, sections, itemCount: sections.reduce((n, s) => n + s.items.length, 0) };
+  });
+}
