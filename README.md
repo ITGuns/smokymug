@@ -36,6 +36,16 @@ Hosted on Vercel (`vercel.json` pins functions to `bom1`, next to the Supabase `
 
 **Admin** (`/admin`, login required) — Dashboard · Reservations (list / calendar / day views, status changes, edit, delete, staff-created bookings) · Menu items (drag-and-drop ordering, item editor with image upload, dietary tags, availability rules, modifier assignment, feature/hide/duplicate/archive/delete) · Categories · Modifiers · Hours (all 8 service windows, weekly reservation windows, blackout dates / special hours) · Settings (booking rules, restaurant info & links, password).
 
+## Testing & QA
+
+```bash
+npm run test:unit     # Vitest: booking engine, availability rules, formatting, validation, calendar, filters
+npm run test:e2e      # Playwright: every customer + admin flow in headless Chromium (desktop + Pixel 7) with axe accessibility scans
+npm run test:all
+```
+
+The E2E suite starts (or reuses) the dev server on :3000, warms every route, logs into the admin, then exercises: the booking wizard end to end (create → manage → cancel, large-party pending, validation, closed days, capacity limits), catering inquiries, menu browsing/search/filters/modals, gallery lightbox, 404/sitemap/robots/upload/auth guards, mobile layout, and the admin dashboard, reservations (create/confirm/edit/day view/delete), menu CMS (item → public site → edit → hide → duplicate → delete, categories, sections, modifiers), hours, blackout dates and booking rules. Records it creates are tagged `QA` / `@qa.smokymug.test` and removed afterwards; settings it changes are reverted. Point `DATABASE_URL` at a staging database to keep it away from live data. Reports land in `tests/report/`.
+
 ## Availability engine
 
 `src/lib/availability.ts` resolves each menu category against the hours table (`store`, `breakfast`, `bbq`, `brunch`, `happy_hour`, …) and each item's own rule (`always | days | schedule | seasonal`) to produce *Available now* / *Fri & Sat only* / *Seasonal* badges. Categories and items are never hidden from admins; the public menu shows badges instead.

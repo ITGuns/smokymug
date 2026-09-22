@@ -33,7 +33,7 @@ export function MobileCta({ phoneHref }: { phoneHref: string }) {
         </Link>
         <Link
           href="/book"
-          className="flex h-12 flex-[1.4] items-center justify-center rounded-full bg-ember-500 text-[15px] font-semibold text-cream-50 shadow-[0_8px_24px_-8px_rgb(200_100_42/0.8)]"
+          className="flex h-12 flex-[1.4] items-center justify-center rounded-full bg-ember-600 text-[15px] font-semibold text-cream-50 shadow-[0_8px_24px_-8px_rgb(200_100_42/0.8)]"
         >
           Book a Table
         </Link>

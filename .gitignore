@@ -15,3 +15,7 @@ next-env.d.ts
 tsconfig.tsbuildinfo
 .env*
 !.env.example
+tests/.auth/
+tests/report/
+test-results/
+playwright-report/

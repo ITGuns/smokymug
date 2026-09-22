@@ -25,7 +25,7 @@ export default async function ReservationPage({ params, searchParams }: { params
             <p className="eyebrow text-ember-600">Reservation</p>
             <h1 className="mt-4 font-display text-4xl font-semibold text-charcoal-900">We couldn&apos;t find that reservation.</h1>
             <p className="mt-3 text-charcoal-700">Check the link in your confirmation, or call us at <a className="font-semibold text-charcoal-900" href={`tel:+1${restaurant.phone.replace(/\D/g, "")}`}>{restaurant.phone}</a>.</p>
-            <Link href="/book" className="mt-6 inline-block rounded-full bg-ember-500 px-6 py-3 font-semibold text-cream-50">Make a new reservation</Link>
+            <Link href="/book" className="mt-6 inline-block rounded-full bg-ember-600 px-6 py-3 font-semibold text-cream-50">Make a new reservation</Link>
           </div>
         )}
       </div>

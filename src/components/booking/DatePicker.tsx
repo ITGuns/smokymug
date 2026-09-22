@@ -66,7 +66,7 @@ export function DatePicker({
               aria-label={parseDate(d).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) + (disabled ? " (unavailable)" : "")}
               className={cn(
                 "relative flex aspect-square items-center justify-center rounded-full text-[15px] font-medium transition-all",
-                selected ? "bg-ember-500 text-cream-50 shadow-glow" : disabled ? "text-charcoal-900/25 line-through decoration-charcoal-900/20" : "text-charcoal-900 hover:bg-charcoal-900/8",
+                selected ? "bg-ember-600 text-cream-50 shadow-glow" : disabled ? "text-charcoal-900/25 line-through decoration-charcoal-900/20" : "text-charcoal-900 hover:bg-charcoal-900/8",
                 isToday && !selected && "ring-1 ring-inset ring-ember-500/60",
               )}
             >

@@ -8,7 +8,7 @@ type Size = "sm" | "md" | "lg";
 const base =
   "group/btn inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold tracking-tight transition-all duration-300 ease-out-expo select-none disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
 const variants: Record<Variant, string> = {
-  primary: "bg-ember-500 text-cream-50 shadow-[0_8px_24px_-8px_rgb(200_100_42/0.7)] hover:bg-ember-400 hover:shadow-glow",
+  primary: "bg-ember-600 text-cream-50 shadow-[0_8px_24px_-8px_rgb(165_79_31/0.7)] hover:bg-ember-500 hover:shadow-glow",
   secondary: "bg-charcoal-900 text-cream-50 hover:bg-charcoal-700",
   ghost: "bg-transparent text-current hover:bg-charcoal-900/5",
   outline: "border border-current/30 text-current hover:border-current hover:bg-current/5",

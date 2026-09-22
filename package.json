@@ -13,7 +13,12 @@
     "db:seed": "tsx src/db/seed.ts",
     "db:reseed": "tsx src/db/seed.ts --force",
     "assets:fetch": "node scripts/fetch-assets.mjs",
-    "setup": "npm run assets:fetch && npm run db:push && npm run db:seed"
+    "setup": "npm run assets:fetch && npm run db:push && npm run db:seed",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:all": "vitest run && playwright test"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.3",
@@ -27,6 +32,8 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.13.0",
     "@types/pg": "^8.23.1",
@@ -36,6 +43,7 @@
     "drizzle-kit": "^0.31.11",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.20.0",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^5.0.1"
   }
 }

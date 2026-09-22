@@ -37,7 +37,7 @@ export function FoodStory({ bbqSummary }: { bbqSummary: string | null }) {
           </Reveal>
         </div>
 
-        <div className="scrollbar-none -mx-5 mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 sm:-mx-8 sm:px-8 md:mx-0 md:grid md:grid-cols-12 md:gap-5 md:overflow-visible md:px-0 md:pb-0">
+        <div tabIndex={0} aria-label="Food photos" className="scrollbar-none -mx-5 mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 focus-visible:outline-2 focus-visible:outline-ember-400 sm:-mx-8 sm:px-8 md:mx-0 md:grid md:grid-cols-12 md:gap-5 md:overflow-visible md:px-0 md:pb-0">
           {PHOTOS.map((p, i) => (
             <ParallaxImage
               key={p.src}

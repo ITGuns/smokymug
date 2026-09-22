@@ -23,7 +23,7 @@ export function Reviews({ reviews }: { reviews: Review[] }) {
                   </span>
                   <span className="eyebrow text-charcoal-500">{r.platform}</span>
                 </div>
-                <div className="mt-5 flex items-center gap-0.5 text-gold-500" aria-label="Very positive review">
+                <div className="mt-5 flex items-center gap-0.5 text-gold-500" role="img" aria-label="Very positive review, five stars">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <svg key={i} viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden>
                       <path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L10 14.9l-5.3 2.8 1.1-5.9L1.5 7.7l5.9-.8L10 1.5z" />

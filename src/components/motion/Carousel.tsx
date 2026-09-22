@@ -101,7 +101,7 @@ export function Carousel({
       onBlurCapture={() => setPaused(false)}
       onTouchStart={() => setPaused(true)}
     >
-      <ul ref={track} className={cn("scrollbar-none flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth", trackClassName)}>
+      <ul ref={track} tabIndex={0} aria-label={`${ariaLabel} slides`} className={cn("scrollbar-none flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth rounded-[22px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember-500", trackClassName)}>
         {slides.map((s, i) => (
           <li key={i} className={cn("shrink-0 snap-start", slideClassName)} aria-roledescription="slide" aria-label={`${i + 1} of ${count}`}>
             {s}

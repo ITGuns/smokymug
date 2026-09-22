@@ -21,7 +21,8 @@ const emptyToNull = (max = 500) =>
 
 /** cents from a dollar string / number; "" → null */
 const cents = z
-  .union([z.string(), z.number(), z.null(), z.undefined()])
+  .union([z.string(), z.number(), z.null()])
+  .optional()
   .transform((v, ctx) => {
     if (v === "" || v == null) return null;
     const n = typeof v === "number" ? v : Number(String(v).replace(/[$,\s]/g, ""));

@@ -137,7 +137,7 @@ export function Header({ status, phone, phoneHref, address, hoursToday, instagra
           </nav>
 
           <div className="hidden items-center gap-4 lg:flex">
-            <a href={phoneHref} className="hidden whitespace-nowrap nav-label text-[14px] text-cream-100/75 transition hover:text-cream-50 xl:block">
+            <a href={phoneHref} className="hidden whitespace-nowrap nav-label text-[14px] text-cream-100/90 transition hover:text-cream-50 xl:block">
               {phone}
             </a>
             <ButtonLink href="/book" size="sm" className="h-10 px-5" arrow>

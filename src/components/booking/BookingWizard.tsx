@@ -183,7 +183,7 @@ export function BookingWizard({
                   aria-current={current ? "step" : undefined}
                   className={cn("flex items-center gap-2 text-[13px] font-semibold", current ? "text-charcoal-900" : done ? "text-charcoal-700" : "text-charcoal-500/60")}
                 >
-                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-full font-label text-[13px] tracking-wide", current ? "bg-ember-500 text-cream-50" : done ? "bg-charcoal-900 text-cream-50" : "bg-charcoal-900/8 text-charcoal-500")}>
+                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-full font-label text-[13px] tracking-wide", current ? "bg-ember-600 text-cream-50" : done ? "bg-charcoal-900 text-cream-50" : "bg-charcoal-900/8 text-charcoal-500")}>
                     {done ? "✓" : i + 1}
                   </span>
                   <span className="hidden sm:inline">{label}</span>
@@ -234,7 +234,7 @@ export function BookingWizard({
                         aria-pressed={party === n}
                         className={cn(
                           "flex aspect-square flex-col items-center justify-center rounded-[18px] border text-charcoal-900 transition-all",
-                          party === n ? "border-ember-500 bg-ember-500 text-cream-50 shadow-glow" : "border-charcoal-900/10 bg-cream-50 hover:border-charcoal-900",
+                          party === n ? "border-ember-600 bg-ember-600 text-cream-50 shadow-glow" : "border-charcoal-900/10 bg-cream-50 hover:border-charcoal-900",
                         )}
                       >
                         <span className="font-display text-3xl font-semibold leading-none">{n}</span>
@@ -405,7 +405,7 @@ function SlotGrid({ slots, label, note, value, onChoose, onOtherDay }: { slots: 
                 className={cn(
                   "h-12 rounded-full border text-[15px] font-semibold transition-all",
                   value === s.time
-                    ? "border-ember-500 bg-ember-500 text-cream-50 shadow-glow"
+                    ? "border-ember-600 bg-ember-600 text-cream-50 shadow-glow"
                     : s.available
                       ? "border-charcoal-900/12 bg-cream-50 text-charcoal-900 hover:border-charcoal-900"
                       : "cursor-not-allowed border-charcoal-900/8 bg-charcoal-900/4 text-charcoal-900/30 line-through",

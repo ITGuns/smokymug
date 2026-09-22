@@ -41,7 +41,7 @@ export function Pill({
 }) {
   const tones = {
     neutral: "bg-charcoal-900/6 text-charcoal-700 ring-charcoal-900/10",
-    ember: "bg-ember-500/12 text-ember-600 ring-ember-500/30",
+    ember: "bg-ember-500/12 text-ember-700 ring-ember-500/30",
     sage: "bg-sage-500/15 text-sage-700 ring-sage-500/30",
     gold: "bg-gold-400/25 text-wood-700 ring-gold-500/40",
     brick: "bg-brick-600/10 text-brick-600 ring-brick-600/25",
