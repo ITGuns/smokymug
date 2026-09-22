@@ -92,7 +92,11 @@ export function initials(first: string, last: string): string {
 }
 
 export function formatRelative(iso: string): string {
-  const then = new Date(/[zZ]|[+-]\d{2}(:?\d{2})?$/.test(iso) ? iso.replace(" ", "T") : iso.replace(" ", "T") + "Z").getTime();
+  // Accepts ISO strings and Postgres timestamptz text ("2026-09-22 16:58:33.414+00").
+  let s = iso.includes("T") ? iso : iso.replace(" ", "T");
+  if (/[+-]\d{2}$/.test(s)) s += ":00";
+  else if (!/[zZ]$|[+-]\d{2}:\d{2}$/.test(s)) s += "Z";
+  const then = new Date(s).getTime();
   if (Number.isNaN(then)) return "";
   const diff = Date.now() - then;
   const mins = Math.round(diff / 60000);

@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Keep the DB driver + ORM out of the webpack server bundle; bundling them breaks row mapping in production.
+  serverExternalPackages: ["pg"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.squarespace-cdn.com" },
