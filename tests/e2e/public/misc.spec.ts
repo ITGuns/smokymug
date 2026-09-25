@@ -6,7 +6,7 @@ test.describe("Other public pages & routes", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Come say hi.");
     await expect(page.locator("main").getByRole("link", { name: /2930 North Avenue/ }).first()).toHaveAttribute("href", /google\.com\/maps/);
     await expect(page.getByRole("link", { name: "(804) 562-3722" }).first()).toHaveAttribute("href", "tel:+18045623722");
-    await expect(page.getByRole("link", { name: "thesmokymug@gmail.com" }).first()).toHaveAttribute("href", "mailto:thesmokymug@gmail.com");
+    await expect(page.locator("main").getByRole("link", { name: "thesmokymug@gmail.com", exact: true }).first()).toHaveAttribute("href", "mailto:thesmokymug@gmail.com");
     await expect(page.getByText("Sunday brunch").first()).toBeVisible();
   });
 

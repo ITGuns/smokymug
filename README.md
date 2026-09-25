@@ -21,7 +21,7 @@ All restaurant content — menu items, prices, modifiers, hours, links, photogra
 npm install
 cp .env.example .env.local        # Supabase pooler URLs, SESSION_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
 npm run setup                     # downloads photography → pushes schema → seeds the full menu + admin user
-npm run dev                       # http://localhost:3000  ·  admin at /admin
+npm run dev                       # http://localhost:3107  ·  admin at /admin
 ```
 
 `npm run db:reseed` wipes and re-seeds menu/content tables without deleting reservations. `DATABASE_URL` should be the **transaction pooler** (port 6543); `DIRECT_URL` the **session pooler** (port 5432) used by `drizzle-kit push` and the seed. The Supabase direct host is IPv6-only, which Vercel cannot reach, so always use the pooler.
@@ -44,7 +44,7 @@ npm run test:e2e      # Playwright: every customer + admin flow in headless Chro
 npm run test:all
 ```
 
-The E2E suite starts (or reuses) the dev server on :3000, warms every route, logs into the admin, then exercises: the booking wizard end to end (create → manage → cancel, large-party pending, validation, closed days, capacity limits), catering inquiries, menu browsing/search/filters/modals, gallery lightbox, 404/sitemap/robots/upload/auth guards, mobile layout, and the admin dashboard, reservations (create/confirm/edit/day view/delete), menu CMS (item → public site → edit → hide → duplicate → delete, categories, sections, modifiers), hours, blackout dates and booking rules. Records it creates are tagged `QA` / `@qa.smokymug.test` and removed afterwards; settings it changes are reverted. Point `DATABASE_URL` at a staging database to keep it away from live data. Reports land in `tests/report/`.
+The E2E suite starts (or reuses) its own dev server on :3107 (override with `E2E_PORT`) so it never picks up another local project on :3000, warms every route, logs into the admin, then exercises: the booking wizard end to end (create → manage → cancel, large-party pending, validation, closed days, capacity limits), catering inquiries, menu browsing/search/filters/modals, gallery lightbox, 404/sitemap/robots/upload/auth guards, mobile layout, and the admin dashboard, reservations (create/confirm/edit/day view/delete), menu CMS (item → public site → edit → hide → duplicate → delete, categories, sections, modifiers), hours, blackout dates and booking rules. Records it creates are tagged `QA` / `@qa.smokymug.test` and removed afterwards; settings it changes are reverted. Point `DATABASE_URL` at a staging database to keep it away from live data. Reports land in `tests/report/`.
 
 ## Availability engine
 

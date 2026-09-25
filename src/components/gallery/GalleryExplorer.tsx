@@ -68,7 +68,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
             <p className="eyebrow text-ember-300">Off the pit</p>
             <h2 className="mt-2 font-display text-3xl font-semibold display-soft">Swipe through the smoke.</h2>
           </div>
-          <span className="hidden text-[12px] uppercase tracking-[0.16em] text-cream-100/40 sm:block">Scroll →</span>
+          <span className="hidden text-[12px] uppercase tracking-[0.16em] text-cream-100/70 sm:block">Scroll →</span>
         </div>
         <ul className="scrollbar-none mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 sm:px-8 lg:px-12" aria-label="Featured BBQ photos">
           {featuredRow.map((img, i) => (

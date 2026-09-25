@@ -12,7 +12,7 @@ const dietaryStyles: Record<DietaryTag, string> = {
   "non-alcoholic": "bg-charcoal-900/8 text-charcoal-700 ring-charcoal-900/15",
 };
 
-export function DietaryBadge({ tag, size = "sm", className }: { tag: DietaryTag; size?: "xs" | "sm"; className?: string }) {
+export function DietaryBadge({ tag, size = "sm", onDark = false, className }: { tag: DietaryTag; size?: "xs" | "sm"; onDark?: boolean; className?: string }) {
   const meta = DIETARY_LABELS[tag];
   return (
     <span
@@ -21,7 +21,7 @@ export function DietaryBadge({ tag, size = "sm", className }: { tag: DietaryTag;
       className={cn(
         "inline-flex items-center rounded-full font-label tracking-[0.12em] ring-1 ring-inset",
         size === "xs" ? "h-5 px-1.5 text-[11px]" : "h-6 px-2 text-[12px]",
-        dietaryStyles[tag],
+        onDark ? "bg-cream-50/15 text-cream-50 ring-cream-50/30" : dietaryStyles[tag],
         className,
       )}
     >
@@ -36,12 +36,13 @@ export function Pill({
   className,
 }: {
   children: React.ReactNode;
-  tone?: "neutral" | "ember" | "sage" | "gold" | "brick" | "dark" | "light";
+  tone?: "neutral" | "ember" | "emberOnDark" | "sage" | "gold" | "brick" | "dark" | "light";
   className?: string;
 }) {
   const tones = {
     neutral: "bg-charcoal-900/6 text-charcoal-700 ring-charcoal-900/10",
     ember: "bg-ember-500/12 text-ember-700 ring-ember-500/30",
+    emberOnDark: "bg-ember-400/15 text-ember-300 ring-ember-400/35",
     sage: "bg-sage-500/15 text-sage-700 ring-sage-500/30",
     gold: "bg-gold-400/25 text-wood-700 ring-gold-500/40",
     brick: "bg-brick-600/10 text-brick-600 ring-brick-600/25",

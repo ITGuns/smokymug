@@ -1,7 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
+/** Dedicated port so a dev server from another local project on :3000 is never mistaken for this app. */
+const PORT = Number(process.env.E2E_PORT ?? 3107);
+const BASE_URL = `http://localhost:${PORT}`;
+
 /**
- * End-to-end suite. Runs against a dev server on :3000 (reused if already up)
+ * End-to-end suite. Runs against a dev server on :3107 (E2E_PORT; reused if already up)
  * and the database in DATABASE_URL. Tests create clearly-labelled "QA" records
  * and remove them afterwards; point DATABASE_URL at a staging database when
  * the production data must not be touched.
@@ -15,7 +19,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 1,
   reporter: [["list"], ["html", { open: "never", outputFolder: "tests/report" }]],
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: BASE_URL,
     actionTimeout: 20_000,
     navigationTimeout: 90_000,
     trace: "retain-on-failure",
@@ -28,8 +32,8 @@ export default defineConfig({
     { name: "admin", testMatch: /admin\/.*\.spec\.ts/, dependencies: ["setup"], use: { ...devices["Desktop Chrome"], viewport: { width: 1360, height: 900 }, storageState: "tests/.auth/admin.json" } },
   ],
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000/robots.txt",
+    command: `npx next dev -p ${PORT}`,
+    url: `${BASE_URL}/robots.txt`,
     reuseExistingServer: true,
     timeout: 180_000,
   },

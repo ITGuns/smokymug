@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Hours, RestaurantInfo } from "@/db/schema";
 import { Logo } from "./Logo";
+import { SocialLinks } from "./SocialLinks";
 import { HoursTable } from "./HoursTable";
 import { mapsUrl } from "@/lib/site";
 
@@ -28,44 +29,20 @@ export function Footer({ restaurant: r, hours, phoneHref, todayDow }: { restaura
               {r.city}, {r.state} {r.zip}
             </a>
             <br />
-            <a href={phoneHref} className="mt-2 inline-block hover:text-cream-50">
+            <a href={phoneHref} className="mt-2 inline-flex min-h-6 items-center hover:text-cream-50">
               {r.phone}
             </a>
             <br />
-            <a href={`mailto:${r.email}`} className="hover:text-cream-50">
+            <a href={`mailto:${r.email}`} className="inline-flex min-h-6 items-center hover:text-cream-50">
               {r.email}
             </a>
           </address>
-          <div className="mt-6 flex gap-3">
-            {r.instagramUrl && (
-              <a
-                href={r.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-cream-50/15 text-cream-100 transition hover:border-ember-400 hover:text-ember-300"
-              >
-                <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <rect x="3" y="3" width="18" height="18" rx="5" />
-                  <circle cx="12" cy="12" r="4" />
-                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-                </svg>
-              </a>
-            )}
-            {r.facebookUrl && (
-              <a
-                href={r.facebookUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-cream-50/15 text-cream-100 transition hover:border-ember-400 hover:text-ember-300"
-              >
-                <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="currentColor">
-                  <path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.6 1.6-1.6h1.7V4.3c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.4H7.4V14h2.8v8h3.3z" />
-                </svg>
-              </a>
-            )}
-          </div>
+          <SocialLinks
+            instagramUrl={r.instagramUrl}
+            facebookUrl={r.facebookUrl}
+            className="mt-6 gap-3"
+            linkClassName="flex h-10 w-10 items-center justify-center rounded-full border border-cream-50/15 text-cream-100 transition hover:border-ember-400 hover:text-ember-300"
+          />
         </div>
 
         <div className="lg:col-span-2">

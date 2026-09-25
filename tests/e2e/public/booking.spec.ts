@@ -61,7 +61,7 @@ test.describe("Reservations", () => {
     await page.locator("button[aria-pressed]").filter({ has: page.locator("span.font-display", { hasText: /^2$/ }) }).click();
     await page.getByRole("button", { name: "12:00 PM", exact: true }).click();
     await page.getByLabel(/^First name/).fill("QA");
-    await page.getByLabel(/^Email/).fill("not-an-email");
+    await page.getByRole("textbox", { name: /^Email/ }).fill("not-an-email");
     await page.getByLabel(/^Phone/).fill("12");
     await page.getByRole("button", { name: "Review reservation" }).click();
     await expect(page.getByText("Last name is required")).toBeVisible();

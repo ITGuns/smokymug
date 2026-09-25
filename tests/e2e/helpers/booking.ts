@@ -21,7 +21,7 @@ export async function bookThrough(page: Page, opts: { date: string; party: numbe
   await expect(page.getByRole("heading", { name: "Who's the table for?" })).toBeVisible();
   await page.getByLabel(/^First name/).fill(opts.first);
   await page.getByLabel(/^Last name/).fill(opts.last);
-  await page.getByLabel(/^Email/).fill(opts.email);
+  await page.getByRole("textbox", { name: /^Email/ }).fill(opts.email);
   await page.getByLabel(/^Phone/).fill(opts.phone);
   if (opts.requests) await page.getByLabel(/^Special requests/).fill(opts.requests);
   await page.getByRole("button", { name: "Review reservation" }).click();

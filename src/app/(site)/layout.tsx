@@ -31,6 +31,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         address={`${restaurant.addressLine1}, ${restaurant.city}, ${restaurant.state}`}
         hoursToday={hoursToday}
         instagramUrl={restaurant.instagramUrl}
+        facebookUrl={restaurant.facebookUrl}
+        email={restaurant.email}
       />
       <main id="main">{children}</main>
       <Footer restaurant={restaurant} hours={hours} phoneHref={phoneHref} todayDow={clock.dayOfWeek} />

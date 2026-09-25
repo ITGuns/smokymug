@@ -11,12 +11,49 @@ test.describe("Mobile layout", () => {
     const mobileNav = page.getByRole("navigation", { name: "Mobile" });
     await expect(mobileNav.getByRole("link", { name: "Catering" })).toBeVisible();
     await expect(page.locator("#mobile-nav")).toContainText("2930 North Avenue");
-    await page.getByRole("button", { name: "Close menu" }).click();
+    const menu = page.locator("#mobile-nav");
+    await expect(menu.getByRole("link", { name: "Instagram" })).toHaveAttribute("href", "https://www.instagram.com/thesmokymug");
+    await expect(menu.getByRole("link", { name: "Facebook" })).toHaveAttribute("href", "https://www.facebook.com/thesmokymug");
+    await expect(menu.getByRole("link", { name: /^Email / })).toHaveAttribute("href", "mailto:thesmokymug@gmail.com");
+    for (const name of ["Instagram", "Facebook", /^Email /]) {
+      const box = await menu.getByRole("link", { name }).boundingBox();
+      expect(box!.width).toBeGreaterThanOrEqual(44);
+      expect(box!.height).toBeGreaterThanOrEqual(44);
+    }
+    await expect(page.locator("main")).toHaveAttribute("inert", "");
+    await page.keyboard.press("Escape");
+    await expect(page.locator("#mobile-nav")).toBeHidden();
+    await expect(page.getByRole("button", { name: "Open menu" })).toBeFocused();
+    await expect(page.locator("main")).not.toHaveAttribute("inert");
 
     const bar = page.locator(".fixed.inset-x-0.bottom-0");
     await expect(bar.getByRole("link", { name: "Book a Table" })).toBeVisible();
     const box = await bar.getByRole("link", { name: "Book a Table" }).boundingBox();
     expect(box!.height).toBeGreaterThanOrEqual(44);
+  });
+
+  test("open menu covers the page (inert), and same-page links or rotating to desktop close it", async ({ page }) => {
+    await page.goto("/");
+    const nav = page.locator("#mobile-nav");
+    await page.getByRole("button", { name: "Open menu" }).click();
+    await expect(nav).toBeVisible();
+    await expect(page.locator("main")).toHaveAttribute("inert", "");
+    await expect(page.locator("body > footer")).toHaveAttribute("inert", "");
+    await expect(page.locator(".fixed.inset-x-0.bottom-0").first()).toHaveAttribute("inert", "");
+
+    // A link to the current page doesn't change the pathname but must still close the menu.
+    await nav.getByRole("link", { name: "Our Story" }).click();
+    await expect(nav).toHaveCount(0);
+    await expect(page.locator("main")).not.toHaveAttribute("inert");
+
+    // Rotating a tablet past the lg breakpoint hides the menu; the page must not stay inert.
+    await page.getByRole("button", { name: "Open menu" }).click();
+    await expect(nav).toBeVisible();
+    await page.setViewportSize({ width: 1180, height: 820 });
+    await expect(nav).toHaveCount(0);
+    await expect(page.locator("main")).not.toHaveAttribute("inert");
+    await expect(page.locator("body > footer")).not.toHaveAttribute("inert");
+    await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe("");
   });
 
   test("menu: category chips scroll, sections collapse, cards stack", async ({ page }) => {

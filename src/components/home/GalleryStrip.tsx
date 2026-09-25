@@ -39,7 +39,7 @@ export function GalleryStrip({ images }: { images: GalleryImage[] }) {
             );
           })}
         </Marquee>
-        <p className="container-site mt-4 text-[12px] uppercase tracking-[0.16em] text-cream-100/40">Drag to browse</p>
+        <p className="container-site mt-4 text-[12px] uppercase tracking-[0.16em] text-cream-100/70">Drag to browse</p>
       </Reveal>
     </section>
   );

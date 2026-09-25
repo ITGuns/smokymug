@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Logo } from "./Logo";
+import { SocialLinks } from "./SocialLinks";
 import { ButtonLink } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 
@@ -23,6 +24,8 @@ export type HeaderProps = {
   address: string;
   hoursToday: string;
   instagramUrl?: string | null;
+  facebookUrl?: string | null;
+  email?: string | null;
 };
 
 function StatusDot({ isOpen, className }: { isOpen: boolean; className?: string }) {
@@ -34,10 +37,12 @@ function StatusDot({ isOpen, className }: { isOpen: boolean; className?: string 
   );
 }
 
-export function Header({ status, phone, phoneHref, address, hoursToday, instagramUrl }: HeaderProps) {
+export function Header({ status, phone, phoneHref, address, hoursToday, instagramUrl, facebookUrl, email }: HeaderProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const overHero = pathname === "/" || pathname === "/catering" || pathname === "/gallery";
 
   useEffect(() => {
@@ -58,13 +63,41 @@ export function Header({ status, phone, phoneHref, address, hoursToday, instagra
     };
   }, [open]);
 
+  // While the full-screen menu is open, everything outside the header (main, footer, the bottom booking
+  // bar, the skip link) is covered by it: make it inert so keyboard focus can't land there, and let Escape close it.
+  useEffect(() => {
+    if (!open) return;
+    const header = headerRef.current;
+    const covered = Array.from(document.body.children).filter(
+      (el): el is HTMLElement => el instanceof HTMLElement && el !== header && !el.contains(header) && !el.inert,
+    );
+    covered.forEach((el) => (el.inert = true));
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    // The menu only exists below the lg breakpoint; if the viewport crosses it (tablet rotation, window resize)
+    // the overlay disappears, so close the menu rather than leave the page inert behind nothing.
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const onBreakpoint = () => desktop.matches && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    desktop.addEventListener("change", onBreakpoint);
+    onBreakpoint();
+    return () => {
+      covered.forEach((el) => (el.inert = false));
+      document.removeEventListener("keydown", onKey);
+      desktop.removeEventListener("change", onBreakpoint);
+    };
+  }, [open]);
+
   const solid = scrolled || !overHero || open;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
+    <header ref={headerRef} className="fixed inset-x-0 top-0 z-50">
       {/* Utility strip (desktop) */}
       <div
-        aria-hidden={scrolled}
+        inert={scrolled}
         className={cn(
           "hidden overflow-hidden transition-[max-height,opacity] duration-500 ease-out-expo lg:block",
           scrolled ? "max-h-0 opacity-0" : "max-h-10 opacity-100",
@@ -88,11 +121,14 @@ export function Header({ status, phone, phoneHref, address, hoursToday, instagra
             <a href={phoneHref} className="text-cream-50 transition hover:text-ember-300">
               {phone}
             </a>
-            {instagramUrl && (
-              <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="transition hover:text-ember-300">
-                Instagram
-              </a>
-            )}
+            <SocialLinks
+              instagramUrl={instagramUrl}
+              facebookUrl={facebookUrl}
+              email={email}
+              className="-mr-1.5 -translate-y-px gap-0.5"
+              linkClassName="flex h-7 w-7 items-center justify-center rounded-full text-cream-100/80 transition hover:bg-cream-50/10 hover:text-ember-300 focus-visible:outline-offset-1"
+              iconClassName="h-[15px] w-[15px]"
+            />
           </div>
         </div>
         <div className="h-px bg-gradient-to-r from-transparent via-cream-50/15 to-transparent" />
@@ -150,6 +186,7 @@ export function Header({ status, phone, phoneHref, address, hoursToday, instagra
               Book
             </ButtonLink>
             <button
+              ref={menuButtonRef}
               type="button"
               aria-expanded={open}
               aria-controls="mobile-nav"
@@ -188,6 +225,7 @@ export function Header({ status, phone, phoneHref, address, hoursToday, instagra
                   >
                     <Link
                       href={item.href}
+                      onClick={() => setOpen(false)}
                       className="flex items-center justify-between border-b border-cream-50/10 py-5 font-display text-[2.1rem] font-medium text-cream-50 display-sharp"
                     >
                       {item.label}
@@ -197,7 +235,7 @@ export function Header({ status, phone, phoneHref, address, hoursToday, instagra
                 ))}
               </nav>
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="mt-8 space-y-5">
-                <ButtonLink href="/book" size="lg" className="w-full" arrow>
+                <ButtonLink href="/book" size="lg" className="w-full" arrow onClick={() => setOpen(false)}>
                   Book a Table
                 </ButtonLink>
                 <div className="grid gap-4 rounded-[20px] border border-cream-50/10 p-5 text-[14px] text-cream-100/75">
@@ -207,11 +245,17 @@ export function Header({ status, phone, phoneHref, address, hoursToday, instagra
                     <span>· Today {hoursToday}</span>
                   </p>
                   <p>{address}</p>
-                  <div className="flex flex-wrap gap-x-5 gap-y-2 font-label text-[14px] tracking-[0.16em]">
-                    <a href={phoneHref} className="text-cream-50">{phone}</a>
-                    {instagramUrl && (
-                      <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="text-cream-100/75">Instagram</a>
-                    )}
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <a href={phoneHref} className="font-label text-[15px] tracking-[0.16em] text-cream-50">
+                      {phone}
+                    </a>
+                    <SocialLinks
+                      instagramUrl={instagramUrl}
+                      facebookUrl={facebookUrl}
+                      email={email}
+                      className="gap-2"
+                      linkClassName="flex h-11 w-11 items-center justify-center rounded-full border border-cream-50/15 text-cream-50 transition hover:border-ember-400 hover:text-ember-300"
+                    />
                   </div>
                 </div>
               </motion.div>

@@ -111,7 +111,7 @@ export function Carousel({
       {(showArrows || showDots) && count > 1 && (
         <div className="mt-6 flex items-center justify-between gap-4">
           {showDots ? (
-            <div className="flex items-center gap-2" role="tablist" aria-label="Slides">
+            <div className="-mx-2 flex items-center" role="tablist" aria-label="Slides">
               {slides.map((_, i) => (
                 <button
                   key={i}
@@ -120,11 +120,16 @@ export function Carousel({
                   aria-selected={i === index}
                   aria-label={`Go to slide ${i + 1}`}
                   onClick={() => scrollTo(i)}
-                  className={cn(
-                    "h-2 rounded-full transition-all duration-500",
-                    i === index ? "w-8 bg-ember-500" : dark ? "w-2 bg-cream-50/30 hover:bg-cream-50/60" : "w-2 bg-charcoal-900/20 hover:bg-charcoal-900/40",
-                  )}
-                />
+                  className="group flex h-6 min-w-6 items-center justify-center px-2"
+                >
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "h-2 rounded-full transition-all duration-500",
+                      i === index ? "w-8 bg-ember-500" : dark ? "w-2 bg-cream-50/30 group-hover:bg-cream-50/60" : "w-2 bg-charcoal-900/20 group-hover:bg-charcoal-900/40",
+                    )}
+                  />
+                </button>
               ))}
             </div>
           ) : (

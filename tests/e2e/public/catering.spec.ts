@@ -15,7 +15,7 @@ test.describe("Catering", () => {
 
     const email = `qa-catering@${QA.emailDomain}`;
     await page.getByLabel(/^Your name/).fill("QA Planner");
-    await page.getByLabel(/^Email/).fill(email);
+    await page.getByRole("textbox", { name: /^Email/ }).fill(email);
     await page.getByLabel(/^What's the occasion/).fill("QA office lunch");
     await page.getByLabel(/^Number of guests/).fill("40");
     await page.getByLabel(/^Service type/).selectOption("Delivery");
@@ -30,7 +30,7 @@ test.describe("Catering", () => {
 
   test("rejects an incomplete inquiry with field errors", async ({ page }) => {
     await page.goto("/catering#inquiry");
-    await page.getByLabel(/^Email/).fill("bad");
+    await page.getByRole("textbox", { name: /^Email/ }).fill("bad");
     await page.getByRole("button", { name: "Send inquiry" }).click();
     await expect(page.getByText("Name is required")).toBeVisible();
     await expect(page.getByText("Enter a valid email")).toBeVisible();

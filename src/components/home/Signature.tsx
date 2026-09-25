@@ -57,7 +57,7 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
                     <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/90 via-charcoal-950/30 to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 p-7 lg:p-9">
                       <div className="flex flex-wrap items-center gap-2">
-                        <Pill tone="ember">{lead.categoryName}</Pill>
+                        <Pill tone="emberOnDark">{lead.categoryName}</Pill>
                         {lead.availabilityLabel && <Pill tone="light">{lead.availabilityLabel}</Pill>}
                       </div>
                       <div className="mt-4 flex items-end justify-between gap-6">
@@ -67,7 +67,7 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
                           {lead.dietaryTags.length > 0 && (
                             <div className="mt-3 flex gap-1.5">
                               {lead.dietaryTags.map((t) => (
-                                <DietaryBadge key={t} tag={t} className="bg-cream-50/15 text-cream-50 ring-cream-50/30" />
+                                <DietaryBadge key={t} tag={t} onDark />
                               ))}
                             </div>
                           )}
@@ -101,7 +101,7 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
                     ) : (
                       <div className="relative flex items-center justify-between px-6 pt-6">
                         <span className="font-display text-6xl font-semibold leading-none text-ember-400/90 display-wonk">{item.name[0]}</span>
-                        {item.availabilityLabel && <Pill tone="ember">{item.availabilityLabel}</Pill>}
+                        {item.availabilityLabel && <Pill tone="emberOnDark">{item.availabilityLabel}</Pill>}
                       </div>
                     )}
                     <div className="flex flex-1 flex-col p-6">
@@ -116,7 +116,7 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
                       {item.dietaryTags.length > 0 && (
                         <div className="mt-auto flex gap-1.5 pt-4">
                           {item.dietaryTags.map((t) => (
-                            <DietaryBadge key={t} tag={t} size="xs" className={cn(!item.image && "bg-cream-50/15 text-cream-50 ring-cream-50/30")} />
+                            <DietaryBadge key={t} tag={t} size="xs" onDark={!item.image} />
                           ))}
                         </div>
                       )}

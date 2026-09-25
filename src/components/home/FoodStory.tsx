@@ -53,7 +53,7 @@ export function FoodStory({ bbqSummary }: { bbqSummary: string | null }) {
             </ParallaxImage>
           ))}
         </div>
-        <p className="mt-4 text-[12px] uppercase tracking-[0.16em] text-cream-100/40 md:hidden">Swipe →</p>
+        <p className="mt-4 text-[12px] uppercase tracking-[0.16em] text-cream-100/70 md:hidden">Swipe →</p>
       </div>
     </section>
   );
