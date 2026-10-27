@@ -85,11 +85,13 @@ export function computeAvailability(date: string, partySize: number, ctx: Availa
       if (seen.has(time)) continue;
       seen.add(time);
 
+      // Lead time counts from now in absolute minutes, so a 24h+ lead time also
+      // blocks tomorrow morning's slots, not just today's.
+      const dayDiff = (Date.parse(`${date}T00:00:00Z`) - Date.parse(`${clock.date}T00:00:00Z`)) / 86_400_000;
+      const minutesFromNow = dayDiff * 1440 + m - clock.minutes;
       let reason: SlotInfo["reason"] | undefined;
-      if (date === clock.date) {
-        if (m < clock.minutes) reason = "past";
-        else if (m < clock.minutes + settings.minLeadTimeMinutes) reason = "lead";
-      }
+      if (minutesFromNow < 0) reason = "past";
+      else if (minutesFromNow < settings.minLeadTimeMinutes) reason = "lead";
       if (!reason) {
         const overlapping = active.filter((r) => Math.abs(toMinutes(r.time) - m) < turn);
         const covers = overlapping.reduce((n, r) => n + r.partySize, 0);

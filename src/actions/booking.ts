@@ -1,6 +1,6 @@
 "use server";
 
-import { randomBytes } from "node:crypto";
+import { randomBytes, timingSafeEqual } from "node:crypto";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { db, schema } from "@/db";
 import type { Reservation } from "@/db/schema";
@@ -89,7 +89,7 @@ export async function createReservation(raw: ReservationInput): Promise<ActionRe
           ),
         )
         .limit(1);
-      if (dup) throw new BookingError("You already have a reservation at this time. Check your email for the confirmation.", "duplicate");
+      if (dup) throw new BookingError("You already have a reservation at this time. Call us if you need to change it.", "duplicate");
 
       const status = ctx.settings.autoConfirm && input.partySize < ctx.settings.largePartyThreshold ? "confirmed" : "pending";
       const manageToken = randomBytes(16).toString("hex");
@@ -125,15 +125,22 @@ export async function createReservation(raw: ReservationInput): Promise<ActionRe
   }
 }
 
+/** Constant-time manage-token check; string !== leaks match length via timing. */
+function tokenMatches(expected: string, given: string): boolean {
+  const a = Buffer.from(expected);
+  const b = Buffer.from(given);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 export async function lookupReservation(code: string, token: string): Promise<ActionResult<PublicReservation>> {
   const r = await getReservationByCode(code);
-  if (!r || r.manageToken !== token) return fail("We couldn't find that reservation.", { code: "not_found" });
+  if (!r || !tokenMatches(r.manageToken, token)) return fail("We couldn't find that reservation.", { code: "not_found" });
   return { ok: true, data: toPublic(r) };
 }
 
 export async function cancelReservation(code: string, token: string): Promise<ActionResult<PublicReservation>> {
   const r = await getReservationByCode(code);
-  if (!r || r.manageToken !== token) return fail("We couldn't find that reservation.", { code: "not_found" });
+  if (!r || !tokenMatches(r.manageToken, token)) return fail("We couldn't find that reservation.", { code: "not_found" });
   if (r.status === "cancelled") return { ok: true, data: toPublic(r) };
   if (r.status !== "pending" && r.status !== "confirmed") return fail("This reservation can no longer be cancelled online.", { code: "locked" });
   const clock = getClock("America/New_York");

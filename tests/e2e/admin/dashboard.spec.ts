@@ -27,7 +27,7 @@ test.describe("Admin dashboard & shell", () => {
     expect(await toggle.getAttribute("aria-checked")).toBe("true");
   });
 
-  test("sign out ends the session", async ({ page, request }) => {
+  test("sign out ends the session", async ({ page }) => {
     await page.goto("/admin");
     await page.getByRole("button", { name: "Sign out" }).click();
     await expect(page).toHaveURL(/\/admin\/login/);

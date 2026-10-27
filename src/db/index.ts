@@ -21,13 +21,15 @@ function createPool() {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var __smokyPool: Pool | undefined;
 }
 
 // Reuse one pool across Next.js hot reloads / route modules.
 const pool = globalThis.__smokyPool ?? createPool();
 if (process.env.NODE_ENV !== "production") globalThis.__smokyPool = pool;
+
+// An idle client error with no listener is an unhandled "error" event and kills the process.
+pool.on("error", (err) => console.error("pg pool idle client error:", err.message));
 
 export const db = drizzle(pool, { schema });
 export { schema };

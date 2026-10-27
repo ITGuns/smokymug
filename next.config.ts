@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ["motion"],
+    // Default is 1 MB, which rejects most phone photos sent to the image-upload action.
+    serverActions: { bodySizeLimit: "4mb" },
   },
   async headers() {
     return [

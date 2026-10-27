@@ -277,7 +277,7 @@ export function BookingWizard({
 
               {step === 3 && (
                 <section aria-labelledby="step-details">
-                  <h2 id="step-details" className="font-display text-3xl font-semibold text-charcoal-900 sm:text-4xl">Who's the table for?</h2>
+                  <h2 id="step-details" className="font-display text-3xl font-semibold text-charcoal-900 sm:text-4xl">Who&apos;s the table for?</h2>
                   <form
                     className="mt-6 grid gap-4 sm:grid-cols-2"
                     noValidate

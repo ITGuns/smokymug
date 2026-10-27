@@ -32,5 +32,6 @@ export function RestaurantJsonLd({ restaurant: r, hours }: { restaurant: Restaur
     })),
     amenityFeature: r.features.map((f) => ({ "@type": "LocationFeatureSpecification", name: f, value: true })),
   };
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
+  // "<" must be escaped or an admin-edited value containing "</script>" becomes stored XSS.
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }} />;
 }

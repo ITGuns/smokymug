@@ -1,6 +1,7 @@
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { MobileCta } from "@/components/site/MobileCta";
+import { MotionProvider } from "@/components/site/MotionProvider";
 import { RestaurantJsonLd } from "@/components/site/JsonLd";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { time12 } from "@/lib/format";
@@ -18,7 +19,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       ? `${time12(today.opensAt, { compact: true })} – ${time12(today.closesAt, { compact: true })}`
       : "Closed";
   return (
-    <>
+    <MotionProvider>
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-teal-600 focus:px-4 focus:py-2 focus:text-cream-50"
@@ -42,6 +43,6 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Footer restaurant={restaurant} hours={hours} phoneHref={phoneHref} todayDow={clock.dayOfWeek} />
       <MobileCta phoneHref={phoneHref} />
       <RestaurantJsonLd restaurant={restaurant} hours={hours} />
-    </>
+    </MotionProvider>
   );
 }

@@ -12,6 +12,10 @@ export type AdminSession = { sub: number; email: string; name: string; role: str
 function secret(): Uint8Array {
   const s = process.env.SESSION_SECRET;
   if (!s || s.length < 16) throw new Error("SESSION_SECRET must be set (16+ chars) in .env.local");
+  // The .env.example placeholder signs valid admin JWTs if it ever reaches production.
+  if (process.env.NODE_ENV === "production" && (s.length < 32 || s.includes("change-me"))) {
+    throw new Error("SESSION_SECRET is a placeholder or under 32 chars; set a real secret (openssl rand -hex 32)");
+  }
   return new TextEncoder().encode(s);
 }
 

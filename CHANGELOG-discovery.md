@@ -45,6 +45,23 @@ system (admin-managed, `bookingsEnabled` pause toggle, no 404), no specials page
 and Toast (not SpotOn) links seeded for gift cards/loyalty. Defaults above were
 applied against the repo as it exists; where the two disagree, Genrou decides.
 
+## Hardening pass (28 Oct 2026, after a full repo audit)
+
+Applied on top of the discovery changes: next 15.5.25 → 15.5.28 (critical image
+optimizer CVE) + non-breaking `npm audit fix`; JSON-LD `<` escaping (stored-XSS
+via admin-edited text); production guard against placeholder/short
+`SESSION_SECRET`; timing-safe manage-token compare + same-origin check on
+`/admin/logout`; booking lead time measured in absolute minutes (was today-only;
+regression test added); server-action body limit 4 MB + client-side 3 MB image
+check and upload error handling; `pg` pool error listener; `error.tsx` for site,
+admin and global; `MotionConfig reducedMotion="user"`; danger dialogs focus
+Cancel; working ESLint flat-config gate (`npm run lint`, 0 errors).
+
+Known remaining advisory: 1 high in postcss vendored inside next 15.x; the only
+fix is next 16 (breaking), owner's call. Bigger audit recommendations (catering
+inquiries admin + alerts, durable rate limiting, transactional email, caching/
+region strategy, session revocation, CI) are in the dev report, not built.
+
 ## Open inputs still needed (handoff §4)
 
 Q1 final teal/red values · Q2 Roadstore file + license · Q4 confirm dropdown

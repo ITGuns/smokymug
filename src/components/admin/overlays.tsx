@@ -78,8 +78,9 @@ export function ConfirmDialog({ open, title, body, confirmLabel = "Confirm", ton
             <h2 id="confirm-title" className="text-[16px] font-semibold text-zinc-900">{title}</h2>
             {body && <p className="mt-2 text-[14px] text-zinc-600">{body}</p>}
             <div className="mt-5 flex justify-end gap-2">
-              <Btn variant="ghost" onClick={onCancel} disabled={loading}>Cancel</Btn>
-              <Btn variant={tone} onClick={onConfirm} loading={loading} autoFocus>{confirmLabel}</Btn>
+              {/* Destructive dialogs focus Cancel, so a stray Enter can't delete. */}
+              <Btn variant="ghost" onClick={onCancel} disabled={loading} autoFocus={tone === "danger"}>Cancel</Btn>
+              <Btn variant={tone} onClick={onConfirm} loading={loading} autoFocus={tone !== "danger"}>{confirmLabel}</Btn>
             </div>
           </motion.div>
         </motion.div>

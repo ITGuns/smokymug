@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { config as loadEnv } from "dotenv";
 import { sql } from "drizzle-orm";
 import { MENU } from "./seed-data/menu";
@@ -134,7 +133,7 @@ async function main() {
 
 type SeedDb = Awaited<ReturnType<typeof importDb>>["db"];
 type AdminTable = Awaited<ReturnType<typeof importDb>>["schema"]["adminUsers"];
-const importDb = () => import("./index");
+const importDb = () => import("./index"); // eslint-disable-line @typescript-eslint/no-unused-vars -- type source only
 
 async function seedAdmin(db: SeedDb, adminUsers: AdminTable) {
   const email = process.env.ADMIN_EMAIL;
