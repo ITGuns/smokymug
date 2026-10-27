@@ -22,11 +22,11 @@ export function Programs({ restaurant: r }: { restaurant: RestaurantInfo }) {
                 href={c.href!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex h-full flex-col rounded-[22px] border border-charcoal-900/8 bg-cream-50 p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:border-ember-400/50 hover:shadow-lift"
+                className="group flex h-full flex-col rounded-2xl border border-charcoal-900/8 bg-cream-50 p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:border-teal-600/50 hover:shadow-lift"
               >
                 <h3 className="font-display text-2xl font-semibold leading-tight text-charcoal-900">{c.title}</h3>
                 <p className="mt-2 flex-1 text-[14.5px] leading-relaxed text-charcoal-700">{c.body}</p>
-                <span className="mt-5 inline-flex items-center gap-2 text-[14px] font-semibold text-ember-600">
+                <span className="mt-5 inline-flex items-center gap-2 text-[14px] font-semibold text-teal-600">
                   {c.cta}
                   <span className="transition-transform group-hover:translate-x-1">↗</span>
                 </span>

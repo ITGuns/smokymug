@@ -26,8 +26,12 @@ export async function readBookingSettings(ex: DbLike = db): Promise<BookingSetti
 export async function readReviews(): Promise<Review[]> {
   return db.select().from(reviews).where(eq(reviews.active, true)).orderBy(asc(reviews.displayOrder));
 }
-export async function readGallery(): Promise<GalleryImage[]> {
-  return db.select().from(galleryImages).where(eq(galleryImages.active, true)).orderBy(asc(galleryImages.displayOrder));
+export async function readGallery(includeInactive = false): Promise<GalleryImage[]> {
+  return db
+    .select()
+    .from(galleryImages)
+    .where(includeInactive ? undefined : eq(galleryImages.active, true))
+    .orderBy(asc(galleryImages.displayOrder), asc(galleryImages.id));
 }
 
 /** Cached reads (public site). Invalidated via revalidateTag(CONTENT_TAG). */

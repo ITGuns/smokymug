@@ -6,7 +6,8 @@ import { useRef } from "react";
 import { ImageCarousel, type Slide } from "@/components/motion/ImageCarousel";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { SplitText } from "@/components/motion/SplitText";
-import { Logo } from "@/components/site/Logo";
+import type { MenuLink } from "@/components/site/Header";
+import { MenuDropdown } from "@/components/site/MenuDropdown";
 import { SmokeBackdrop } from "@/components/site/SmokeBackdrop";
 import { ButtonLink } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
@@ -25,10 +26,14 @@ export function Hero({
   tagline,
   status,
   addressShort,
+  orderUrl,
+  menuLinks = [],
 }: {
   tagline: string;
   status: { isOpen: boolean; label: string; detail: string };
   addressShort: string;
+  orderUrl?: string | null;
+  menuLinks?: MenuLink[];
 }) {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
@@ -61,18 +66,15 @@ export function Hero({
 
       <motion.div style={{ y: textY, opacity: textOpacity }} className="container-site relative z-10 pb-32 pt-40 lg:pb-28">
         <motion.div initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } } }} className="max-w-4xl">
-          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 1, ease } } }}>
-            <Logo invert width={220} priority className="w-[180px] md:w-[240px]" />
-          </motion.div>
-
+          {/* C1: no large logo in the hero — the header logo carries the brand */}
           <SplitText
             as="h1"
             delay={0.35}
             lines={[
               { text: "Smoked low." },
-              { text: "Brewed slow.", className: "text-ember-300" },
+              { text: "Brewed slow.", className: "text-teal-300" },
             ]}
-            className="mt-8 font-display text-[clamp(3.25rem,10vw,8.5rem)] font-semibold leading-[0.92] tracking-[-0.02em] display-wonk text-shadow-hero"
+            className="font-display text-[clamp(3.25rem,10vw,8.5rem)] font-semibold leading-[0.92] tracking-[-0.02em] display-wonk text-shadow-hero"
           />
 
           <motion.p
@@ -86,16 +88,15 @@ export function Hero({
             variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 1, ease, delay: 0.85 } } }}
             className="mt-9 flex flex-wrap items-center gap-3"
           >
-            <Magnetic>
-              <ButtonLink href="/book" size="lg" arrow>
-                Book a Table
-              </ButtonLink>
-            </Magnetic>
-            <Magnetic strength={0.2}>
-              <ButtonLink href="/menu" size="lg" variant="dark">
-                Explore Menu
-              </ButtonLink>
-            </Magnetic>
+            {/* L4 note: highlight the Menu and Ordering on the hero (C3 dropdown, Q4 default) */}
+            <MenuDropdown links={menuLinks} />
+            {orderUrl && (
+              <Magnetic>
+                <ButtonLink href={orderUrl} size="lg" arrow>
+                  Order Now
+                </ButtonLink>
+              </Magnetic>
+            )}
           </motion.div>
 
           <motion.div
@@ -130,7 +131,7 @@ export function Hero({
       >
         <span className="eyebrow [writing-mode:vertical-rl]">Scroll</span>
         <span className="h-10 w-px overflow-hidden bg-cream-100/20">
-          <motion.span className="block h-full w-full bg-ember-400" animate={{ y: ["-100%", "100%"] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} />
+          <motion.span className="block h-full w-full bg-red-400" animate={{ y: ["-100%", "100%"] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} />
         </span>
       </motion.div>
     </section>

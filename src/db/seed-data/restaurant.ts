@@ -5,6 +5,8 @@ export const RESTAURANT = {
   id: 1,
   name: "The Smoky Mug",
   tagline: "Richmond's Best Texas Craft BBQ + Cafe in Brookland Park!",
+  // C10: footer tagline copy will be replaced by Dan via the copy sheet (E1)
+  footerTagline: null as string | null,
   category: "Cafe & Craft Barbecue & Tex-Mex Kitchen",
   description:
     "Cafe & Craft Barbecue & Tex-Mex Kitchen in Northside Richmond, VA. Coffee and elevated cafe fare served every day. Top class brisket, pulled pork, ribs, and more smoked on site and plated through a unique rotating Tex-mex menu.",
@@ -23,6 +25,8 @@ export const RESTAURANT = {
   loyaltyUrl: "https://www.toasttab.com/thesmokymug/rewardsSignup",
   marketingSignupUrl: "https://www.toasttab.com/thesmokymug/marketing-signup",
   brunchReservationUrl: "https://host.tablesready.com/p/book/add/thesmokymug",
+  // OPEN Q8: Dan has not supplied the SpotOn ordering link yet. Set it in Admin → Settings.
+  orderUrl: null as string | null,
   logoUrl: "/images/logo.png",
   ogImageUrl: "/images/og-square-logo.png",
   features: [

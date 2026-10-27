@@ -12,7 +12,8 @@ function createPool() {
   if (!url) throw new Error("DATABASE_URL is not set. Add your Supabase connection string to .env.local.");
   return new Pool({
     connectionString: url,
-    ssl: { rejectUnauthorized: false },
+    // Supabase poolers require TLS; a local dev database opts out with ?sslmode=disable.
+    ssl: /sslmode=disable/.test(url) ? undefined : { rejectUnauthorized: false },
     max: process.env.NODE_ENV === "production" ? 4 : 8,
     idleTimeoutMillis: 20_000,
     connectionTimeoutMillis: 15_000,

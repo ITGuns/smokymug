@@ -6,7 +6,7 @@ import { Reveal } from "@/components/ui/Reveal";
 
 export function GalleryStrip({ images }: { images: GalleryImage[] }) {
   return (
-    <section className="overflow-hidden bg-charcoal-950 py-20 text-cream-50 lg:py-28">
+    <section className="overflow-hidden bg-teal-950 py-20 text-cream-50 lg:py-28">
       <div className="container-site flex items-end justify-between gap-6">
         <Reveal>
           <h2 className="font-display text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.05] display-sharp">Gallery</h2>
@@ -27,7 +27,7 @@ export function GalleryStrip({ images }: { images: GalleryImage[] }) {
                 key={img.id}
                 href={`/gallery?photo=${img.id}`}
                 draggable={false}
-                className="group relative mr-4 block h-[240px] overflow-hidden rounded-[20px] bg-charcoal-800 sm:h-[300px] lg:h-[360px]"
+                className="group relative mr-4 block h-[240px] overflow-hidden rounded-2xl bg-teal-900 sm:h-[300px] lg:h-[360px]"
                 style={{ aspectRatio: tall ? "3/4" : `${img.width}/${img.height}` }}
               >
                 <Image src={img.file} alt={img.alt} fill sizes="(min-width: 1024px) 420px, 300px" draggable={false} className="object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-[1.06]" />

@@ -41,7 +41,13 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero tagline={restaurant.tagline} status={status} addressShort={`${restaurant.addressLine1} · Brookland Park, RVA`} />
+      <Hero
+        tagline={restaurant.tagline}
+        status={status}
+        addressShort={`${restaurant.addressLine1} · Brookland Park, RVA`}
+        orderUrl={restaurant.orderUrl}
+        menuLinks={tree.categories.map((c) => ({ label: c.name, href: `/menu?category=${c.slug}` }))}
+      />
       <Ticker items={["Texas craft brisket", "Homemade tortillas", "Specialty lattes", "Taco Tuesday", "Happy hour Wed–Sat", "Sunday brunch", "Dog-friendly porch"]} />
       <Intro blurb={blurb} cafeSummary={restaurant.cafeSummary} bbqSummary={restaurant.bbqSummary} features={restaurant.features} />
       <FoodStory bbqSummary={restaurant.bbqSummary} />

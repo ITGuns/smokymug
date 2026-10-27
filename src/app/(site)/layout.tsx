@@ -4,12 +4,14 @@ import { MobileCta } from "@/components/site/MobileCta";
 import { RestaurantJsonLd } from "@/components/site/JsonLd";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { time12 } from "@/lib/format";
+import { getMenuTree } from "@/lib/data/menu";
 import { getSiteChrome } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const { restaurant, hours, status, phoneHref, clock } = await getSiteChrome();
+  const [{ restaurant, hours, status, phoneHref, clock }, tree] = await Promise.all([getSiteChrome(), getMenuTree()]);
+  const menuLinks = tree.categories.map((c) => ({ label: c.name, href: `/menu?category=${c.slug}` }));
   const today = status.today;
   const hoursToday =
     today && !today.isClosed && today.opensAt && today.closesAt
@@ -19,7 +21,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     <>
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ember-600 focus:px-4 focus:py-2 focus:text-cream-50"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-teal-600 focus:px-4 focus:py-2 focus:text-cream-50"
       >
         Skip to content
       </a>
@@ -33,6 +35,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         instagramUrl={restaurant.instagramUrl}
         facebookUrl={restaurant.facebookUrl}
         email={restaurant.email}
+        orderUrl={restaurant.orderUrl}
+        menuLinks={menuLinks}
       />
       <main id="main">{children}</main>
       <Footer restaurant={restaurant} hours={hours} phoneHref={phoneHref} todayDow={clock.dayOfWeek} />

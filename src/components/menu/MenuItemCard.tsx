@@ -28,7 +28,7 @@ export function MenuItemCard({
       onClick={() => onOpen(item.slug)}
       aria-haspopup="dialog"
       className={cn(
-        "group flex h-full w-full flex-col overflow-hidden rounded-[22px] border border-charcoal-900/8 bg-cream-50 text-left shadow-card transition-all duration-500 ease-out-expo hover:-translate-y-1 hover:border-ember-400/40 hover:shadow-lift focus-visible:outline-offset-4",
+        "group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-charcoal-900/8 bg-cream-50 text-left shadow-card transition-all duration-500 ease-out-expo hover:-translate-y-1 hover:border-teal-600/40 hover:shadow-lift focus-visible:outline-offset-4",
         hasImage ? "" : "",
       )}
     >
@@ -50,7 +50,7 @@ export function MenuItemCard({
           </div>
         )}
         <div className="flex items-start justify-between gap-4">
-          <h4 className="font-display text-[1.35rem] font-semibold leading-[1.15] text-charcoal-900 group-hover:text-ember-600">{item.name}</h4>
+          <h4 className="font-display text-[1.35rem] font-semibold leading-[1.15] text-charcoal-900 group-hover:text-teal-600">{item.name}</h4>
           <PriceTag item={item} className="shrink-0" />
         </div>
         {item.description && <p className="mt-2 text-[14.5px] leading-relaxed text-charcoal-700">{item.description}</p>}
@@ -62,7 +62,7 @@ export function MenuItemCard({
             ))}
           </div>
           {customizable && (
-            <span className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-charcoal-500 transition-colors group-hover:text-ember-600">
+            <span className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-charcoal-500 transition-colors group-hover:text-teal-600">
               Options
               <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M7 5l5 5-5 5" />

@@ -41,7 +41,7 @@ export default async function CateringPage() {
           overlay={<div aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-charcoal-950 via-charcoal-950/55 to-charcoal-950/25" />}
         />
         <div className="container-site relative z-10 pb-20 pt-40">
-          <SplitText as="h1" delay={0.2} lines={[{ text: "Catering &" }, { text: "events.", className: "text-ember-300" }]} className="mt-4 font-display text-[clamp(3rem,8vw,7rem)] font-semibold leading-[0.95] tracking-[-0.02em] display-wonk text-shadow-hero" />
+          <SplitText as="h1" delay={0.2} lines={[{ text: "Catering &" }, { text: "events.", className: "text-teal-300" }]} className="mt-4 font-display text-[clamp(3rem,8vw,7rem)] font-semibold leading-[0.95] tracking-[-0.02em] display-wonk text-shadow-hero" />
           <p className="mt-6 max-w-xl text-lg text-cream-100/85">{CATERING.quote}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href="#inquiry" size="lg" arrow>Plan Your Event</ButtonLink>
@@ -53,13 +53,13 @@ export default async function CateringPage() {
       <section id="services" className="scroll-mt-20 bg-cream-100 py-24 lg:py-32">
         <div className="container-site">
           <Reveal className="max-w-2xl">
-            <p className="eyebrow text-ember-600">What we cater</p>
+            <p className="eyebrow text-teal-600">What we cater</p>
             <h2 className="mt-4 font-display text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.02em] text-charcoal-900 display-sharp">Parties, professional events, holidays. Or rent the whole restaurant.</h2>
           </Reveal>
           <RevealGroup className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {CATERING.categories.map((c) => (
-              <RevealItem key={c.name} className="flex h-full flex-col rounded-[22px] border border-charcoal-900/8 bg-cream-50 p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:shadow-lift">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ember-500/12 text-ember-600">
+              <RevealItem key={c.name} className="flex h-full flex-col rounded-2xl border border-charcoal-900/8 bg-cream-50 p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:shadow-lift">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-teal-600/10 text-teal-600">
                   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{ICONS[c.name]}</svg>
                 </span>
                 <h3 className="mt-5 font-display text-2xl font-semibold text-charcoal-900">{c.name}</h3>
@@ -73,8 +73,8 @@ export default async function CateringPage() {
               <p className="eyebrow text-charcoal-500">How it works</p>
               <ul className="mt-5 space-y-4">
                 {CATERING.serviceTypes.map((s, i) => (
-                  <li key={s} className="flex gap-4 border-l-2 border-ember-500/60 pl-4">
-                    <span className="font-label text-2xl leading-none text-ember-500">0{i + 1}</span>
+                  <li key={s} className="flex gap-4 border-l-2 border-red-600/60 pl-4">
+                    <span className="font-label text-2xl leading-none text-teal-600">0{i + 1}</span>
                     <span className="text-[16px] text-charcoal-800">{s}</span>
                   </li>
                 ))}
@@ -82,30 +82,30 @@ export default async function CateringPage() {
               <p className="mt-6 text-[14px] leading-relaxed text-charcoal-500">{CATERING.note}</p>
             </Reveal>
             <div className="grid grid-cols-2 gap-4 lg:col-span-7">
-              <ParallaxImage src="/images/catering-brisket-taco-guac.png" alt="Brisket taco, chips n guac, guacamole" sizes="(min-width:1024px) 30vw, 50vw" className="aspect-[4/5] rounded-[24px] shadow-lift" speed={0.16} />
-              <ParallaxImage src="/images/bbq-platter-full.jpg" alt="Texas craft barbecue platter with smoked meats and homemade sides" sizes="(min-width:1024px) 30vw, 50vw" className="mt-10 aspect-[4/5] rounded-[24px] shadow-lift" speed={0.24} />
+              <ParallaxImage src="/images/catering-brisket-taco-guac.png" alt="Brisket taco, chips n guac, guacamole" sizes="(min-width:1024px) 30vw, 50vw" className="aspect-[4/5] rounded-2xl shadow-lift" speed={0.16} />
+              <ParallaxImage src="/images/bbq-platter-full.jpg" alt="Texas craft barbecue platter with smoked meats and homemade sides" sizes="(min-width:1024px) 30vw, 50vw" className="mt-10 aspect-[4/5] rounded-2xl shadow-lift" speed={0.24} />
             </div>
           </div>
         </div>
       </section>
 
-      <section id="inquiry" className="grain relative scroll-mt-20 overflow-hidden bg-wood-700 py-24 text-cream-50 lg:py-32">
+      <section id="inquiry" className="grain relative scroll-mt-20 overflow-hidden bg-teal-800 py-24 text-cream-50 lg:py-32">
         <div className="container-site relative z-[2] grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Reveal>
-              <p className="eyebrow text-ember-300">Plan your event</p>
+              <p className="eyebrow text-teal-300">Plan your event</p>
               <h2 className="mt-4 font-display text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.02em] display-sharp">Tell us the occasion, the date, and the headcount.</h2>
               <p className="mt-5 text-[15px] leading-relaxed text-cream-100/75">We&apos;ll reply with a catering menu and a quote. Pick-up, delivery, or full service with setup, line service and cleanup.</p>
               <div className="mt-8 space-y-2 text-[15px]">
-                <a href={`tel:+1${r.phone.replace(/\D/g, "")}`} className="block font-semibold hover:text-ember-300">{r.phone}</a>
-                <a href={`mailto:${r.email}`} className="block font-semibold hover:text-ember-300">{r.email}</a>
+                <a href={`tel:+1${r.phone.replace(/\D/g, "")}`} className="block font-semibold hover:text-teal-300">{r.phone}</a>
+                <a href={`mailto:${r.email}`} className="block font-semibold hover:text-teal-300">{r.email}</a>
               </div>
             </Reveal>
-            <Reveal delay={0.15} className="relative mt-10 hidden aspect-[4/3] overflow-hidden rounded-[24px] lg:block">
+            <Reveal delay={0.15} className="relative mt-10 hidden aspect-[4/3] overflow-hidden rounded-2xl lg:block">
               <Image src="/images/sausage-prep.jpg" alt="Preparing homemade smoked sausage" fill sizes="30vw" className="object-cover" />
             </Reveal>
           </div>
-          <Reveal delay={0.1} className="rounded-[28px] bg-cream-100 p-6 text-charcoal-900 shadow-lift sm:p-8 lg:col-span-7">
+          <Reveal delay={0.1} className="rounded-2xl bg-cream-100 p-6 text-charcoal-900 shadow-lift sm:p-8 lg:col-span-7">
             <CateringForm email={r.email} phone={r.phone} />
           </Reveal>
         </div>

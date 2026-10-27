@@ -27,7 +27,7 @@ export function ManageReservation({ reservation, token, restaurant, turnTime }: 
     <div>
       <Confirmation reservation={r} restaurant={restaurant} turnTime={turnTime} heading="Your reservation" />
       {cancellable && (
-        <div className="mx-auto mt-8 max-w-xl rounded-[22px] border border-charcoal-900/10 bg-cream-50 p-6 text-center">
+        <div className="mx-auto mt-8 max-w-xl rounded-2xl border border-charcoal-900/10 bg-cream-50 p-6 text-center">
           {!confirming ? (
             <>
               <p className="text-[14px] text-charcoal-700">Plans changed?</p>

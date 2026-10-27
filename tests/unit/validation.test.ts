@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bookingSettingsInput, cateringInput, fieldErrors, hoursRowInput, menuItemInput, reservationInput } from "@/lib/validation";
+import { bookingSettingsInput, cateringInput, fieldErrors, galleryOrderInput, hoursRowInput, menuItemInput, reservationInput } from "@/lib/validation";
 
 const validReservation = {
   date: "2026-09-26",
@@ -69,6 +69,20 @@ describe("hoursRowInput", () => {
   it("accepts blank open time (from store opening) and rejects bad formats", () => {
     expect(hoursRowInput.parse({ category: "breakfast", dayOfWeek: "1", opensAt: "", closesAt: "11:30", isClosed: false })).toMatchObject({ opensAt: null, closesAt: "11:30" });
     expect(hoursRowInput.safeParse({ category: "store", dayOfWeek: 1, opensAt: "7am", closesAt: "12:00" }).success).toBe(false);
+  });
+});
+
+describe("galleryOrderInput", () => {
+  it("accepts a list of distinct positive ids", () => {
+    expect(galleryOrderInput.parse([3, 1, 2])).toEqual([3, 1, 2]);
+  });
+  it("rejects empty, duplicate, non-integer and non-numeric lists", () => {
+    expect(galleryOrderInput.safeParse([]).success).toBe(false);
+    expect(galleryOrderInput.safeParse([1, 2, 1]).success).toBe(false);
+    expect(galleryOrderInput.safeParse([1, 2.5]).success).toBe(false);
+    expect(galleryOrderInput.safeParse([0, -1]).success).toBe(false);
+    expect(galleryOrderInput.safeParse(["1", "2"]).success).toBe(false);
+    expect(galleryOrderInput.safeParse("1,2").success).toBe(false);
   });
 });
 

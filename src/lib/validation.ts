@@ -201,6 +201,7 @@ export const dateOverrideInput = z.object({
 export const restaurantInfoInput = z.object({
   name: z.string().trim().min(1).max(100),
   tagline: z.string().trim().min(1).max(200),
+  footerTagline: emptyToNull(200),
   category: z.string().trim().max(120),
   description: z.string().trim().max(1000),
   addressLine1: z.string().trim().min(1).max(120),
@@ -218,6 +219,7 @@ export const restaurantInfoInput = z.object({
   loyaltyUrl: emptyToNull(200),
   marketingSignupUrl: emptyToNull(200),
   brunchReservationUrl: emptyToNull(200),
+  orderUrl: emptyToNull(200),
   features: z.array(z.string().trim().min(1).max(120)).default([]),
   cafeSummary: emptyToNull(300),
   bbqSummary: emptyToNull(300),
@@ -242,6 +244,13 @@ export const adminReservationInput = z.object({
 });
 
 export const statusInput = z.enum(RESERVATION_STATUSES);
+
+/** Full gallery order: every image id once, first id = first photo shown. */
+export const galleryOrderInput = z
+  .array(z.number().int().positive())
+  .min(1, "The gallery order can't be empty")
+  .max(1000)
+  .refine((ids) => new Set(ids).size === ids.length, "Each photo can appear only once");
 
 /** Flatten zod issues into { field: message } */
 export function fieldErrors(error: z.ZodError): Record<string, string> {

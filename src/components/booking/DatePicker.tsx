@@ -37,7 +37,7 @@ export function DatePicker({
   const today = from;
 
   return (
-    <div className="rounded-[22px] border border-charcoal-900/10 bg-cream-50 p-4 sm:p-6">
+    <div className="rounded-2xl border border-charcoal-900/10 bg-cream-50 p-4 sm:p-6">
       <div className="flex items-center justify-between">
         <button type="button" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1, 12))} disabled={!canPrev} aria-label="Previous month" className="flex h-10 w-10 items-center justify-center rounded-full border border-charcoal-900/10 text-charcoal-900 transition hover:bg-charcoal-900/5 disabled:opacity-30">
           <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4l-6 6 6 6" /></svg>
@@ -66,8 +66,8 @@ export function DatePicker({
               aria-label={parseDate(d).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) + (disabled ? " (unavailable)" : "")}
               className={cn(
                 "relative flex aspect-square items-center justify-center rounded-full text-[15px] font-medium transition-all",
-                selected ? "bg-ember-600 text-cream-50 shadow-glow" : disabled ? "text-charcoal-900/25 line-through decoration-charcoal-900/20" : "text-charcoal-900 hover:bg-charcoal-900/8",
-                isToday && !selected && "ring-1 ring-inset ring-ember-500/60",
+                selected ? "bg-red-600 text-cream-50 shadow-glow" : disabled ? "text-charcoal-900/25 line-through decoration-charcoal-900/20" : "text-charcoal-900 hover:bg-charcoal-900/8",
+                isToday && !selected && "ring-1 ring-inset ring-teal-600/60",
               )}
             >
               {Number(d.slice(-2))}

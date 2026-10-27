@@ -150,7 +150,7 @@ export function BookingWizard({
 
   if (!settings.bookingsEnabled) {
     return (
-      <div className="rounded-[24px] border border-charcoal-900/10 bg-cream-50 p-8 text-center shadow-card">
+      <div className="rounded-2xl border border-charcoal-900/10 bg-cream-50 p-8 text-center shadow-card">
         <h2 className="font-display text-3xl font-semibold text-charcoal-900">Online booking is paused</h2>
         <p className="mt-3 text-charcoal-700">Please call us at <a className="font-semibold text-charcoal-900" href={`tel:+1${restaurant.phone.replace(/\D/g, "")}`}>{restaurant.phone}</a> to reserve a table.</p>
       </div>
@@ -183,12 +183,12 @@ export function BookingWizard({
                   aria-current={current ? "step" : undefined}
                   className={cn("flex items-center gap-2 text-[13px] font-semibold", current ? "text-charcoal-900" : done ? "text-charcoal-700" : "text-charcoal-500/60")}
                 >
-                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-full font-label text-[13px] tracking-wide", current ? "bg-ember-600 text-cream-50" : done ? "bg-charcoal-900 text-cream-50" : "bg-charcoal-900/8 text-charcoal-500")}>
+                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-full font-label text-[13px] tracking-wide", current ? "bg-red-600 text-cream-50" : done ? "bg-teal-600 text-cream-50" : "bg-charcoal-900/8 text-charcoal-500")}>
                     {done ? "✓" : i + 1}
                   </span>
                   <span className="hidden sm:inline">{label}</span>
                 </button>
-                {i < STEPS.length - 1 && <span className={cn("h-px flex-1", done ? "bg-charcoal-900" : "bg-charcoal-900/10")} />}
+                {i < STEPS.length - 1 && <span className={cn("h-px flex-1", done ? "bg-teal-600" : "bg-charcoal-900/10")} />}
               </li>
             );
           })}
@@ -233,8 +233,8 @@ export function BookingWizard({
                         onClick={() => chooseParty(n)}
                         aria-pressed={party === n}
                         className={cn(
-                          "flex aspect-square flex-col items-center justify-center rounded-[18px] border text-charcoal-900 transition-all",
-                          party === n ? "border-ember-600 bg-ember-600 text-cream-50 shadow-glow" : "border-charcoal-900/10 bg-cream-50 hover:border-charcoal-900",
+                          "flex aspect-square flex-col items-center justify-center rounded-2xl border text-charcoal-900 transition-all",
+                          party === n ? "border-red-600 bg-red-600 text-cream-50 shadow-glow" : "border-charcoal-900/10 bg-cream-50 hover:border-charcoal-900",
                         )}
                       >
                         <span className="font-display text-3xl font-semibold leading-none">{n}</span>
@@ -261,7 +261,7 @@ export function BookingWizard({
                       </div>
                     )}
                     {!loadingSlots && slots && !slots.ok && (
-                      <div className="rounded-[20px] border border-charcoal-900/10 bg-cream-50 p-6">
+                      <div className="rounded-2xl border border-charcoal-900/10 bg-cream-50 p-6">
                         <p className="font-semibold text-charcoal-900">{slots.message}</p>
                         <Button size="sm" variant="secondary" className="mt-4" onClick={() => go(0)}>Choose another day</Button>
                       </div>
@@ -305,7 +305,7 @@ export function BookingWizard({
                         value={details.specialRequests}
                         onChange={(e) => setDetails({ ...details, specialRequests: e.target.value })}
                         placeholder="Allergies, high chair, celebrating something?"
-                        className="w-full rounded-2xl border border-charcoal-900/12 bg-cream-50 px-4 py-3 text-[15px] text-charcoal-900 placeholder:text-charcoal-500/60 focus:border-ember-400 focus:outline-none"
+                        className="w-full rounded-2xl border border-charcoal-900/12 bg-cream-50 px-4 py-3 text-[15px] text-charcoal-900 placeholder:text-charcoal-500/60 focus:border-teal-600 focus:outline-none"
                       />
                     </label>
                     <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
@@ -319,7 +319,7 @@ export function BookingWizard({
               {step === 4 && (
                 <section aria-labelledby="step-confirm">
                   <h2 id="step-confirm" className="font-display text-3xl font-semibold text-charcoal-900 sm:text-4xl">Everything look right?</h2>
-                  <div className="mt-6 rounded-[24px] border border-charcoal-900/10 bg-cream-50 p-6 shadow-card sm:p-8">
+                  <div className="mt-6 rounded-2xl border border-charcoal-900/10 bg-cream-50 p-6 shadow-card sm:p-8">
                     <dl className="grid gap-5 sm:grid-cols-3">
                       <div><dt className="eyebrow text-charcoal-500">Date</dt><dd className="mt-1 font-display text-xl font-semibold text-charcoal-900">{longDate(date!)}</dd></div>
                       <div><dt className="eyebrow text-charcoal-500">Time</dt><dd className="mt-1 font-display text-xl font-semibold text-charcoal-900">{time12(time!)}</dd></div>
@@ -334,7 +334,7 @@ export function BookingWizard({
                     </div>
                   </div>
                   {party! >= settings.largePartyThreshold && (
-                    <p className="mt-4 rounded-2xl bg-gold-400/20 px-4 py-3 text-[14px] text-wood-700">Parties of {settings.largePartyThreshold}+ are submitted as a request. We&apos;ll confirm by phone or email.</p>
+                    <p className="mt-4 rounded-2xl bg-teal-600/10 px-4 py-3 text-[14px] text-teal-800">Parties of {settings.largePartyThreshold}+ are submitted as a request. We&apos;ll confirm by phone or email.</p>
                   )}
                   <div className="mt-6 flex flex-wrap items-center gap-3">
                     <Button size="lg" onClick={submit} disabled={submitting} arrow={!submitting}>
@@ -351,8 +351,8 @@ export function BookingWizard({
 
       {/* Summary rail */}
       <aside className="hidden lg:col-span-4 lg:block">
-        <div className="sticky top-28 rounded-[24px] bg-charcoal-900 p-6 text-cream-50 shadow-lift">
-          <p className="eyebrow text-ember-300">Your reservation</p>
+        <div className="sticky top-28 rounded-2xl bg-teal-900 p-6 text-cream-50 shadow-lift">
+          <p className="eyebrow text-teal-300">Your reservation</p>
           <dl className="mt-4 space-y-3">
             <SummaryRow label="Date" value={date ? longDate(date) : "…"} onEdit={date ? () => go(0) : undefined} />
             <SummaryRow label="Guests" value={party ? `${party}` : "…"} onEdit={party ? () => go(1) : undefined} />
@@ -383,9 +383,9 @@ function SlotGrid({ slots, label, note, value, onChoose, onOtherDay }: { slots: 
   const anyAvailable = slots.some((s) => s.available);
   return (
     <div className="space-y-6">
-      {note && <p className="rounded-2xl bg-gold-400/20 px-4 py-2.5 text-[14px] text-wood-700">{note}</p>}
+      {note && <p className="rounded-2xl bg-teal-600/10 px-4 py-2.5 text-[14px] text-teal-800">{note}</p>}
       {!anyAvailable && (
-        <div className="rounded-[20px] border border-charcoal-900/10 bg-cream-50 p-6">
+        <div className="rounded-2xl border border-charcoal-900/10 bg-cream-50 p-6">
           <p className="font-semibold text-charcoal-900">No times left for this party size on this day.</p>
           <Button size="sm" variant="secondary" className="mt-4" onClick={onOtherDay}>Try another day</Button>
         </div>
@@ -405,7 +405,7 @@ function SlotGrid({ slots, label, note, value, onChoose, onOtherDay }: { slots: 
                 className={cn(
                   "h-12 rounded-full border text-[15px] font-semibold transition-all",
                   value === s.time
-                    ? "border-ember-600 bg-ember-600 text-cream-50 shadow-glow"
+                    ? "border-red-600 bg-red-600 text-cream-50 shadow-glow"
                     : s.available
                       ? "border-charcoal-900/12 bg-cream-50 text-charcoal-900 hover:border-charcoal-900"
                       : "cursor-not-allowed border-charcoal-900/8 bg-charcoal-900/4 text-charcoal-900/30 line-through",
@@ -428,7 +428,7 @@ function SummaryRow({ label, value, onEdit }: { label: string; value: string; on
       <dd className="flex items-baseline gap-3 text-right text-[15px] font-semibold">
         {value}
         {onEdit && (
-          <button type="button" onClick={onEdit} className="text-[12px] font-semibold text-ember-300 hover:underline">
+          <button type="button" onClick={onEdit} className="text-[12px] font-semibold text-teal-300 hover:underline">
             Edit
           </button>
         )}
@@ -450,7 +450,7 @@ function TextField({ label, error, onChange, ...rest }: { label: string; error?:
         onChange={(e) => onChange(e.target.value)}
         className={cn(
           "h-12 w-full rounded-full border bg-cream-50 px-4 text-[15px] text-charcoal-900 placeholder:text-charcoal-500/60 focus:outline-none",
-          error ? "border-brick-500 focus:border-brick-500" : "border-charcoal-900/12 focus:border-ember-400",
+          error ? "border-brick-500 focus:border-brick-500" : "border-charcoal-900/12 focus:border-teal-600",
         )}
       />
       {error && <span id={`${id}-err`} className="mt-1 block text-[12px] font-medium text-brick-600">{error}</span>}
@@ -463,7 +463,7 @@ function SelectField({ label, name, value, options, onChange }: { label: string;
   return (
     <label htmlFor={id} className="block">
       <span className="mb-1.5 block text-[13px] font-semibold text-charcoal-800">{label} <span className="font-normal text-charcoal-500">(optional)</span></span>
-      <select id={id} name={name} value={value} onChange={(e) => onChange(e.target.value)} className="h-12 w-full appearance-none rounded-full border border-charcoal-900/12 bg-cream-50 px-4 text-[15px] text-charcoal-900 focus:border-ember-400 focus:outline-none">
+      <select id={id} name={name} value={value} onChange={(e) => onChange(e.target.value)} className="h-12 w-full appearance-none rounded-full border border-charcoal-900/12 bg-cream-50 px-4 text-[15px] text-charcoal-900 focus:border-teal-600 focus:outline-none">
         <option value="">No preference</option>
         {options.map((o) => (
           <option key={o} value={o}>{o}</option>

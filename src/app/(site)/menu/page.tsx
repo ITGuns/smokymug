@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Suspense } from "react";
 import { MenuExplorer } from "@/components/menu/MenuExplorer";
 import { Pill } from "@/components/ui/Badge";
@@ -27,10 +28,19 @@ export default async function MenuPage({ searchParams }: { searchParams: Promise
 
   return (
     <>
-      <section className="grain relative overflow-hidden bg-charcoal-950 pb-14 pt-32 text-cream-50 md:pt-40">
-        <div aria-hidden className="pointer-events-none absolute -right-20 top-0 h-[420px] w-[420px] rounded-full bg-ember-500/15 blur-3xl" />
+      {/* A6: photo background with a scrim on the menu header (placeholder photo until Q7) */}
+      <section className="grain relative overflow-hidden bg-teal-950 pb-14 pt-32 text-cream-50 md:pt-40">
+        <Image
+          src="/images/bbq-platter-full.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[50%_60%]"
+        />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/90 via-charcoal-950/65 to-charcoal-950/45" />
         <div className="container-site relative z-[2]">
-          <p className="eyebrow text-ember-300">The menu</p>
+          <p className="eyebrow text-teal-300">The menu</p>
           <h1 className="mt-4 font-display text-[clamp(2.8rem,7vw,6rem)] font-semibold leading-[0.95] tracking-[-0.02em] display-wonk">
             Breakfast. Barbecue. Brunch. Bar.
           </h1>
@@ -44,7 +54,7 @@ export default async function MenuPage({ searchParams }: { searchParams: Promise
               {itemCount} items · {DAY_NAMES[clock.dayOfWeek]} menu
             </span>
           </div>
-          <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-cream-100/70">
+          <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-cream-100/80">
             Everything is smoked, baked and brewed in-house. Availability badges reflect today&apos;s service windows; BBQ can sell out early.
           </p>
         </div>

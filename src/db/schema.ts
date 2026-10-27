@@ -49,6 +49,9 @@ export const restaurantInfo = pgTable("restaurant_info", {
   id: integer("id").primaryKey(),
   name: text("name").notNull(),
   tagline: text("tagline").notNull(),
+  // C10: the footer tagline is its own editable string (falls back to tagline),
+  // so the copy-sheet replacement can't ripple into the hero.
+  footerTagline: text("footer_tagline"),
   category: text("category").notNull(),
   description: text("description").notNull(),
   addressLine1: text("address_line1").notNull(),
@@ -66,6 +69,8 @@ export const restaurantInfo = pgTable("restaurant_info", {
   loyaltyUrl: text("loyalty_url"),
   marketingSignupUrl: text("marketing_signup_url"),
   brunchReservationUrl: text("brunch_reservation_url"),
+  // C2/Q8: SpotOn online-ordering link. ORDER NOW buttons hide while this is empty.
+  orderUrl: text("order_url"),
   logoUrl: text("logo_url"),
   ogImageUrl: text("og_image_url"),
   features: jsonArray<string[]>("features"),

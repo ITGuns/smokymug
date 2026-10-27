@@ -16,7 +16,7 @@ export function HoursSection({ hours, todayDow, status }: { hours: Hours[]; toda
               {status.detail && <span>· {status.detail}</span>}
             </p>
           </Reveal>
-          <Reveal delay={0.1} className="mt-8 rounded-[24px] bg-cream-50 p-6 shadow-card sm:p-8">
+          <Reveal delay={0.1} className="mt-8 rounded-2xl bg-cream-50 p-6 shadow-card sm:p-8">
             <HoursTable hours={hours} todayDow={todayDow} />
           </Reveal>
         </div>
@@ -27,7 +27,7 @@ export function HoursSection({ hours, todayDow, status }: { hours: Hours[]; toda
               <ServiceHours hours={hours} />
             </div>
           </Reveal>
-          <Reveal delay={0.15} className="mt-10 rounded-[24px] border border-charcoal-900/10 bg-cream-50/60 p-6 sm:p-8">
+          <Reveal delay={0.15} className="mt-10 rounded-2xl border border-charcoal-900/10 bg-cream-50/60 p-6 sm:p-8">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-display text-2xl font-semibold text-charcoal-900">Reservations</p>

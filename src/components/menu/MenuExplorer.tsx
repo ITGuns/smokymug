@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
@@ -7,6 +8,7 @@ import type { AvailabilityInfo } from "@/lib/availability";
 import type { CategoryNode, ItemNode } from "@/lib/data/menu";
 import { DIETARY_FILTERS, type DietaryFilterKey } from "@/lib/constants";
 import { cn } from "@/lib/cn";
+import { money } from "@/lib/format";
 import { AddonsList } from "./AddonsList";
 import { MenuItemCard } from "./MenuItemCard";
 import { MenuItemModal } from "./MenuItemModal";
@@ -115,7 +117,7 @@ export function MenuExplorer({
                         isActive ? "text-cream-50" : "text-charcoal-700 hover:bg-charcoal-900/5 hover:text-charcoal-900",
                       )}
                     >
-                      {isActive && <motion.span layoutId="cat-pill" className="absolute inset-0 rounded-full bg-charcoal-900" transition={{ type: "spring", stiffness: 400, damping: 34 }} />}
+                      {isActive && <motion.span layoutId="cat-pill" className="absolute inset-0 rounded-full bg-teal-600" transition={{ type: "spring", stiffness: 400, damping: 34 }} />}
                       <span className="relative">{c.name}</span>
                     </button>
                   </li>
@@ -136,7 +138,7 @@ export function MenuExplorer({
                 value={filters.query}
                 onChange={(e) => setFilters((f) => ({ ...f, query: e.target.value }))}
                 placeholder="Search brisket, latte, vegan…"
-                className="h-10 w-full rounded-full border border-charcoal-900/12 bg-cream-50 pl-10 pr-4 text-[14px] text-charcoal-900 placeholder:text-charcoal-500/70 focus:border-ember-400 focus:outline-none"
+                className="h-10 w-full rounded-full border border-charcoal-900/12 bg-cream-50 pl-10 pr-4 text-[14px] text-charcoal-900 placeholder:text-charcoal-500/70 focus:border-teal-600 focus:outline-none"
               />
             </label>
             <button
@@ -146,7 +148,7 @@ export function MenuExplorer({
               aria-controls="menu-filters"
               className={cn(
                 "flex h-10 items-center gap-2 rounded-full border px-4 text-[14px] font-semibold transition-colors",
-                activeFilterCount ? "border-ember-500 bg-ember-500 text-cream-50" : "border-charcoal-900/12 bg-cream-50 text-charcoal-800 hover:border-charcoal-900/30",
+                activeFilterCount ? "border-red-600 bg-red-600 text-cream-50" : "border-charcoal-900/12 bg-cream-50 text-charcoal-800 hover:border-charcoal-900/30",
               )}
             >
               <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -182,7 +184,7 @@ export function MenuExplorer({
                   Signature
                 </FilterChip>
                 {hasActiveFilters(filters) && (
-                  <button type="button" onClick={() => setFilters(EMPTY_FILTERS)} className="ml-auto text-[13px] font-semibold text-ember-600 hover:underline">
+                  <button type="button" onClick={() => setFilters(EMPTY_FILTERS)} className="ml-auto text-[13px] font-semibold text-teal-600 hover:underline">
                     Clear all
                   </button>
                 )}
@@ -216,28 +218,35 @@ export function MenuExplorer({
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-16"
           >
-            {visibleCategories.map((cat) => (
+            {visibleCategories.map((cat) => {
+              const featuredDish = searching ? undefined : firstItem(cat);
+              return (
               <section key={cat.id} aria-labelledby={`cat-${cat.id}`} className="scroll-mt-40">
                 <header className="mb-8 max-w-3xl">
                   <h2 id={`cat-${cat.id}`} className="font-display text-[clamp(2.2rem,4.5vw,3.6rem)] font-semibold leading-[1.02] tracking-[-0.02em] text-charcoal-900 display-sharp">
                     {cat.name}
                   </h2>
-                  {cat.hoursNote && <p className="mt-3 font-label text-[15px] tracking-[0.16em] text-ember-600">{cat.hoursNote}</p>}
+                  {cat.hoursNote && <p className="mt-3 font-label text-[15px] tracking-[0.16em] text-teal-600">{cat.hoursNote}</p>}
                   {cat.description && <p className="mt-2 text-[16px] leading-relaxed text-charcoal-700">{cat.description}</p>}
                 </header>
 
                 {cat.itemCount === 0 && !searching && (
-                  <div className="rounded-[22px] border border-dashed border-charcoal-900/15 p-10 text-center text-charcoal-500">
+                  <div className="rounded-2xl border border-dashed border-charcoal-900/15 p-10 text-center text-charcoal-500">
                     Nothing here matches your filters.{" "}
-                    <button type="button" onClick={() => setFilters(EMPTY_FILTERS)} className="font-semibold text-ember-600 hover:underline">
+                    <button type="button" onClick={() => setFilters(EMPTY_FILTERS)} className="font-semibold text-teal-600 hover:underline">
                       Clear filters
                     </button>
                   </div>
                 )}
 
+                {/* B2 (L2-D): featured dish above the list — Q10 default: the tab's first
+                    item; an admin "pin" control is CHECK and not built. */}
+                {featuredDish && <FeaturedDish item={featuredDish} availability={availability[featuredDish.id]} onOpen={openModal} />}
+
                 <div className="space-y-12">
                   {cat.sections.map((sec) => {
                     const isCollapsed = collapsed.has(sec.id);
+                    const items = sec.items.filter((i) => i.id !== featuredDish?.id);
                     return (
                       <section key={sec.id} aria-labelledby={`sec-${sec.id}`}>
                         <div className="mb-5 flex items-end justify-between gap-4 border-b border-charcoal-900/10 pb-3">
@@ -264,7 +273,7 @@ export function MenuExplorer({
                             <AddonsList group={sec.linkedGroup} description={sec.description} />
                           ) : (
                             <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                              {sec.items.map((item) => (
+                              {items.map((item) => (
                                 <li key={item.id}>
                                   <MenuItemCard item={item} availability={availability[item.id]} happyHourNow={happyHourNow} onOpen={openModal} />
                                 </li>
@@ -276,13 +285,61 @@ export function MenuExplorer({
                   })}
                 </div>
               </section>
-            ))}
+              );
+            })}
           </motion.div>
         </AnimatePresence>
       </div>
 
       <MenuItemModal item={openItem} availability={openItem ? availability[openItem.id] : undefined} happyHourNow={happyHourNow} onClose={closeModal} />
     </>
+  );
+}
+
+/** Q10 default: the featured dish is the first item in the tab (after filters). */
+function firstItem(cat: { sections: { sectionType: string; items: ItemNode[] }[] }): ItemNode | undefined {
+  for (const sec of cat.sections) {
+    if (sec.sectionType === "items" && sec.items.length) return sec.items[0];
+  }
+  return undefined;
+}
+
+function FeaturedDish({ item, availability, onOpen }: { item: ItemNode; availability?: AvailabilityInfo; onOpen: (slug: string) => void }) {
+  return (
+    <button type="button" aria-haspopup="dialog" onClick={() => onOpen(item.slug)} className="group mb-10 block w-full text-left">
+      <div className="relative overflow-hidden rounded-2xl bg-teal-800 text-cream-50 shadow-card transition-shadow duration-500 hover:shadow-lift md:flex">
+        {item.image && (
+          <div className="relative aspect-[16/10] overflow-hidden md:aspect-auto md:w-[46%]">
+            <Image
+              src={item.image}
+              alt={item.imageAlt ?? item.name}
+              fill
+              sizes="(min-width: 768px) 46vw, 100vw"
+              className="object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-[1.04]"
+            />
+          </div>
+        )}
+        <div className="flex flex-1 flex-col justify-center gap-3 p-7 lg:p-9">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex h-7 items-center rounded-full bg-red-600 px-3 font-label text-[12px] tracking-[0.18em] text-cream-50">Featured</span>
+            {availability?.label && (
+              <span className="inline-flex h-7 items-center rounded-full bg-cream-50/15 px-3 font-label text-[12px] tracking-[0.18em] text-cream-50">
+                {availability.label}
+              </span>
+            )}
+          </div>
+          <div className="flex items-start justify-between gap-6">
+            <h3 className="font-display text-3xl font-semibold leading-tight lg:text-4xl">{item.name}</h3>
+            <span className="shrink-0 font-label text-2xl tracking-wide">
+              {item.price != null ? money(item.price) : (item.priceNote ?? "Varies")}
+              {item.price != null && item.largePrice != null && <span className="text-cream-100/70"> / {money(item.largePrice)}</span>}
+            </span>
+          </div>
+          {item.description && <p className="max-w-xl text-[15px] leading-relaxed text-cream-100/85">{item.description}</p>}
+          <span className="mt-1 text-[13px] font-semibold text-teal-300 transition group-hover:text-cream-50">View details →</span>
+        </div>
+      </div>
+    </button>
   );
 }
 
@@ -294,7 +351,7 @@ function FilterChip({ active, onClick, children }: { active: boolean; onClick: (
       aria-pressed={active}
       className={cn(
         "h-9 rounded-full border px-3.5 text-[13px] font-semibold transition-colors",
-        active ? "border-charcoal-900 bg-charcoal-900 text-cream-50" : "border-charcoal-900/12 bg-cream-50 text-charcoal-800 hover:border-charcoal-900/40",
+        active ? "border-red-600 bg-red-600 text-cream-50" : "border-charcoal-900/12 bg-cream-50 text-charcoal-800 hover:border-charcoal-900/40",
       )}
     >
       {children}

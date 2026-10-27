@@ -62,10 +62,10 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
   return (
     <>
       {/* Horizontal scroll row */}
-      <section className="overflow-hidden bg-charcoal-950 py-14 text-cream-50">
+      <section className="overflow-hidden bg-teal-950 py-14 text-cream-50">
         <div className="container-site flex items-end justify-between">
           <div>
-            <p className="eyebrow text-ember-300">Off the pit</p>
+            <p className="eyebrow text-teal-300">Off the pit</p>
             <h2 className="mt-2 font-display text-3xl font-semibold display-soft">Swipe through the smoke.</h2>
           </div>
           <span className="hidden text-[12px] uppercase tracking-[0.16em] text-cream-100/70 sm:block">Scroll →</span>
@@ -73,7 +73,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
         <ul className="scrollbar-none mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 sm:px-8 lg:px-12" aria-label="Featured BBQ photos">
           {featuredRow.map((img, i) => (
             <li key={img.id} className="shrink-0 snap-start">
-              <button type="button" onClick={() => setOpen(img.id)} className="group relative block h-[300px] overflow-hidden rounded-[22px] bg-charcoal-800 sm:h-[380px] lg:h-[440px]" style={{ aspectRatio: `${img.width}/${img.height}` }}>
+              <button type="button" onClick={() => setOpen(img.id)} className="group relative block h-[300px] overflow-hidden rounded-2xl bg-teal-900 sm:h-[380px] lg:h-[440px]" style={{ aspectRatio: `${img.width}/${img.height}` }}>
                 <Image src={img.file} alt={img.alt} fill sizes="(min-width:1024px) 520px, 360px" loading={i < 2 ? "eager" : "lazy"} className="object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-[1.05]" />
                 <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 <span className="absolute inset-x-4 bottom-4 translate-y-2 text-left text-[13px] font-medium text-cream-50 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">{img.alt}</span>
@@ -96,7 +96,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
                 onClick={() => setTag(t.key)}
                 className={cn("relative h-10 rounded-full px-4 text-[14px] font-semibold transition-colors", tag === t.key ? "text-cream-50" : "text-charcoal-700 hover:bg-charcoal-900/5")}
               >
-                {tag === t.key && <motion.span layoutId="gal-pill" className="absolute inset-0 rounded-full bg-charcoal-900" transition={{ type: "spring", stiffness: 400, damping: 34 }} />}
+                {tag === t.key && <motion.span layoutId="gal-pill" className="absolute inset-0 rounded-full bg-red-600" transition={{ type: "spring", stiffness: 400, damping: 34 }} />}
                 <span className="relative">{t.label}</span>
               </button>
             ))}
@@ -105,7 +105,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
             <AnimatePresence initial={false}>
               {list.map((img) => (
                 <motion.li key={img.id} layout initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}>
-                  <button type="button" onClick={() => setOpen(img.id)} className="group relative block w-full overflow-hidden rounded-[20px] bg-charcoal-800 shadow-card" style={{ aspectRatio: `${img.width}/${img.height}` }}>
+                  <button type="button" onClick={() => setOpen(img.id)} className="group relative block w-full overflow-hidden rounded-2xl bg-charcoal-800 shadow-card" style={{ aspectRatio: `${img.width}/${img.height}` }}>
                     <Image src={img.file} alt={img.alt} fill sizes="(min-width:1280px) 22vw, (min-width:768px) 30vw, 48vw" className="object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-[1.06]" />
                     <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                     <span className="absolute inset-x-4 bottom-4 translate-y-2 text-left text-[13px] font-medium leading-snug text-cream-50 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">{img.alt}</span>
@@ -157,7 +157,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="relative w-full overflow-hidden rounded-[20px]" style={{ aspectRatio: `${current.width}/${current.height}`, maxHeight: "78svh" }}>
+                <div className="relative w-full overflow-hidden rounded-2xl" style={{ aspectRatio: `${current.width}/${current.height}`, maxHeight: "78svh" }}>
                   <Image src={current.file} alt={current.alt} fill sizes="(min-width:1024px) 1024px, 100vw" className="object-contain" priority draggable={false} />
                 </div>
                 <figcaption className="mt-4 flex w-full items-center justify-between gap-4 text-[13px] text-cream-100/75">

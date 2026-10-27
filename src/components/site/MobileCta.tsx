@@ -11,7 +11,7 @@ export function MobileCta({ phoneHref }: { phoneHref: string }) {
     <div
       className={cn(
         "fixed inset-x-0 bottom-0 z-40 lg:hidden",
-        "border-t border-cream-50/10 bg-charcoal-950/90 backdrop-blur-xl",
+        "border-t border-cream-50/10 bg-teal-950/90 backdrop-blur-xl",
         "pb-[max(env(safe-area-inset-bottom),12px)] pt-3",
       )}
     >
@@ -33,7 +33,7 @@ export function MobileCta({ phoneHref }: { phoneHref: string }) {
         </Link>
         <Link
           href="/book"
-          className="flex h-12 flex-[1.4] items-center justify-center rounded-full bg-ember-600 text-[15px] font-semibold text-cream-50 shadow-[0_8px_24px_-8px_rgb(200_100_42/0.8)]"
+          className="flex h-12 flex-[1.4] items-center justify-center rounded-[10px] bg-red-600 text-[15px] font-semibold text-cream-50 shadow-[0_8px_24px_-8px_rgb(143_30_24/0.8)]"
         >
           Book a Table
         </Link>

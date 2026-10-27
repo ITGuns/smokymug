@@ -5,7 +5,7 @@ import { mkdirSync } from "node:fs";
 config({ path: ".env.local" });
 
 const PUBLIC_ROUTES = ["/", "/menu", "/book", "/catering", "/gallery", "/contact", "/admin/login", "/this-page-does-not-exist"];
-const ADMIN_ROUTES = ["/admin", "/admin/reservations", "/admin/menu", "/admin/menu/categories", "/admin/menu/modifiers", "/admin/hours", "/admin/settings"];
+const ADMIN_ROUTES = ["/admin", "/admin/reservations", "/admin/menu", "/admin/menu/categories", "/admin/menu/modifiers", "/admin/gallery", "/admin/hours", "/admin/settings"];
 
 setup("admin login + route warm-up", async ({ page }) => {
   // Compile every route once so first-hit dev compilation never eats into test timeouts.
