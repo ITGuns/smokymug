@@ -6,6 +6,7 @@ import type { Reservation, ReservationStatus } from "@/db/schema";
 import { RESERVATION_STATUSES } from "@/db/schema";
 import { Btn, Field, Input, Select, Textarea } from "@/components/admin/ui";
 import { useToast } from "@/components/admin/toast";
+import { useAction } from "@/components/admin/useAction";
 import { RESERVATION_STATUS_LABELS } from "@/lib/constants";
 
 type FormState = {
@@ -30,15 +31,13 @@ export function ReservationForm({ initial, defaultDate, seatingPreferences, occa
     status: initial?.status ?? "confirmed",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const set = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBusy(true);
     setErrors({});
-    const res = await saveReservation({ ...f, id: initial?.id });
-    setBusy(false);
+    const res = await run(() => saveReservation({ ...f, id: initial?.id }));
     if (res.ok) {
       toast.success(initial ? "Reservation updated" : "Reservation created", `${res.data.firstName} ${res.data.lastName} · ${res.data.confirmationCode}`);
       onSaved(res.data);

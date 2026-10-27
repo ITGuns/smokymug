@@ -7,6 +7,7 @@ import { AVAILABILITY_TYPES, DIETARY_TAGS } from "@/db/schema";
 import { Btn, Checkbox, DaysPicker, Field, Input, Select, Textarea, Toggle, centsToInput } from "@/components/admin/ui";
 import { ConfirmDialog } from "@/components/admin/overlays";
 import { useToast } from "@/components/admin/toast";
+import { runAction } from "@/components/admin/useAction";
 import { DIETARY_LABELS } from "@/lib/constants";
 import type { CategoryNode, GroupNode, ItemNode } from "@/lib/data/menu";
 import { ImageUpload } from "./ImageUpload";
@@ -53,7 +54,7 @@ export function ItemEditor({ item, defaultSectionId, categories, groups, onSaved
     setBusy(mode);
     setErrors({});
     const payload = { ...f, ...overrides, id: item?.id, sectionId: Number(f.sectionId) };
-    const res = await saveMenuItem(payload);
+    const res = await runAction(() => saveMenuItem(payload));
     setBusy(false);
     if (res.ok) {
       toast.success(item ? "Item saved" : "Item created", f.name);
@@ -66,7 +67,7 @@ export function ItemEditor({ item, defaultSectionId, categories, groups, onSaved
 
   const archive = async () => {
     setBusy("archive");
-    const res = await saveMenuItem({ ...f, id: item?.id, sectionId: Number(f.sectionId), active: false });
+    const res = await runAction(() => saveMenuItem({ ...f, id: item?.id, sectionId: Number(f.sectionId), active: false }));
     setBusy(false);
     if (res.ok) {
       toast.success("Item archived", "Hidden from the public menu.");
@@ -77,7 +78,7 @@ export function ItemEditor({ item, defaultSectionId, categories, groups, onSaved
   const remove = async () => {
     if (!item) return;
     setBusy("delete");
-    const res = await deleteMenuItem(item.id);
+    const res = await runAction(() => deleteMenuItem(item.id));
     setBusy(false);
     setConfirmDelete(false);
     if (res.ok) {

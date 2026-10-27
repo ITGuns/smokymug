@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { changePassword } from "@/actions/auth";
 import { useToast } from "@/components/admin/toast";
+import { useAction } from "@/components/admin/useAction";
 import { Btn, Card, Field, Input } from "@/components/admin/ui";
 
 export function PasswordForm() {
@@ -10,13 +11,11 @@ export function PasswordForm() {
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (next !== confirm) return toast.error("New passwords don't match");
-    setBusy(true);
-    const res = await changePassword(current, next);
-    setBusy(false);
+    const res = await run(() => changePassword(current, next));
     if (res.ok) {
       toast.success("Password updated");
       setCurrent(""); setNext(""); setConfirm("");

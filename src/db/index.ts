@@ -13,7 +13,12 @@ function createPool() {
   return new Pool({
     connectionString: url,
     // Supabase poolers require TLS; a local dev database opts out with ?sslmode=disable.
-    ssl: /sslmode=disable/.test(url) ? undefined : { rejectUnauthorized: false },
+    // Set DATABASE_CA_CERT (PEM) to verify the server instead of trusting any cert.
+    ssl: /sslmode=disable/.test(url)
+      ? undefined
+      : process.env.DATABASE_CA_CERT
+        ? { ca: process.env.DATABASE_CA_CERT }
+        : { rejectUnauthorized: false },
     max: process.env.NODE_ENV === "production" ? 4 : 8,
     idleTimeoutMillis: 20_000,
     connectionTimeoutMillis: 15_000,

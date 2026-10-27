@@ -8,6 +8,7 @@ import type { HoursCategory } from "@/db/schema";
 import { HOURS_CATEGORIES } from "@/db/schema";
 import { Drawer, ConfirmDialog } from "@/components/admin/overlays";
 import { useToast } from "@/components/admin/toast";
+import { runAction, useAction } from "@/components/admin/useAction";
 import { Btn, Card, DaysPicker, EmptyState, Field, Input, Select, Tag, Textarea, Toggle } from "@/components/admin/ui";
 import { HOURS_CATEGORY_LABELS } from "@/lib/constants";
 import type { CategoryNode } from "@/lib/data/menu";
@@ -19,14 +20,14 @@ export function CategoriesManager({ categories }: { categories: CategoryNode[] }
   const [list, setList] = useState(categories);
   const [editing, setEditing] = useState<CategoryNode | null | "new">(null);
   const [deleting, setDeleting] = useState<CategoryNode | null>(null);
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const dirty = useRef(false);
   useEffect(() => setList(categories), [categories]);
 
   const commit = async () => {
     if (!dirty.current) return;
     dirty.current = false;
-    const res = await reorderCategories(list.map((c) => c.id));
+    const res = await runAction(() => reorderCategories(list.map((c) => c.id)));
     if (res.ok) {
       toast.success("Category order saved");
       router.refresh();
@@ -34,9 +35,7 @@ export function CategoriesManager({ categories }: { categories: CategoryNode[] }
   };
   const remove = async () => {
     if (!deleting) return;
-    setBusy(true);
-    const res = await deleteCategory(deleting.id);
-    setBusy(false);
+    const res = await run(() => deleteCategory(deleting.id));
     setDeleting(null);
     if (res.ok) {
       toast.success("Category deleted");
@@ -93,12 +92,10 @@ function CategoryForm({ category, onDone }: { category: CategoryNode | null; onD
     active: category?.active ?? true,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBusy(true);
-    const res = await saveCategory({ ...f, id: category?.id, availableDays: f.availableDays.length ? f.availableDays : null });
-    setBusy(false);
+    const res = await run(() => saveCategory({ ...f, id: category?.id, availableDays: f.availableDays.length ? f.availableDays : null }));
     if (res.ok) {
       toast.success(category ? "Category saved" : "Category created", f.name);
       onDone();

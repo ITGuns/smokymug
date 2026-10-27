@@ -24,7 +24,7 @@ export async function login(_prev: ActionResult | null, formData: FormData): Pro
   if (!user || !ok) return fail("Incorrect email or password.");
 
   await db.update(adminUsers).set({ lastLoginAt: new Date().toISOString() }).where(eq(adminUsers.id, user.id));
-  await createSession({ sub: user.id, email: user.email, name: user.name, role: user.role });
+  await createSession({ sub: user.id, email: user.email, name: user.name, role: user.role, sv: user.sessionVersion });
   const next = String(formData.get("next") ?? "/admin");
   redirect(next.startsWith("/admin") ? next : "/admin");
 }
@@ -39,6 +39,13 @@ export async function changePassword(current: string, next: string): Promise<Act
   if (next.length < 10) return fail("New password must be at least 10 characters.");
   const [user] = await db.select().from(adminUsers).where(eq(adminUsers.id, session.sub)).limit(1);
   if (!user || !verifyPassword(current, user.passwordHash)) return fail("Current password is incorrect.");
-  await db.update(adminUsers).set({ passwordHash: hashPassword(next), updatedAt: new Date().toISOString() }).where(eq(adminUsers.id, user.id));
+  // Bump the session version so every other signed-in session is revoked,
+  // then re-issue this one so the admin changing the password stays in.
+  const sv = user.sessionVersion + 1;
+  await db
+    .update(adminUsers)
+    .set({ passwordHash: hashPassword(next), sessionVersion: sv, updatedAt: new Date().toISOString() })
+    .where(eq(adminUsers.id, user.id));
+  await createSession({ sub: user.id, email: user.email, name: user.name, role: user.role, sv });
   return { ok: true, data: undefined };
 }

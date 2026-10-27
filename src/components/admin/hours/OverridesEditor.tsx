@@ -6,6 +6,7 @@ import { deleteDateOverride, saveDateOverride } from "@/actions/hours";
 import type { DateOverride } from "@/db/schema";
 import { ConfirmDialog, Drawer } from "@/components/admin/overlays";
 import { useToast } from "@/components/admin/toast";
+import { useAction } from "@/components/admin/useAction";
 import { Btn, Card, EmptyState, Field, Input, Segmented, Tag } from "@/components/admin/ui";
 import { longDate, time12 } from "@/lib/format";
 
@@ -14,13 +15,11 @@ export function OverridesEditor({ overrides }: { overrides: DateOverride[] }) {
   const toast = useToast();
   const [editing, setEditing] = useState<DateOverride | null | "new">(null);
   const [deleting, setDeleting] = useState<DateOverride | null>(null);
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
 
   const remove = async () => {
     if (!deleting) return;
-    setBusy(true);
-    const res = await deleteDateOverride(deleting.id);
-    setBusy(false);
+    const res = await run(() => deleteDateOverride(deleting.id));
     setDeleting(null);
     if (res.ok) {
       toast.success("Override removed");
@@ -57,12 +56,10 @@ function OverrideForm({ o, onDone }: { o: DateOverride | null; onDone: () => voi
   const toast = useToast();
   const [f, setF] = useState({ date: o?.date ?? "", mode: (o && !o.closed ? "special" : "closed") as "closed" | "special", startTime: o?.startTime ?? "17:00", endTime: o?.endTime ?? "20:00", reason: o?.reason ?? "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBusy(true);
-    const res = await saveDateOverride({ id: o?.id, date: f.date, closed: f.mode === "closed", startTime: f.startTime, endTime: f.endTime, reason: f.reason });
-    setBusy(false);
+    const res = await run(() => saveDateOverride({ id: o?.id, date: f.date, closed: f.mode === "closed", startTime: f.startTime, endTime: f.endTime, reason: f.reason }));
     if (res.ok) {
       toast.success("Date saved");
       onDone();

@@ -71,9 +71,10 @@ test.describe("Admin hours & settings", () => {
 
     const pub2 = await browser.newPage();
     await pub2.goto("/book");
-    await pub2.locator("button[aria-pressed]:not([disabled])").first().click();
+    // Scoped to main: the header's animation pause toggle is also a button[aria-pressed]
+    await pub2.locator("main button[aria-pressed]:not([disabled])").first().click();
     await expect(pub2.getByRole("heading", { name: "How many guests?" })).toBeVisible();
-    await expect(pub2.locator("button[aria-pressed]")).toHaveCount(8);
+    await expect(pub2.locator("main button[aria-pressed]")).toHaveCount(8);
     await pub2.close();
 
     await page.getByLabel("Max party size (online)").fill("10");

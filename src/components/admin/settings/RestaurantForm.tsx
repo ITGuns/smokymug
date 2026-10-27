@@ -5,6 +5,7 @@ import { useState } from "react";
 import { saveRestaurantInfo } from "@/actions/settings";
 import type { RestaurantInfo } from "@/db/schema";
 import { useToast } from "@/components/admin/toast";
+import { useAction } from "@/components/admin/useAction";
 import { Btn, Card, Field, Input, Textarea } from "@/components/admin/ui";
 
 export function RestaurantForm({ info }: { info: RestaurantInfo }) {
@@ -17,14 +18,12 @@ export function RestaurantForm({ info }: { info: RestaurantInfo }) {
     features: info.features.join("\n"), cafeSummary: info.cafeSummary ?? "", bbqSummary: info.bbqSummary ?? "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const t = (k: keyof typeof f) => ({ id: `r-${k}`, value: f[k], onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value }), error: !!errors[k] });
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBusy(true);
-    const res = await saveRestaurantInfo({ ...f, features: f.features.split("\n").map((x) => x.trim()).filter(Boolean) });
-    setBusy(false);
+    const res = await run(() => saveRestaurantInfo({ ...f, features: f.features.split("\n").map((x) => x.trim()).filter(Boolean) }));
     if (res.ok) {
       toast.success("Restaurant info saved");
       router.refresh();

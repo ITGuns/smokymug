@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, customType, index, integer, jsonb, pgTable, primaryKey, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { boolean, check, customType, index, integer, jsonb, pgTable, primaryKey, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 /* ------------------------------------------------------------------ */
 /* Shared vocab                                                        */
@@ -177,6 +177,12 @@ export const reservations = pgTable(
     uniqueIndex("reservations_idem_idx").on(t.idempotencyKey),
     index("reservations_date_idx").on(t.date, t.time),
     index("reservations_status_idx").on(t.status),
+    // Integrity the app also checks; the DB enforces it against raw writes and races.
+    check("reservations_party_size_check", sql`${t.partySize} between 1 and 50`),
+    check("reservations_status_check", sql`${t.status} in ('pending', 'confirmed', 'cancelled', 'completed', 'no_show')`),
+    uniqueIndex("reservations_active_slot_idx")
+      .on(t.email, t.date, t.time)
+      .where(sql`${t.status} in ('pending', 'confirmed')`),
   ],
 );
 
@@ -374,6 +380,8 @@ export const adminUsers = pgTable(
     /** scrypt: salt:hash (hex) */
     passwordHash: text("password_hash").notNull(),
     role: text("role").notNull().default("admin"),
+    /** Bumped on password change; sessions carrying an older value are rejected. */
+    sessionVersion: integer("session_version").notNull().default(1),
     lastLoginAt: text("last_login_at"),
     ...timestamps,
   },

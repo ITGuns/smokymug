@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Logo } from "./Logo";
+import { MotionToggle } from "./MotionProvider";
 import { SocialLinks } from "./SocialLinks";
 import { ButtonLink } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
@@ -62,6 +63,7 @@ export function Header({
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const overHero = pathname === "/" || pathname === "/catering" || pathname === "/gallery";
 
@@ -78,6 +80,8 @@ export function Header({
 
   useEffect(() => {
     if (!open) setMenuOpen(false);
+    // Move focus into the dialog on open (axe/APG: aria-modal needs its focus inside).
+    if (open) requestAnimationFrame(() => closeButtonRef.current?.focus());
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
@@ -162,6 +166,7 @@ export function Header({
               linkClassName="flex h-7 w-7 items-center justify-center rounded-full text-cream-100/80 transition hover:bg-cream-50/10 hover:text-teal-300 focus-visible:outline-offset-1"
               iconClassName="h-[15px] w-[15px]"
             />
+            <MotionToggle className="flex h-7 w-7 items-center justify-center rounded-full text-cream-100/80 transition hover:bg-cream-50/10 hover:text-teal-300 focus-visible:outline-offset-1" />
           </div>
         </div>
         <div className="h-px bg-gradient-to-r from-transparent via-cream-50/15 to-transparent" />
@@ -236,8 +241,8 @@ export function Header({
             </ButtonLink>
           </div>
 
-          {/* Spacer so the centered logo stays truly centered in compressed mode */}
-          <span aria-hidden className="h-11 w-11 lg:hidden" />
+          {/* Same footprint as the hamburger, so the centered logo stays centered */}
+          <MotionToggle className="relative z-10 -mr-1 flex h-11 w-11 items-center justify-center rounded-full border border-cream-50/15 text-cream-50 lg:hidden" />
         </div>
       </div>
 
@@ -270,6 +275,7 @@ export function Header({
                 <div className="mb-2 flex items-center justify-between">
                   <Logo invert width={96} />
                   <button
+                    ref={closeButtonRef}
                     type="button"
                     aria-label="Close menu"
                     onClick={closeAndFocus}

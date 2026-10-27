@@ -109,6 +109,13 @@
       transition-duration: 0.001ms !important;
     }
   }
+  /* Header play/pause toggle: freezes CSS animation (smoke, ticker, shimmer);
+     motion/react animation stops via MotionConfig in MotionProvider. */
+  :root[data-motion="paused"] *,
+  :root[data-motion="paused"] *::before,
+  :root[data-motion="paused"] *::after {
+    animation-play-state: paused !important;
+  }
   body {
     @apply bg-cream-100 text-charcoal-900 font-sans antialiased;
   }

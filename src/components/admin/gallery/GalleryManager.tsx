@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { reorderGalleryImages } from "@/actions/gallery";
 import { useToast } from "@/components/admin/toast";
+import { useAction } from "@/components/admin/useAction";
 import { Btn, Card, EmptyState, Spinner, Tag } from "@/components/admin/ui";
 import type { GalleryImage } from "@/db/schema";
 import { cn } from "@/lib/cn";
@@ -19,14 +20,12 @@ export function GalleryManager({ images }: { images: GalleryImage[] }) {
   const router = useRouter();
   const toast = useToast();
   const [list, setList] = useState(images);
-  const [saving, setSaving] = useState(false);
+  const { busy: saving, run } = useAction();
   const dirty = useRef(false);
   useEffect(() => setList(images), [images]);
 
   const save = async (next: GalleryImage[]) => {
-    setSaving(true);
-    const res = await reorderGalleryImages(next.map((i) => i.id));
-    setSaving(false);
+    const res = await run(() => reorderGalleryImages(next.map((i) => i.id)));
     if (res.ok) {
       toast.success("Gallery order saved");
       router.refresh();

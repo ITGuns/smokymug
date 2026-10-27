@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GalleryImage } from "@/db/schema";
 import { cn } from "@/lib/cn";
+import { useFocusTrap } from "@/components/useFocusTrap";
 
 const TAGS: { key: string; label: string }[] = [
   { key: "all", label: "Everything" },
@@ -35,19 +36,19 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
     [list, openIndex],
   );
 
+  // Focus in, Tab trap, Escape, scroll lock, and focus back to the opening thumbnail.
+  const lightboxRef = useRef<HTMLDivElement>(null);
+  const close = useCallback(() => setOpen(null), []);
+  useFocusTrap(current != null, lightboxRef, { onClose: close });
+
   useEffect(() => {
     if (open == null) return;
-    document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(null);
       if (e.key === "ArrowRight") step(1);
       if (e.key === "ArrowLeft") step(-1);
     };
     window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [open, step]);
 
   useEffect(() => {
@@ -121,6 +122,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
       <AnimatePresence>
         {current && (
           <motion.div
+            ref={lightboxRef}
             className="fixed inset-0 z-[80] flex items-center justify-center bg-charcoal-950/95 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -131,7 +133,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
             aria-modal="true"
             aria-label={current.alt}
           >
-            <button type="button" onClick={() => setOpen(null)} aria-label="Close" className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-cream-50/10 text-cream-50 backdrop-blur transition hover:bg-cream-50/20">
+            <button type="button" onClick={() => setOpen(null)} aria-label="Close" data-autofocus className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-cream-50/10 text-cream-50 backdrop-blur transition hover:bg-cream-50/20">
               <svg viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 5l10 10M15 5L5 15" /></svg>
             </button>
             <button type="button" onClick={(e) => { e.stopPropagation(); step(-1); }} aria-label="Previous photo" className="absolute left-3 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 text-cream-50 backdrop-blur transition hover:bg-cream-50/20 sm:flex">

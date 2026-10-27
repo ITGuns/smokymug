@@ -1,7 +1,16 @@
 import { z } from "zod";
 import { AVAILABILITY_TYPES, DIETARY_TAGS, HOURS_CATEGORIES, RESERVATION_STATUSES } from "@/db/schema";
 
-const ymd = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date");
+const ymd = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date")
+  // Round-trip through Date.UTC: 2026-11-31 rolls over to Dec 1 and is rejected instead of booking the wrong weekday.
+  // Zod 4 still runs this after a failed regex, so it must not throw on junk (NaN parts just compare false).
+  .refine((v) => {
+    const [y, m, d] = v.split("-").map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
+  }, "Invalid date");
 const hhmm = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use HH:MM (24h)");
 const optionalHhmm = z.union([hhmm, z.literal(""), z.null()]).transform((v) => (v ? v : null));
 const phone = z
@@ -15,6 +24,25 @@ const emptyToNull = (max = 500) =>
     .string()
     .trim()
     .max(max)
+    .transform((v) => (v ? v : null))
+    .nullable()
+    .optional();
+
+function isHttpUrl(v: string): boolean {
+  try {
+    const { protocol } = new URL(v);
+    return protocol === "http:" || protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+/** External link: "" → null, otherwise an absolute http(s) URL. A bare "smokymug.com" would render as a broken relative link. */
+const optionalHttpUrl = (max = 500) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .refine((v) => !v || isHttpUrl(v), "Enter a full link starting with https://")
     .transform((v) => (v ? v : null))
     .nullable()
     .optional();
@@ -211,15 +239,15 @@ export const restaurantInfoInput = z.object({
   neighborhood: emptyToNull(200),
   phone: z.string().trim().min(7).max(25),
   email: z.email().max(120),
-  website: emptyToNull(200),
-  instagramUrl: emptyToNull(200),
-  facebookUrl: emptyToNull(200),
-  giftCardUrl: emptyToNull(200),
-  giftCardBalanceUrl: emptyToNull(200),
-  loyaltyUrl: emptyToNull(200),
-  marketingSignupUrl: emptyToNull(200),
-  brunchReservationUrl: emptyToNull(200),
-  orderUrl: emptyToNull(200),
+  website: optionalHttpUrl(200),
+  instagramUrl: optionalHttpUrl(200),
+  facebookUrl: optionalHttpUrl(200),
+  giftCardUrl: optionalHttpUrl(200),
+  giftCardBalanceUrl: optionalHttpUrl(200),
+  loyaltyUrl: optionalHttpUrl(200),
+  marketingSignupUrl: optionalHttpUrl(200),
+  brunchReservationUrl: optionalHttpUrl(200),
+  orderUrl: optionalHttpUrl(200),
   features: z.array(z.string().trim().min(1).max(120)).default([]),
   cafeSummary: emptyToNull(300),
   bbqSummary: emptyToNull(300),

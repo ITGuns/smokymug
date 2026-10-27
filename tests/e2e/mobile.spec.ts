@@ -73,7 +73,8 @@ test.describe("Mobile layout", () => {
   test("booking wizard hides the desktop rail and keeps touch targets large", async ({ page }) => {
     await page.goto("/book");
     await expect(page.locator("aside")).toBeHidden();
-    const enabledDay = page.locator("button[aria-pressed]:not([disabled])").first();
+    // Scoped to main: the header's animation pause toggle is also a button[aria-pressed]
+    const enabledDay = page.locator("main button[aria-pressed]:not([disabled])").first();
     const box = await enabledDay.boundingBox();
     expect(box!.width).toBeGreaterThanOrEqual(38);
     await enabledDay.click();

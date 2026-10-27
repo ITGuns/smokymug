@@ -62,6 +62,27 @@ fix is next 16 (breaking), owner's call. Bigger audit recommendations (catering
 inquiries admin + alerts, durable rate limiting, transactional email, caching/
 region strategy, session revocation, CI) are in the dev report, not built.
 
+## Audit engineering pass (28 Oct 2026, second batch)
+
+Safe-bucket items from the audit, built on request: session versioning (password
+change revokes every other admin session; all admins re-log once after deploy);
+header play/pause motion toggle (both nav modes, persisted, pauses CSS + motion
+animation); open/closed status honours today's blackout or special-hours
+override; shared `useAction`/`runAction` error handling across all 15 admin
+editors; shared `useFocusTrap` on the nav drawer, gallery lightbox, admin
+drawers and confirm dialogs (stacked Escape handling); calendar-valid dates +
+http(s)-only link validation; DB CHECK constraints + partial unique index on
+active bookings; e2e suite refuses Supabase hosts without `E2E_ALLOW_REMOTE=1`
+and the hardcoded fallback admin password is removed (rotate if it was ever
+real); GitHub Actions CI (checks + e2e on a Postgres service container);
+conservative CSP on every route; optional `DATABASE_CA_CERT` pins Supabase TLS.
+
+Deploy notes: run `npm run db:push` (new column + constraints; the unique
+active-booking index fails to apply if existing duplicate active bookings
+exist, so dedupe first if push complains), and expect one forced re-login for
+all admins. Gate: tsc 0, lint 0 errors, vitest 60, build clean, e2e suite green
+(one known timing flake on the drawer rotate test, passes on retry).
+
 ## Open inputs still needed (handoff §4)
 
 Q1 final teal/red values · Q2 Roadstore file + license · Q4 confirm dropdown

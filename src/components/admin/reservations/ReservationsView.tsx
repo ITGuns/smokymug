@@ -7,6 +7,7 @@ import { deleteReservation, updateReservationStatus } from "@/actions/reservatio
 import type { Reservation, ReservationStatus } from "@/db/schema";
 import { Drawer, ConfirmDialog } from "@/components/admin/overlays";
 import { useToast } from "@/components/admin/toast";
+import { runAction } from "@/components/admin/useAction";
 import { Btn, Card, EmptyState, Input, Segmented, Select, StatusBadge } from "@/components/admin/ui";
 import { DAY_SHORT, RESERVATION_STATUS_LABELS } from "@/lib/constants";
 import { addDays, longDate, parseDate, shortDate, time12, toYmd, formatRelative } from "@/lib/format";
@@ -48,7 +49,7 @@ export function ReservationsView({
 
   const setStatus = async (r: Reservation, status: ReservationStatus) => {
     setBusyId(r.id);
-    const res = await updateReservationStatus(r.id, status);
+    const res = await runAction(() => updateReservationStatus(r.id, status));
     setBusyId(null);
     if (res.ok) {
       toast.success(`Marked ${RESERVATION_STATUS_LABELS[status].toLowerCase()}`, `${r.firstName} ${r.lastName} · ${r.confirmationCode}`);
@@ -59,7 +60,7 @@ export function ReservationsView({
   const confirmDelete = async () => {
     if (!deleting) return;
     setBusyId(deleting.id);
-    const res = await deleteReservation(deleting.id);
+    const res = await runAction(() => deleteReservation(deleting.id));
     setBusyId(null);
     setDeleting(null);
     if (res.ok) {
