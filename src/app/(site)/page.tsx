@@ -48,7 +48,7 @@ export default async function HomePage() {
         orderUrl={restaurant.orderUrl}
         menuLinks={tree.categories.map((c) => ({ label: c.name, href: `/menu?category=${c.slug}` }))}
       />
-      <Ticker items={["Texas craft brisket", "Homemade tortillas", "Specialty lattes", "Taco Tuesday", "Happy hour Wed–Sat", "Sunday brunch", "Dog-friendly porch"]} />
+      <Ticker items={["Texas craft brisket", "Homemade tortillas", "Specialty lattes", "Taco Tuesday", "Happy hour Tue–Sat", "Sunday brunch", "Dog-friendly porch"]} />
       <Intro blurb={blurb} cafeSummary={restaurant.cafeSummary} bbqSummary={restaurant.bbqSummary} features={restaurant.features} />
       <FoodStory bbqSummary={restaurant.bbqSummary} />
       <Signature items={featuredItems} />

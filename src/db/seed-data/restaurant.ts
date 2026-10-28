@@ -66,21 +66,13 @@ export const HOURS: HoursRow[] = [
   { category: "store", dayOfWeek: SAT, opensAt: "08:00", closesAt: "22:00" },
   { category: "store", dayOfWeek: SUN, opensAt: "09:30", closesAt: "14:30" },
 
-  // Breakfast (opensAt null = from opening)
-  { category: "breakfast", dayOfWeek: MON, opensAt: null, closesAt: "12:00" },
-  ...days([TUE, WED, THU, FRI, SAT], {
+  // Breakfast (opensAt null = from opening) — 2026 menu: "'til 11:30am every day"
+  // (Sunday runs the brunch menu instead)
+  ...days([MON, TUE, WED, THU, FRI, SAT], {
     category: "breakfast",
     opensAt: null,
     closesAt: "11:30",
-    note: "Menu image header says 'Mon - Sat til 11:30am'; Breakfast Grill 'Avail. til 11:30AM Wed-Sat'",
-  }),
-
-  // Cafe fare
-  ...days([WED, THU, FRI, SAT, SUN], {
-    category: "cafe_fare",
-    opensAt: null,
-    closesAt: "15:00",
-    note: "Avocado toast, milk & honey, overnight oats, pastry",
+    note: "2026 menu: 'til 11:30am every day",
   }),
 
   // Cafe + drinks (daily)
@@ -91,28 +83,34 @@ export const HOURS: HoursRow[] = [
     note: "'til 7pm (or close, if earlier)",
   }),
 
-  // BBQ
-  { category: "bbq", dayOfWeek: TUE, opensAt: "11:30", closesAt: "21:00", note: "Taco Tuesday Specials; early sellout possible" },
+  // BBQ — 2026 menu: Wed-Sat 11:30a-9p (Tuesday now belongs to Tex Mex)
   ...days([WED, THU, FRI, SAT], {
     category: "bbq",
     opensAt: "11:30",
     closesAt: "21:00",
-    note: "Early sellout possible; menu image header says 'Wed - Sat 11:30a - 9p'",
+    note: "Early sellout possible; 2026 menu: Wed-Sat 11:30a-9p",
+  }),
+
+  // Tex Mex — new 2026 menu page: Tue-Sat 11:30a-9p, Taco Tuesday happy-hour tacos all day
+  ...days([TUE, WED, THU, FRI, SAT], {
+    category: "tex_mex",
+    opensAt: "11:30",
+    closesAt: "21:00",
+    note: "Taco Tuesdays: happy hour tacos all day",
   }),
 
   // Brunch
   { category: "brunch", dayOfWeek: SUN, opensAt: "09:30", closesAt: "14:30", note: "Reservations via TablesReady" },
 
-  // Happy Hour — website says Wed–Sat; bar menu image says Wed–Sun (store closes 2:30 PM on Sundays)
-  ...days([WED, THU, FRI, SAT], {
+  // Happy Hour — 2026 bar page: Tues-Sat 3-6pm ($2 off drafts & cocktails, $8/$32 wine).
+  // The BBQ and Tex Mex pages say "3pm-6pm daily"; built as Tue-Sat, flagged for Genrou.
+  ...days([TUE, WED, THU, FRI, SAT], {
     category: "happy_hour",
     opensAt: "15:00",
     closesAt: "18:00",
-    note: "$2 off drafts & house cocktails; $8 glass / $32 bottle wine. Website says Wed-Sat; Bar menu image says Wed-Sun 3-6PM",
+    note: "$2 off drafts & cocktails; $8 glass / $32 bottle wine. Bar page says Tue-Sat; BBQ/Tex Mex pages say daily",
   }),
-
-  // Wine Wednesdays
-  { category: "wine_wednesday", dayOfWeek: WED, opensAt: "15:00", closesAt: "21:00", note: "Wine happy hour extended 'til 9PM" },
+  // Wine Wednesdays is not on the 2026 menu; no rows seeded.
 ];
 
 /**

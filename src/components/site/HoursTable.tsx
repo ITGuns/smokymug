@@ -37,9 +37,8 @@ export function HoursTable({
 
 /** Compact "service" chips: breakfast/bbq/brunch/happy hour windows summarised. */
 export function ServiceHours({ hours, tone = "light" }: { hours: Hours[]; tone?: "light" | "dark" }) {
-  // C8: the Cafe Fare window is removed from the public service chips (the hours row
-  // itself stays in the DB because menu availability still resolves against it).
-  const cats: HoursCategory[] = ["breakfast", "bbq", "brunch", "happy_hour", "wine_wednesday", "cafe_drinks"];
+  // C8: the Cafe Fare window stays off the public service chips.
+  const cats: HoursCategory[] = ["breakfast", "bbq", "tex_mex", "brunch", "happy_hour", "cafe_drinks"];
   const dark = tone === "dark";
   return (
     <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2">

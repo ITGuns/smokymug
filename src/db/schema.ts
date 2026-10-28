@@ -22,7 +22,7 @@ export type AvailabilityType = (typeof AVAILABILITY_TYPES)[number];
 export const RESERVATION_STATUSES = ["pending", "confirmed", "cancelled", "completed", "no_show"] as const;
 export type ReservationStatus = (typeof RESERVATION_STATUSES)[number];
 
-export const HOURS_CATEGORIES = ["store", "breakfast", "cafe_fare", "cafe_drinks", "bbq", "brunch", "happy_hour", "wine_wednesday"] as const;
+export const HOURS_CATEGORIES = ["store", "breakfast", "cafe_fare", "cafe_drinks", "bbq", "tex_mex", "brunch", "happy_hour", "wine_wednesday"] as const;
 export type HoursCategory = (typeof HOURS_CATEGORIES)[number];
 
 export const SECTION_TYPES = ["items", "addons"] as const;

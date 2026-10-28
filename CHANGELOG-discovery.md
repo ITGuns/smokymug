@@ -83,6 +83,24 @@ exist, so dedupe first if push complains), and expect one forced re-login for
 all admins. Gate: tsc 0, lint 0 errors, vitest 60, build clean, e2e suite green
 (one known timing flake on the drawer rotate test, passes on retry).
 
+## 2026 menu (28 Oct 2026, from "2026 New Menu (FINAL).pdf")
+
+Full menu content replaced in the seed: 6 categories / 32 sections / 144 items /
+32 modifier groups. Structural changes: Tex Mex is its own menu view (Tue-Sat
+11:30-9, new `tex_mex` hours category; tacos/nachos moved out of BBQ), BBQ is
+Wed-Sat only, breakfast is "South Western Breakfast" 'til 11:30 daily, bar
+drops Wine Wednesday, happy hour seeded Tue-Sat 3-6. Surviving items keep
+slugs/images/featured flags; apply with `npm run db:reseed` (wipes and reseeds
+menu/content, keeps reservations; admin menu edits made since the last seed are
+lost, and the Next data cache holds the old menu until the next deploy or a
+cache clear).
+
+Confirm with Dan (printed in the PDF exactly as entered, flagged with
+`// TODO 2026-menu:` in the seed): hot Black Eye 5.95|4.75 (S dearer than L),
+hot Mocha 4.75|5.50, hot Matcha Latte 6.25|7.95, iced Matcha Latte 4.35|8.05,
+Dirty Soda single 4.75; happy hour Tue-Sat (bar page) vs "daily" (BBQ/Tex Mex
+pages); Meat Market units no longer printed; sampler choice count assumed 4.
+
 ## Open inputs still needed (handoff §4)
 
 Q1 final teal/red values · Q2 Roadstore file + license · Q4 confirm dropdown

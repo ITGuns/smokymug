@@ -132,7 +132,9 @@ export function Header({
         className={cn(
           "overflow-hidden transition-[max-height,opacity] duration-500 ease-out-expo",
           scrolled ? "max-h-0 opacity-0" : "max-h-10 opacity-100",
-          solid && !scrolled ? "bg-teal-950" : "bg-teal-950/55 backdrop-blur-md",
+          // 85%: keeps the glass look over the hero while the strip's small text
+          // still clears 4.5:1 even against the cream page behind a slow-loading photo
+          solid && !scrolled ? "bg-teal-950" : "bg-teal-950/85 backdrop-blur-md",
         )}
       >
         {/* Compressed mode: phone only */}
@@ -141,7 +143,7 @@ export function Header({
             {phone}
           </a>
         </div>
-        <div className="container-site hidden h-9 items-center justify-between font-label text-[12.5px] tracking-[0.16em] text-cream-100/70 lg:flex">
+        <div className="container-site hidden h-9 items-center justify-between font-label text-[12.5px] tracking-[0.16em] text-cream-100/85 lg:flex">
           <span className="inline-flex items-center gap-2">
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-teal-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z" />
