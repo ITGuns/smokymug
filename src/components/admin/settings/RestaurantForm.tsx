@@ -5,26 +5,25 @@ import { useState } from "react";
 import { saveRestaurantInfo } from "@/actions/settings";
 import type { RestaurantInfo } from "@/db/schema";
 import { useToast } from "@/components/admin/toast";
+import { useAction } from "@/components/admin/useAction";
 import { Btn, Card, Field, Input, Textarea } from "@/components/admin/ui";
 
 export function RestaurantForm({ info }: { info: RestaurantInfo }) {
   const router = useRouter();
   const toast = useToast();
   const [f, setF] = useState({
-    name: info.name, tagline: info.tagline, category: info.category, description: info.description, addressLine1: info.addressLine1, city: info.city, state: info.state, zip: info.zip,
+    name: info.name, tagline: info.tagline, footerTagline: info.footerTagline ?? "", category: info.category, description: info.description, addressLine1: info.addressLine1, city: info.city, state: info.state, zip: info.zip,
     neighborhood: info.neighborhood ?? "", phone: info.phone, email: info.email, website: info.website ?? "", instagramUrl: info.instagramUrl ?? "", facebookUrl: info.facebookUrl ?? "",
-    giftCardUrl: info.giftCardUrl ?? "", giftCardBalanceUrl: info.giftCardBalanceUrl ?? "", loyaltyUrl: info.loyaltyUrl ?? "", marketingSignupUrl: info.marketingSignupUrl ?? "", brunchReservationUrl: info.brunchReservationUrl ?? "",
+    giftCardUrl: info.giftCardUrl ?? "", giftCardBalanceUrl: info.giftCardBalanceUrl ?? "", loyaltyUrl: info.loyaltyUrl ?? "", marketingSignupUrl: info.marketingSignupUrl ?? "", brunchReservationUrl: info.brunchReservationUrl ?? "", orderUrl: info.orderUrl ?? "",
     features: info.features.join("\n"), cafeSummary: info.cafeSummary ?? "", bbqSummary: info.bbqSummary ?? "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const t = (k: keyof typeof f) => ({ id: `r-${k}`, value: f[k], onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value }), error: !!errors[k] });
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBusy(true);
-    const res = await saveRestaurantInfo({ ...f, features: f.features.split("\n").map((x) => x.trim()).filter(Boolean) });
-    setBusy(false);
+    const res = await run(() => saveRestaurantInfo({ ...f, features: f.features.split("\n").map((x) => x.trim()).filter(Boolean) }));
     if (res.ok) {
       toast.success("Restaurant info saved");
       router.refresh();
@@ -41,6 +40,7 @@ export function RestaurantForm({ info }: { info: RestaurantInfo }) {
           <Field label="Name" htmlFor="r-name" error={errors.name} required><Input {...t("name")} required /></Field>
           <Field label="Category" htmlFor="r-category" error={errors.category}><Input {...t("category")} /></Field>
           <Field label="Tagline" htmlFor="r-tagline" error={errors.tagline} className="sm:col-span-2" required><Input {...t("tagline")} required /></Field>
+          <Field label="Footer tagline" htmlFor="r-footerTagline" error={errors.footerTagline} className="sm:col-span-2" hint="Leave blank to reuse the tagline."><Input {...t("footerTagline")} /></Field>
           <Field label="Description (SEO)" htmlFor="r-description" error={errors.description} className="sm:col-span-2"><Textarea {...t("description")} /></Field>
           <Field label="Address" htmlFor="r-addressLine1" error={errors.addressLine1} required><Input {...t("addressLine1")} required /></Field>
           <Field label="Neighborhood" htmlFor="r-neighborhood" error={errors.neighborhood}><Input {...t("neighborhood")} /></Field>
@@ -66,6 +66,7 @@ export function RestaurantForm({ info }: { info: RestaurantInfo }) {
           <Field label="Loyalty signup URL" htmlFor="r-loyaltyUrl" error={errors.loyaltyUrl}><Input {...t("loyaltyUrl")} /></Field>
           <Field label="Email list signup URL" htmlFor="r-marketingSignupUrl" error={errors.marketingSignupUrl}><Input {...t("marketingSignupUrl")} /></Field>
           <Field label="Brunch reservations URL (TablesReady)" htmlFor="r-brunchReservationUrl" error={errors.brunchReservationUrl}><Input {...t("brunchReservationUrl")} /></Field>
+          <Field label="Online ordering URL (SpotOn)" htmlFor="r-orderUrl" error={errors.orderUrl} hint="Order Now buttons stay hidden until this is set."><Input {...t("orderUrl")} /></Field>
         </div>
       </Card>
     </form>

@@ -16,9 +16,9 @@ test.describe("Admin menu CMS", () => {
     await drawer.getByLabel("Item name").fill(name);
     await drawer.getByLabel("Description").fill("temporary QA item");
     await drawer.getByLabel("Base price ($)").fill("12.5");
-    await drawer.getByLabel("Category / section").selectOption({ label: "Breakfast Grill" });
+    await drawer.getByLabel("Category / section").selectOption({ label: "Classics" });
     await drawer.getByRole("checkbox", { name: /Vegetarian \(V\)/ }).check();
-    await drawer.getByRole("checkbox", { name: /Add to any grill item/ }).check();
+    await drawer.getByRole("checkbox", { name: /Meats & Extras!/ }).check();
     await drawer.getByRole("button", { name: "Save changes" }).click();
     await expect(page.getByRole("status")).toContainText("Item created");
     const row = page.locator("main").getByText(name, { exact: true });
@@ -30,7 +30,7 @@ test.describe("Admin menu CMS", () => {
     const card = pub.locator("button[aria-haspopup='dialog']", { hasText: name });
     await expect(card).toContainText("$12.50");
     await card.click();
-    await expect(pub.getByRole("dialog").getByRole("heading", { name: "Add to any grill item" })).toBeVisible();
+    await expect(pub.getByRole("dialog").getByRole("heading", { name: "Meats & Extras!" })).toBeVisible();
     await pub.keyboard.press("Escape");
 
     // Edit price (narrow the list to the QA item first)

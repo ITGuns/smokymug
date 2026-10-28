@@ -6,6 +6,7 @@ import type { SectionType } from "@/db/schema";
 import { Btn, Field, Input, Select, Textarea, Toggle } from "@/components/admin/ui";
 import { ConfirmDialog } from "@/components/admin/overlays";
 import { useToast } from "@/components/admin/toast";
+import { useAction } from "@/components/admin/useAction";
 import type { GroupNode, SectionNode } from "@/lib/data/menu";
 
 export function SectionEditor({ section, categoryId, groups, onDone }: { section: SectionNode | null; categoryId: number; groups: GroupNode[]; onDone: () => void }) {
@@ -18,14 +19,12 @@ export function SectionEditor({ section, categoryId, groups, onDone }: { section
     active: section?.active ?? true,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const [confirm, setConfirm] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBusy(true);
-    const res = await saveSection({ ...f, id: section?.id, categoryId });
-    setBusy(false);
+    const res = await run(() => saveSection({ ...f, id: section?.id, categoryId }));
     if (res.ok) {
       toast.success(section ? "Section saved" : "Section created", f.name);
       onDone();
@@ -36,9 +35,7 @@ export function SectionEditor({ section, categoryId, groups, onDone }: { section
   };
   const remove = async () => {
     if (!section) return;
-    setBusy(true);
-    const res = await deleteSection(section.id);
-    setBusy(false);
+    const res = await run(() => deleteSection(section.id));
     setConfirm(false);
     if (res.ok) {
       toast.success("Section deleted");

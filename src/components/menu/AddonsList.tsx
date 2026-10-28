@@ -4,7 +4,7 @@ import { priceAdjustment } from "@/lib/format";
 
 export function AddonsList({ group, description }: { group: GroupNode; description?: string | null }) {
   return (
-    <div className="rounded-[20px] border border-charcoal-900/8 bg-cream-50/70 p-5 sm:p-6">
+    <div className="rounded-2xl border border-charcoal-900/8 bg-cream-50/70 p-5 sm:p-6">
       {description && <p className="mb-3 text-[14px] text-charcoal-500">{description}</p>}
       <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
         {group.modifiers.map((m) => (

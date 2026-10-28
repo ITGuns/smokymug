@@ -8,6 +8,7 @@ import type { DietaryTag } from "@/db/schema";
 import { DIETARY_TAGS } from "@/db/schema";
 import { Drawer, ConfirmDialog } from "@/components/admin/overlays";
 import { useToast } from "@/components/admin/toast";
+import { runAction, useAction } from "@/components/admin/useAction";
 import { Btn, Card, Checkbox, DaysPicker, EmptyState, Field, Input, Tag, Textarea, Toggle, centsToInput } from "@/components/admin/ui";
 import { DIETARY_LABELS } from "@/lib/constants";
 import type { GroupNode } from "@/lib/data/menu";
@@ -22,14 +23,12 @@ export function ModifiersManager({ groups, usage }: { groups: GroupNode[]; usage
   const [groupEdit, setGroupEdit] = useState<GroupNode | null | "new">(null);
   const [modEdit, setModEdit] = useState<{ mod: Modifier | null } | null>(null);
   const [deleting, setDeleting] = useState<{ kind: "group"; g: GroupNode } | { kind: "mod"; m: Modifier } | null>(null);
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const group = groups.find((g) => g.id === selected) ?? groups[0];
 
   const remove = async () => {
     if (!deleting) return;
-    setBusy(true);
-    const res = deleting.kind === "group" ? await deleteModifierGroup(deleting.g.id) : await deleteModifier(deleting.m.id);
-    setBusy(false);
+    const res = await run(() => (deleting.kind === "group" ? deleteModifierGroup(deleting.g.id) : deleteModifier(deleting.m.id)));
     setDeleting(null);
     if (res.ok) {
       toast.success(deleting.kind === "group" ? "Group deleted" : "Modifier deleted");
@@ -93,7 +92,7 @@ function GroupPanel({ group, usedBy, onEditGroup, onDeleteGroup, onAdd, onEdit, 
   const commit = async () => {
     if (!dirty.current) return;
     dirty.current = false;
-    const res = await reorderModifiers(mods.map((m) => m.id));
+    const res = await runAction(() => reorderModifiers(mods.map((m) => m.id)));
     if (res.ok) {
       toast.success("Order saved");
       router.refresh();
@@ -145,12 +144,10 @@ function GroupForm({ group, onDone }: { group: GroupNode | null; onDone: (id?: n
   const toast = useToast();
   const [f, setF] = useState({ name: group?.name ?? "", description: group?.description ?? "", required: group?.required ?? false, minSelections: String(group?.minSelections ?? 0), maxSelections: String(group?.maxSelections ?? 1), active: group?.active ?? true });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBusy(true);
-    const res = await saveModifierGroup({ ...f, id: group?.id });
-    setBusy(false);
+    const res = await run(() => saveModifierGroup({ ...f, id: group?.id }));
     if (res.ok) {
       toast.success(group ? "Group saved" : "Group created", f.name);
       onDone(res.data.id);
@@ -190,12 +187,10 @@ function ModifierForm({ mod, groupId, onDone }: { mod: Modifier | null; groupId:
     active: mod?.active ?? true,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBusy(true);
-    const res = await saveModifier({ ...f, id: mod?.id, groupId, availableDays: f.limitDays && f.availableDays.length ? f.availableDays : null });
-    setBusy(false);
+    const res = await run(() => saveModifier({ ...f, id: mod?.id, groupId, availableDays: f.limitDays && f.availableDays.length ? f.availableDays : null }));
     if (res.ok) {
       toast.success(mod ? "Option saved" : "Option added", f.name);
       onDone();

@@ -3,12 +3,34 @@ import { Pool } from "pg";
 
 config({ path: ".env.local" });
 
+/** Hosted Supabase (live data). The suite runs raw DELETEs and rewrites settings, so it never runs there by accident. */
+const REMOTE_DB = /supabase\.(co|com)/i;
+
+/**
+ * The single place e2e code resolves its database. Prefers E2E_DATABASE_URL, falls back to
+ * DATABASE_URL, and refuses a Supabase host unless E2E_ALLOW_REMOTE=1 is set explicitly.
+ * auth.setup.ts calls this first so a refused run stops before any spec starts.
+ */
+export function e2eDatabaseUrl(): string {
+  const source = process.env.E2E_DATABASE_URL ? "E2E_DATABASE_URL" : "DATABASE_URL";
+  const url = process.env[source];
+  if (!url) throw new Error("E2E_DATABASE_URL or DATABASE_URL must be set for the e2e suite.");
+  // Matched against the whole string, not a parsed host: a password with "@" or a ?host= param can't slip past.
+  if (REMOTE_DB.test(url) && process.env.E2E_ALLOW_REMOTE !== "1") {
+    throw new Error(
+      `Refusing to run e2e against a Supabase database (${source}). The suite deletes rows and changes settings. ` +
+        `Point E2E_DATABASE_URL at a local or disposable database, or set E2E_ALLOW_REMOTE=1 to run against it on purpose.`,
+    );
+  }
+  return url;
+}
+
 let pool: Pool | undefined;
 function db(): Pool {
   if (!pool) {
-    const url = process.env.DATABASE_URL;
-    if (!url) throw new Error("DATABASE_URL missing for e2e helpers");
-    pool = new Pool({ connectionString: url, ssl: { rejectUnauthorized: false }, max: 2 });
+    const url = e2eDatabaseUrl();
+    // Same TLS rule as src/db/index.ts: a local database opts out with ?sslmode=disable.
+    pool = new Pool({ connectionString: url, ssl: /sslmode=disable/.test(url) ? undefined : { rejectUnauthorized: false }, max: 2 });
   }
   return pool;
 }

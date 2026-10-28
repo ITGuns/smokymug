@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GalleryImage } from "@/db/schema";
 import { cn } from "@/lib/cn";
+import { useFocusTrap } from "@/components/useFocusTrap";
 
 const TAGS: { key: string; label: string }[] = [
   { key: "all", label: "Everything" },
@@ -35,19 +36,19 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
     [list, openIndex],
   );
 
+  // Focus in, Tab trap, Escape, scroll lock, and focus back to the opening thumbnail.
+  const lightboxRef = useRef<HTMLDivElement>(null);
+  const close = useCallback(() => setOpen(null), []);
+  useFocusTrap(current != null, lightboxRef, { onClose: close });
+
   useEffect(() => {
     if (open == null) return;
-    document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(null);
       if (e.key === "ArrowRight") step(1);
       if (e.key === "ArrowLeft") step(-1);
     };
     window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [open, step]);
 
   useEffect(() => {
@@ -62,10 +63,10 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
   return (
     <>
       {/* Horizontal scroll row */}
-      <section className="overflow-hidden bg-charcoal-950 py-14 text-cream-50">
+      <section className="overflow-hidden bg-teal-950 py-14 text-cream-50">
         <div className="container-site flex items-end justify-between">
           <div>
-            <p className="eyebrow text-ember-300">Off the pit</p>
+            <p className="eyebrow text-teal-300">Off the pit</p>
             <h2 className="mt-2 font-display text-3xl font-semibold display-soft">Swipe through the smoke.</h2>
           </div>
           <span className="hidden text-[12px] uppercase tracking-[0.16em] text-cream-100/70 sm:block">Scroll →</span>
@@ -73,7 +74,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
         <ul className="scrollbar-none mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 sm:px-8 lg:px-12" aria-label="Featured BBQ photos">
           {featuredRow.map((img, i) => (
             <li key={img.id} className="shrink-0 snap-start">
-              <button type="button" onClick={() => setOpen(img.id)} className="group relative block h-[300px] overflow-hidden rounded-[22px] bg-charcoal-800 sm:h-[380px] lg:h-[440px]" style={{ aspectRatio: `${img.width}/${img.height}` }}>
+              <button type="button" onClick={() => setOpen(img.id)} className="group relative block h-[300px] overflow-hidden rounded-2xl bg-teal-900 sm:h-[380px] lg:h-[440px]" style={{ aspectRatio: `${img.width}/${img.height}` }}>
                 <Image src={img.file} alt={img.alt} fill sizes="(min-width:1024px) 520px, 360px" loading={i < 2 ? "eager" : "lazy"} className="object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-[1.05]" />
                 <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 <span className="absolute inset-x-4 bottom-4 translate-y-2 text-left text-[13px] font-medium text-cream-50 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">{img.alt}</span>
@@ -96,7 +97,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
                 onClick={() => setTag(t.key)}
                 className={cn("relative h-10 rounded-full px-4 text-[14px] font-semibold transition-colors", tag === t.key ? "text-cream-50" : "text-charcoal-700 hover:bg-charcoal-900/5")}
               >
-                {tag === t.key && <motion.span layoutId="gal-pill" className="absolute inset-0 rounded-full bg-charcoal-900" transition={{ type: "spring", stiffness: 400, damping: 34 }} />}
+                {tag === t.key && <motion.span layoutId="gal-pill" className="absolute inset-0 rounded-full bg-red-600" transition={{ type: "spring", stiffness: 400, damping: 34 }} />}
                 <span className="relative">{t.label}</span>
               </button>
             ))}
@@ -105,7 +106,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
             <AnimatePresence initial={false}>
               {list.map((img) => (
                 <motion.li key={img.id} layout initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}>
-                  <button type="button" onClick={() => setOpen(img.id)} className="group relative block w-full overflow-hidden rounded-[20px] bg-charcoal-800 shadow-card" style={{ aspectRatio: `${img.width}/${img.height}` }}>
+                  <button type="button" onClick={() => setOpen(img.id)} className="group relative block w-full overflow-hidden rounded-2xl bg-charcoal-800 shadow-card" style={{ aspectRatio: `${img.width}/${img.height}` }}>
                     <Image src={img.file} alt={img.alt} fill sizes="(min-width:1280px) 22vw, (min-width:768px) 30vw, 48vw" className="object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-[1.06]" />
                     <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                     <span className="absolute inset-x-4 bottom-4 translate-y-2 text-left text-[13px] font-medium leading-snug text-cream-50 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">{img.alt}</span>
@@ -121,6 +122,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
       <AnimatePresence>
         {current && (
           <motion.div
+            ref={lightboxRef}
             className="fixed inset-0 z-[80] flex items-center justify-center bg-charcoal-950/95 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -131,7 +133,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
             aria-modal="true"
             aria-label={current.alt}
           >
-            <button type="button" onClick={() => setOpen(null)} aria-label="Close" className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-cream-50/10 text-cream-50 backdrop-blur transition hover:bg-cream-50/20">
+            <button type="button" onClick={() => setOpen(null)} aria-label="Close" data-autofocus className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-cream-50/10 text-cream-50 backdrop-blur transition hover:bg-cream-50/20">
               <svg viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 5l10 10M15 5L5 15" /></svg>
             </button>
             <button type="button" onClick={(e) => { e.stopPropagation(); step(-1); }} aria-label="Previous photo" className="absolute left-3 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 text-cream-50 backdrop-blur transition hover:bg-cream-50/20 sm:flex">
@@ -157,7 +159,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="relative w-full overflow-hidden rounded-[20px]" style={{ aspectRatio: `${current.width}/${current.height}`, maxHeight: "78svh" }}>
+                <div className="relative w-full overflow-hidden rounded-2xl" style={{ aspectRatio: `${current.width}/${current.height}`, maxHeight: "78svh" }}>
                   <Image src={current.file} alt={current.alt} fill sizes="(min-width:1024px) 1024px, 100vw" className="object-contain" priority draggable={false} />
                 </div>
                 <figcaption className="mt-4 flex w-full items-center justify-between gap-4 text-[13px] text-cream-100/75">

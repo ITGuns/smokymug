@@ -37,7 +37,8 @@ export function HoursTable({
 
 /** Compact "service" chips: breakfast/bbq/brunch/happy hour windows summarised. */
 export function ServiceHours({ hours, tone = "light" }: { hours: Hours[]; tone?: "light" | "dark" }) {
-  const cats: HoursCategory[] = ["breakfast", "cafe_fare", "bbq", "brunch", "happy_hour", "wine_wednesday", "cafe_drinks"];
+  // C8: the Cafe Fare window stays off the public service chips.
+  const cats: HoursCategory[] = ["breakfast", "bbq", "tex_mex", "brunch", "happy_hour", "cafe_drinks"];
   const dark = tone === "dark";
   return (
     <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
@@ -45,7 +46,7 @@ export function ServiceHours({ hours, tone = "light" }: { hours: Hours[]; tone?:
         const rows = summarizeHours(hours, c);
         if (!rows.length) return null;
         return (
-          <li key={c} className={cn("flex flex-col gap-0.5 border-l-2 pl-3", dark ? "border-ember-400/70" : "border-ember-500/60")}>
+          <li key={c} className={cn("flex flex-col gap-0.5 border-l-2 pl-3", dark ? "border-teal-300/70" : "border-teal-600/60")}>
             <span className={cn("eyebrow", dark ? "text-cream-100/60" : "text-charcoal-500")}>{HOURS_CATEGORY_LABELS[c]}</span>
             <span className={cn("text-[15px]", dark ? "text-cream-50" : "text-charcoal-900")}>
               {rows.map((r) => `${r.days} ${r.hours}`).join(" · ")}

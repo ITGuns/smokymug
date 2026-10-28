@@ -71,6 +71,17 @@ describe("computeAvailability", () => {
     expect(byTime["13:00"]).toMatchObject({ available: true });
   });
 
+  it("applies a long lead time across future days, not just today", () => {
+    // Clock is Wed 10:00; Sat 13:00 is exactly 4500 minutes away.
+    const r = computeAvailability(SAT, 2, ctx({ settings: settings({ minLeadTimeMinutes: 4500 }) }));
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const byTime = Object.fromEntries(r.slots.map((s) => [s.time, s]));
+    expect(byTime["11:30"]).toMatchObject({ available: false, reason: "lead" });
+    expect(byTime["12:30"]).toMatchObject({ available: false, reason: "lead" });
+    expect(byTime["13:00"]).toMatchObject({ available: true });
+  });
+
   it("fills a slot once max bookings overlap within the turn time", () => {
     const reservations = ["18:00", "18:30", "17:30", "18:00"].map((t) => reservation(t, 2));
     const r = computeAvailability(SAT, 2, ctx({ reservations }));

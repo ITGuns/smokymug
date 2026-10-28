@@ -1,29 +1,15 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Btn } from "./ui";
 import { cn } from "@/lib/cn";
-
-function useEscape(open: boolean, onClose: () => void) {
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [open, onClose]);
-}
+import { useFocusTrap } from "@/components/useFocusTrap";
 
 export function Drawer({ open, onClose, title, description, children, footer, width = "max-w-2xl" }: { open: boolean; onClose: () => void; title: string; description?: string; children: React.ReactNode; footer?: React.ReactNode; width?: string }) {
-  useEscape(open, onClose);
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (open) setTimeout(() => ref.current?.querySelector<HTMLElement>("input, select, textarea, button")?.focus(), 50);
-  }, [open]);
+  // Initial focus: first focusable (the header Close button), as before.
+  useFocusTrap(open, ref, { onClose });
   return (
     <AnimatePresence>
       {open && (
@@ -59,12 +45,14 @@ export function Drawer({ open, onClose, title, description, children, footer, wi
 }
 
 export function ConfirmDialog({ open, title, body, confirmLabel = "Confirm", tone = "danger", loading, onConfirm, onCancel }: { open: boolean; title: string; body?: string; confirmLabel?: string; tone?: "danger" | "primary"; loading?: boolean; onConfirm: () => void; onCancel: () => void }) {
-  useEscape(open, onCancel);
+  const ref = useRef<HTMLDivElement>(null);
+  useFocusTrap(open, ref, { onClose: onCancel });
   return (
     <AnimatePresence>
       {open && (
         <motion.div className="fixed inset-0 z-[95] flex items-center justify-center bg-zinc-900/40 p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} onClick={onCancel}>
           <motion.div
+            ref={ref}
             role="alertdialog"
             aria-modal="true"
             aria-labelledby="confirm-title"
@@ -78,8 +66,10 @@ export function ConfirmDialog({ open, title, body, confirmLabel = "Confirm", ton
             <h2 id="confirm-title" className="text-[16px] font-semibold text-zinc-900">{title}</h2>
             {body && <p className="mt-2 text-[14px] text-zinc-600">{body}</p>}
             <div className="mt-5 flex justify-end gap-2">
-              <Btn variant="ghost" onClick={onCancel} disabled={loading}>Cancel</Btn>
-              <Btn variant={tone} onClick={onConfirm} loading={loading} autoFocus>{confirmLabel}</Btn>
+              {/* Destructive dialogs focus Cancel, so a stray Enter can't delete. data-autofocus (not autoFocus):
+                  autoFocus moves focus before the trap records the opener, which breaks focus restore. */}
+              <Btn variant="ghost" onClick={onCancel} disabled={loading} data-autofocus={tone === "danger" || undefined}>Cancel</Btn>
+              <Btn variant={tone} onClick={onConfirm} loading={loading} data-autofocus={tone !== "danger" || undefined}>{confirmLabel}</Btn>
             </div>
           </motion.div>
         </motion.div>

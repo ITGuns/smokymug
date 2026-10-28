@@ -34,8 +34,8 @@ export function CateringForm({ email, phone }: { email: string; phone: string })
 
   if (status === "done") {
     return (
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-[24px] bg-charcoal-900 p-8 text-cream-50" role="status">
-        <p className="eyebrow text-ember-300">Inquiry sent</p>
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl bg-teal-900 p-8 text-cream-50" role="status">
+        <p className="eyebrow text-teal-300">Inquiry sent</p>
         <h3 className="mt-3 font-display text-3xl font-semibold">We&apos;ll be in touch.</h3>
         <p className="mt-3 text-cream-100/75">Thanks, {form.name.split(" ")[0]}. We&apos;ll reply to {form.email} with menu options and pricing. Need it faster? Call {phone}.</p>
       </motion.div>
@@ -43,7 +43,7 @@ export function CateringForm({ email, phone }: { email: string; phone: string })
   }
 
   const input = (err?: string) =>
-    cn("h-12 w-full rounded-full border bg-cream-50 px-4 text-[15px] text-charcoal-900 placeholder:text-charcoal-500/60 focus:outline-none", err ? "border-brick-500" : "border-charcoal-900/12 focus:border-ember-400");
+    cn("h-12 w-full rounded-full border bg-cream-50 px-4 text-[15px] text-charcoal-900 placeholder:text-charcoal-500/60 focus:outline-none", err ? "border-brick-500" : "border-charcoal-900/12 focus:border-teal-600");
 
   return (
     <form onSubmit={submit} noValidate className="grid gap-4 sm:grid-cols-2">
@@ -62,7 +62,7 @@ export function CateringForm({ email, phone }: { email: string; phone: string })
       </Field>
       <div className="hidden" aria-hidden><label>Website<input tabIndex={-1} autoComplete="off" value={form.website} onChange={set("website")} /></label></div>
       <Field label="Tell us more" error={errors.message} optional className="sm:col-span-2">
-        <textarea rows={4} className="w-full rounded-2xl border border-charcoal-900/12 bg-cream-50 px-4 py-3 text-[15px] text-charcoal-900 placeholder:text-charcoal-500/60 focus:border-ember-400 focus:outline-none" value={form.message} onChange={set("message")} placeholder="Menu ideas, dietary needs, venue details, timing…" />
+        <textarea rows={4} className="w-full rounded-2xl border border-charcoal-900/12 bg-cream-50 px-4 py-3 text-[15px] text-charcoal-900 placeholder:text-charcoal-500/60 focus:border-teal-600 focus:outline-none" value={form.message} onChange={set("message")} placeholder="Menu ideas, dietary needs, venue details, timing…" />
       </Field>
       <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
         <Button type="submit" size="lg" disabled={status === "busy"} arrow={status !== "busy"}>{status === "busy" ? "Sending…" : "Send inquiry"}</Button>

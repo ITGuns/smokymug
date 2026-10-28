@@ -1,62 +1,76 @@
-import { $, FRI, SAT, type SeedModifierGroup } from "./types";
+import { $, FRI, SAT, type SeedModifier, type SeedModifierGroup } from "./types";
 
-const COWBOY_MEATS = [
-  { name: "Brisket", price: $(2) },
+/** Craft Barbecue "THE MEATS:" box, shared by cowboy plates and sandwiches. */
+const BBQ_MEATS = (spareRibsUpcharge: number): SeedModifier[] => [
+  { name: "Brisket", price: $(3) },
   { name: "Pulled Pork" },
-  { name: "House Sausage" },
+  { name: "Housemade Sausage" },
+  { name: "Beef Chorizo" },
   { name: "Smoked Turkey" },
-  { name: "Pork Spare Ribs", note: "Fri & Sat only", days: [FRI, SAT] },
+  { name: "Smoked Chicken Salad" },
   { name: "Pork Belly Burnt Ends", note: "Fri & Sat only", days: [FRI, SAT] },
+  { name: "Pork Spare Ribs", price: spareRibsUpcharge, note: "Fri & Sat only", days: [FRI, SAT] },
 ];
 
-const TACO_FILLINGS = [
+/** Tex Mex "THE MEATS:" box (brisket is its own Brisket Taco, "see below"). */
+const TACO_FILLINGS: SeedModifier[] = [
   { name: "Carnitas" },
-  { name: "Chorizo" },
-  { name: "Chicken" },
-  { name: "Taco de Papas", dietary: ["vegetarian" as const] },
-  { name: "Tofu", dietary: ["vegetarian" as const] },
-  { name: "Pork Belly", price: $(1), note: "+$1 per taco · Fri & Sat only", days: [FRI, SAT] },
+  { name: "Smoked Chicken" },
+  { name: "Beef Chorizo" },
+  { name: "Pork Belly Burnt Ends", price: $(1), note: "+$1 per taco · Fri & Sat only", days: [FRI, SAT] },
+  { name: "Fried Tofu", dietary: ["vegetarian"] },
+  { name: "Refried Bean", dietary: ["vegetarian"] },
+  { name: "Potatoes", dietary: ["vegetarian"] },
 ];
 
 export const MODIFIER_GROUPS: SeedModifierGroup[] = [
-  /* ---------- Breakfast ---------- */
+  /* ---------- South Western Breakfast ---------- */
   {
-    key: "breakfast_grill_addons",
-    name: "Add to any grill item",
+    key: "breakfast_basics",
+    name: "Basics",
+    min: 0,
+    max: 5,
+    modifiers: [
+      { name: "Shredded Potatoes", price: $(2) },
+      { name: "Cubed Potatoes", price: $(2) },
+      { name: "Eggs", price: $(2) },
+      { name: "Cheddar Cheese", price: $(1) },
+      { name: "American Cheese", price: $(1) },
+    ],
+  },
+  {
+    key: "breakfast_meats_extras",
+    name: "Meats & Extras!",
     min: 0,
     max: 9,
     modifiers: [
       { name: "Bacon", price: $(3) },
-      { name: "Pulled Pork", price: $(3) },
-      { name: "Smoked Chicken", price: $(3) },
       { name: "Chorizo", price: $(4) },
-      { name: "Suadero", price: $(3) },
-      { name: "Avocado", price: $(2) },
+      { name: "Suadero", price: $(4) },
+      { name: "Tofu", price: $(3) },
+      // TODO 2026-menu: "Avocado +3" is printed twice in this box (both columns); listed once.
+      { name: "Avocado", price: $(3) },
+      { name: "Smoked Chicken", price: $(3) },
+      { name: "Pulled Pork", price: $(3) },
       { name: "Refried Beans", price: $(1) },
       { name: "Pickled Red Onions", price: 75 },
-      { name: "Hatch Chile Cream Cheese", price: $(1) },
     ],
   },
   {
-    key: "bread_choice",
-    name: "Choice of Bread",
-    required: true,
-    min: 1,
-    max: 1,
+    key: "breakfast_sauces",
+    name: "Sauces",
+    min: 0,
+    max: 8,
     modifiers: [
-      { name: "Everything Bagel", dietary: ["vegan"] },
-      { name: "Housemade Biscuit" },
-      { name: "Texas Toast" },
-      { name: "Potato Bun" },
+      { name: "Hatch Green Chiles", price: 150 },
+      { name: "Salsa Roja", price: $(1) },
+      { name: "Salsa Verde", price: $(1) },
+      { name: "Mojo", price: 75 },
+      { name: "Espresso BBQ Sauce", price: 75 },
+      { name: "Mustard BBQ Sauce", price: 75 },
+      { name: "Cream Cheese", price: 75 },
+      { name: "Special Pepper Crm Chz", price: 75 },
     ],
-  },
-  {
-    key: "avocado_base",
-    name: "Bagel or Toast",
-    required: true,
-    min: 1,
-    max: 1,
-    modifiers: [{ name: "Everything Bagel" }, { name: "Toast" }],
   },
   {
     key: "spreads",
@@ -65,7 +79,8 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     max: 5,
     modifiers: [
       { name: "Cream Cheese", price: $(2) },
-      { name: "Hatch Chile Cream Cheese", price: $(2) },
+      // TODO 2026-menu: printed "Special Pepper Crm Chz (+$1)" under "SPREADS 2"; read as $2 + $1 = $3.
+      { name: "Special Pepper Crm Chz", price: $(3) },
       { name: "Peanut Butter", price: $(2) },
       { name: "House Jam", price: $(2), dietary: ["vegan"] },
       { name: "Butter", price: $(2) },
@@ -79,7 +94,7 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     required: true,
     min: 1,
     max: 1,
-    modifiers: COWBOY_MEATS,
+    modifiers: BBQ_MEATS($(2)),
   },
   {
     key: "cowboy_meat_2",
@@ -87,7 +102,7 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     required: true,
     min: 2,
     max: 2,
-    modifiers: COWBOY_MEATS,
+    modifiers: BBQ_MEATS($(2)),
   },
   {
     key: "cowboy_addons",
@@ -95,9 +110,19 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     min: 0,
     max: 2,
     modifiers: [
-      { name: "Add Corn Bread", price: $(1) },
+      { name: "Add Cornbread", price: $(2) },
       { name: "Add a Side", price: $(4) },
     ],
+  },
+  {
+    key: "sandwich_meat",
+    name: "Choose Your Meat",
+    required: true,
+    min: 1,
+    max: 1,
+    // TODO 2026-menu: the sandwich box prints only "(+3 Brisket)". Whether the Fri & Sat meats
+    // (and the +2 spare-rib upcharge from the plates box) apply to sandwiches is not printed.
+    modifiers: BBQ_MEATS(0),
   },
   {
     key: "top_it_sandwich",
@@ -106,9 +131,42 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     min: 1,
     max: 1,
     modifiers: [
-      { name: "Top It! #1", description: "tejano slaw & sauce" },
-      { name: "Top It! #2", description: "pickles, pickled red onions & sauce" },
+      { name: "Top It! #1", description: "tejano slaw + sauce" },
+      { name: "Top It! #2", description: "pickles, pickled red onions + sauce" },
     ],
+  },
+  {
+    key: "bbq_burger_addons",
+    name: "Add-ons",
+    min: 0,
+    max: 1,
+    modifiers: [{ name: "Add Bacon Jam", price: $(2) }],
+  },
+  {
+    key: "sampler_choice",
+    name: "Choice for Tacos, Nachos & Meat Samples",
+    description: "choice for tacos, nachos, and meat samples",
+    required: true,
+    min: 1,
+    // TODO 2026-menu: how many choices the sampler allows is not printed (1 taco + 1 mini nachos + 2 meat samples → up to 4 assumed).
+    max: 4,
+    modifiers: [
+      { name: "Chicken" },
+      { name: "Carnitas" },
+      { name: "Chorizo" },
+      { name: "Turkey" },
+      { name: "Bean" },
+      { name: "Papas" },
+      { name: "Tofu" },
+    ],
+  },
+  {
+    key: "wings_sauce",
+    name: "Choose Your Sauce",
+    required: true,
+    min: 1,
+    max: 1,
+    modifiers: [{ name: "BBQ" }, { name: "Buffalo" }, { name: "Dry Rub" }, { name: "Mustard" }],
   },
   {
     key: "wings_dip",
@@ -126,19 +184,31 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     modifiers: [{ name: "Sub Fried Tofu", description: "Vegan substitute for wings", dietary: ["vegan"] }],
   },
   {
-    key: "nacho_protein",
-    name: "Choose Your Protein",
+    key: "salad_protein",
+    name: "Pulled Pork or Chicken",
     required: true,
     min: 1,
     max: 1,
+    modifiers: [{ name: "Pulled Pork" }, { name: "Chicken" }],
+  },
+  {
+    key: "bbq_sauces",
+    name: "BBQ Sauces",
+    description: "house made $0.75 extra",
+    min: 0,
+    max: 6,
     modifiers: [
-      { name: "Chicken" },
-      { name: "Pulled Pork" },
-      { name: "Bean", dietary: ["vegetarian"] },
-      { name: "Chorizo", price: $(3) },
-      { name: "Brisket", price: $(6) },
+      { name: "Espresso BBQ", price: 75, description: "brown, sweet" },
+      { name: "Mustard BBQ", price: 75, description: "yellow, tangy" },
+      { name: "NC Vinegar", price: 75, description: "vin, pepper, citrus" },
+      // TODO 2026-menu: printed "(+$0.25)" next to Salsa Verde; read as $0.75 + $0.25 = $1.00 (the breakfast page prices it +1).
+      { name: "Salsa Verde", price: $(1), description: "spicy, green" },
+      { name: "Salsa Roja", price: 75, description: "tomato, mild" },
+      { name: "Housemade Ranch", price: 75, description: "dill-forward" },
     ],
   },
+
+  /* ---------- Tex Mex ---------- */
   {
     key: "taco_filling_1",
     name: "Choose Your Filling",
@@ -163,9 +233,33 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     min: 1,
     max: 1,
     modifiers: [
-      { name: "Top It! #1", description: "slaw, verde, crema, cheese" },
-      { name: "Top It! #2", description: "beans, verde, onion-cilantro" },
+      { name: "Top It! #1", description: "tejano slaw, salsa verde, crema, grated jack" },
+      { name: "Top It! #2", description: "beans, salsa verde, salsa roja, onion-cilantro" },
     ],
+  },
+  {
+    key: "nacho_protein",
+    name: "Choose Your Meat/Veg",
+    required: true,
+    min: 1,
+    max: 1,
+    modifiers: [
+      { name: "Brisket", price: $(6) },
+      { name: "Carnitas" },
+      { name: "Smoked Chicken" },
+      { name: "Beef Chorizo", price: $(3) },
+      { name: "Pork Belly Burnt Ends", price: $(3), note: "Fri & Sat only", days: [FRI, SAT] },
+      { name: "Fried Tofu", dietary: ["vegetarian"] },
+      { name: "Refried Bean", dietary: ["vegetarian"] },
+      { name: "Potatoes", dietary: ["vegetarian"] },
+    ],
+  },
+  {
+    key: "nacho_addons",
+    name: "Add-ons",
+    min: 0,
+    max: 1,
+    modifiers: [{ name: "Cowboy Caviar", price: $(3) }],
   },
   {
     key: "flight_dips",
@@ -173,52 +267,13 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     required: true,
     min: 3,
     max: 3,
-    modifiers: [
-      { name: "Queso" },
-      { name: "Guacamole", dietary: ["vegan"] },
-      { name: "Refried Beans", dietary: ["vegan"] },
-      { name: "Salsa Roja", dietary: ["vegan"] },
-    ],
+    modifiers: [{ name: "Queso" }, { name: "Guacamole" }, { name: "Refried Beans" }, { name: "Salsa Roja" }],
   },
 
   /* ---------- Sunday Brunch ---------- */
   {
-    key: "brunch_add_egg",
-    name: "Add Egg",
-    min: 0,
-    max: 1,
-    modifiers: [{ name: "Add Egg", price: $(3) }],
-  },
-  {
-    key: "burrito_addins",
-    name: "Add-ins (inside)",
-    min: 0,
-    max: 5,
-    modifiers: [
-      { name: "Brisket", price: $(5) },
-      { name: "Chorizo", price: $(3) },
-      { name: "Pulled Pork", price: $(3) },
-      { name: "Pork Belly", price: $(4) },
-      { name: "Bacon", price: $(3) },
-    ],
-  },
-  {
-    key: "burrito_addons",
-    name: "Add-ons (on top)",
-    min: 0,
-    max: 6,
-    modifiers: [
-      { name: "Queso", price: $(3) },
-      { name: "Ranchero Sauce", price: $(3) },
-      { name: "Guacamole", price: $(4) },
-      { name: "Sausage Gravy", price: $(4) },
-      { name: "Salsa Roja", price: $(3) },
-      { name: "Over Medium Egg", price: $(3) },
-    ],
-  },
-  {
     key: "breakfast_nacho_addons",
-    name: "Breakfast Nachos Add-ons",
+    name: "Add for Extra Giddy Up",
     min: 0,
     max: 6,
     modifiers: [
@@ -228,6 +283,16 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
       { name: "Chorizo", price: $(5) },
       { name: "Pork Belly", price: $(6) },
       { name: "Fried Tofu", price: $(5), dietary: ["vegan"] },
+    ],
+  },
+  {
+    key: "brunch_burger_addons",
+    name: "Add-ons",
+    min: 0,
+    max: 2,
+    modifiers: [
+      { name: "Add Egg", price: $(3) },
+      { name: "Add Bacon Jam", price: $(2) },
     ],
   },
   {
@@ -255,6 +320,41 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     ],
   },
   {
+    key: "burrito_addins",
+    name: "Add Inside for Extra Giddy Up",
+    min: 0,
+    max: 5,
+    modifiers: [
+      { name: "Brisket", price: $(5) },
+      { name: "Pulled Pork", price: $(3) },
+      { name: "Bacon", price: $(3) },
+      { name: "Chorizo", price: $(4) },
+      { name: "Pork Belly", price: $(4.5) },
+    ],
+  },
+  {
+    key: "burrito_addons",
+    name: "Add on Top",
+    min: 0,
+    max: 6,
+    modifiers: [
+      { name: "Queso", price: $(3.5) },
+      { name: "Guacamole", price: $(3) },
+      { name: "Salsa Roja", price: $(1) },
+      { name: "Ranchero Sauce", price: $(2.5) },
+      { name: "Hatch Chile-Sausage Gravy", price: $(3.5) },
+      { name: "Over Md Egg", price: $(3) },
+    ],
+  },
+  {
+    key: "mimosa_flavor",
+    name: "Juice Flavor",
+    required: true,
+    min: 1,
+    max: 1,
+    modifiers: [{ name: "OJ" }, { name: "Strawberry" }, { name: "Peach" }],
+  },
+  {
     key: "bloody_spirit",
     name: "Vodka or Tequila",
     required: true,
@@ -271,22 +371,6 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     modifiers: [{ name: "Mimosa" }, { name: "Bloody" }],
   },
 
-  /* ---------- Bar ---------- */
-  {
-    key: "coors_bourbon",
-    name: "Add a Shot",
-    min: 0,
-    max: 1,
-    modifiers: [{ name: "Add Bourbon", price: $(3), description: "with Coors Banquet" }],
-  },
-  {
-    key: "tecate_tequila",
-    name: "Add a Shot",
-    min: 0,
-    max: 1,
-    modifiers: [{ name: "Add Tequila", price: $(3), description: "with Tecate" }],
-  },
-
   /* ---------- Cafe ---------- */
   {
     key: "drink_options",
@@ -296,17 +380,10 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     modifiers: [
       { name: "Oat Milk", price: 90 },
       { name: "Almond Milk", price: 90 },
-      { name: "Syrup", price: 80 },
+      { name: "Syrup", price: 80, description: "Vanilla, Caramel, Hazelnut, Lavender, Pistachio Simple, Sugar-Free, & MORE" },
       { name: "Sauce", price: 115 },
-      { name: "Extra Espresso Shot (+1)", price: 150 },
+      { name: "Espresso (+1)", price: 150 },
       { name: "Housemade Syrup", price: 125 },
     ],
-  },
-  {
-    key: "milk_chocolate",
-    name: "Make it Chocolate",
-    min: 0,
-    max: 1,
-    modifiers: [{ name: "Chocolate", price: $(1) }],
   },
 ];

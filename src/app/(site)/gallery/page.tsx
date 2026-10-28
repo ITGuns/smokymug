@@ -19,7 +19,7 @@ export default async function GalleryPage({ searchParams }: { searchParams: Prom
         <ParallaxImage src="/images/spare-ribs-rack.jpg" alt="Smoked full rack of pork spare ribs" sizes="100vw" priority className="h-[70svh] min-h-[480px] w-full rounded-none" speed={0.3} reveal="none">
           <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-charcoal-950/40 to-charcoal-950/30" />
           <div className="container-site absolute inset-x-0 bottom-0 z-[2] pb-14">
-            <p className="eyebrow text-ember-300">Gallery</p>
+            <p className="eyebrow text-teal-300">Gallery</p>
             <SplitText as="h1" delay={0.2} lines={[{ text: "Come hungry." }]} className="mt-3 font-display text-[clamp(3rem,8vw,7rem)] font-semibold leading-[0.95] tracking-[-0.02em] display-wonk text-shadow-hero" />
             <p className="mt-4 max-w-lg text-[15px] text-cream-100/80">{images.length} photos from the pit, the kitchen and the espresso bar.</p>
           </div>

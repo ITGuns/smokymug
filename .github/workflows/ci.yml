@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      # src/db/index.ts creates the pg pool when the module is imported, so the build needs a
+      # DATABASE_URL to exist. Nothing connects during the build (site pages are force-dynamic),
+      # so this dummy URL points at a database that is not there.
+      - name: Build
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/smokymug_test?sslmode=disable
+
+  e2e:
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: smokymug_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d smokymug_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    # Throwaway values for the service container above; none of them is a real credential.
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/smokymug_test?sslmode=disable
+      DIRECT_URL: postgresql://postgres:postgres@localhost:5432/smokymug_test?sslmode=disable
+      ADMIN_EMAIL: owner@smokymug.com
+      ADMIN_PASSWORD: ci-only-admin-password-not-real
+      ADMIN_NAME: CI Owner
+      NEXT_PUBLIC_SITE_URL: http://localhost:3107
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Generate session secret
+        run: |
+          secret="$(openssl rand -hex 32)"
+          echo "::add-mask::$secret"
+          echo "SESSION_SECRET=$secret" >> "$GITHUB_ENV"
+
+      # The source CDN can be flaky from CI runners; the script skips images already in
+      # public/images, and a failed download must not block the suite.
+      - name: Fetch images
+        run: npm run assets:fetch || true
+
+      - name: Create schema and seed
+        run: npm run db:push && npm run db:seed
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Playwright
+        run: npx playwright test
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: tests/report
+          retention-days: 7

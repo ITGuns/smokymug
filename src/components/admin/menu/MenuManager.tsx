@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { deleteMenuItem, duplicateMenuItem, reorderItems, reorderSections, setItemFlag } from "@/actions/menu";
 import { Drawer, ConfirmDialog } from "@/components/admin/overlays";
 import { useToast } from "@/components/admin/toast";
+import { runAction } from "@/components/admin/useAction";
 import { Btn, Card, EmptyState, Input, Select, Tag } from "@/components/admin/ui";
 import { DIETARY_LABELS } from "@/lib/constants";
 import type { CategoryNode, GroupNode, ItemNode, SectionNode } from "@/lib/data/menu";
@@ -43,7 +44,7 @@ export function MenuManager({ categories, groups }: { categories: CategoryNode[]
 
   const flag = async (item: ItemNode, field: "active" | "featured", value: boolean) => {
     setBusy(item.id);
-    const res = await setItemFlag(item.id, field, value);
+    const res = await runAction(() => setItemFlag(item.id, field, value));
     setBusy(null);
     if (res.ok) {
       toast.success(field === "active" ? (value ? "Item shown" : "Item hidden") : value ? "Featured" : "Unfeatured", item.name);
@@ -52,7 +53,7 @@ export function MenuManager({ categories, groups }: { categories: CategoryNode[]
   };
   const duplicate = async (item: ItemNode) => {
     setBusy(item.id);
-    const res = await duplicateMenuItem(item.id);
+    const res = await runAction(() => duplicateMenuItem(item.id));
     setBusy(null);
     if (res.ok) {
       toast.success("Duplicated as hidden copy", `${item.name} (copy)`);
@@ -62,7 +63,7 @@ export function MenuManager({ categories, groups }: { categories: CategoryNode[]
   const confirmDelete = async () => {
     if (!deleting) return;
     setBusy(deleting.id);
-    const res = await deleteMenuItem(deleting.id);
+    const res = await runAction(() => deleteMenuItem(deleting.id));
     setBusy(null);
     setDeleting(null);
     if (res.ok) {
@@ -192,7 +193,7 @@ function CategoryPanel({ category, groups, row, onEditSection, onAddItem }: { ca
   const commitSections = async () => {
     if (!dirty.current) return;
     dirty.current = false;
-    const res = await reorderSections(sections.map((s) => s.id));
+    const res = await runAction(() => reorderSections(sections.map((s) => s.id)));
     if (res.ok) {
       toast.success("Section order saved");
       router.refresh();
@@ -228,7 +229,7 @@ function SectionBlock({ section, groups, row, onEdit, onAddItem, onDragEnd }: { 
   const commit = async () => {
     if (!dirty.current) return;
     dirty.current = false;
-    const res = await reorderItems(section.id, items.map((i) => i.id));
+    const res = await runAction(() => reorderItems(section.id, items.map((i) => i.id)));
     if (res.ok) {
       toast.success("Item order saved");
       router.refresh();

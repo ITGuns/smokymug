@@ -27,7 +27,13 @@ test.describe("Other public pages & routes", () => {
   });
 
   test("gallery deep link opens the lightbox", async ({ page }) => {
-    await page.goto("/gallery?photo=1");
+    // Gallery ids are serial and shift on reseed, so take a real one from the page.
+    await page.goto("/gallery");
+    await page.locator("ul.columns-2 button").first().click();
+    await expect(page).toHaveURL(/photo=(\d+)/);
+    const url = page.url();
+    await page.goto("/");
+    await page.goto(url);
     await expect(page.getByRole("dialog")).toBeVisible();
   });
 

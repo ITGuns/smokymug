@@ -5,6 +5,7 @@ import { useState } from "react";
 import { saveBookingSettings } from "@/actions/settings";
 import type { BookingSettings } from "@/db/schema";
 import { useToast } from "@/components/admin/toast";
+import { useAction } from "@/components/admin/useAction";
 import { Btn, Card, Field, Input, Textarea, Toggle } from "@/components/admin/ui";
 
 export function BookingSettingsForm({ settings: s }: { settings: BookingSettings }) {
@@ -16,14 +17,12 @@ export function BookingSettingsForm({ settings: s }: { settings: BookingSettings
     maxDaysInAdvance: String(s.maxDaysInAdvance), autoConfirm: s.autoConfirm, bookingsEnabled: s.bookingsEnabled, seatingPreferences: s.seatingPreferences.join("\n"), occasions: s.occasions.join("\n"),
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const num = (k: keyof typeof f) => ({ value: f[k] as string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => setF({ ...f, [k]: e.target.value }), error: !!errors[k], type: "number" as const });
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBusy(true);
-    const res = await saveBookingSettings({ ...f, seatingPreferences: f.seatingPreferences.split("\n").map((x) => x.trim()).filter(Boolean), occasions: f.occasions.split("\n").map((x) => x.trim()).filter(Boolean) });
-    setBusy(false);
+    const res = await run(() => saveBookingSettings({ ...f, seatingPreferences: f.seatingPreferences.split("\n").map((x) => x.trim()).filter(Boolean), occasions: f.occasions.split("\n").map((x) => x.trim()).filter(Boolean) }));
     if (res.ok) {
       toast.success("Booking rules saved");
       router.refresh();

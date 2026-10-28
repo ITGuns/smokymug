@@ -1,5 +1,6 @@
 import "server-only";
 import { getClock, storeStatus, type Clock, type StoreStatus } from "./availability";
+import { readDateOverrides } from "./data/booking";
 import { getBookingSettings, getHours, getRestaurant } from "./data/restaurant";
 import { phoneHref } from "./format";
 import type { Hours, RestaurantInfo } from "@/db/schema";
@@ -15,7 +16,9 @@ export type SiteChrome = {
 export async function getSiteChrome(): Promise<SiteChrome> {
   const [restaurant, hours, settings] = await Promise.all([getRestaurant(), getHours(), getBookingSettings()]);
   const clock = getClock(settings.timezone);
-  return { restaurant, hours, clock, status: storeStatus(hours, clock), phoneHref: phoneHref(restaurant.phone) };
+  const [todayOverride] = await readDateOverrides(clock.date);
+  const override = todayOverride?.date === clock.date ? todayOverride : null;
+  return { restaurant, hours, clock, status: storeStatus(hours, clock, override), phoneHref: phoneHref(restaurant.phone) };
 }
 
 export function mapsUrl(r: RestaurantInfo): string {

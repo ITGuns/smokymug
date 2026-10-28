@@ -1,4 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
+import { config } from "dotenv";
+
+// Same env source as tests/e2e/helpers/db.ts, so E2E_DATABASE_URL set in .env.local reaches the dev server too.
+config({ path: ".env.local" });
+const E2E_DATABASE_URL = process.env.E2E_DATABASE_URL;
 
 /** Dedicated port so a dev server from another local project on :3000 is never mistaken for this app. */
 const PORT = Number(process.env.E2E_PORT ?? 3107);
@@ -6,9 +11,9 @@ const BASE_URL = `http://localhost:${PORT}`;
 
 /**
  * End-to-end suite. Runs against a dev server on :3107 (E2E_PORT; reused if already up)
- * and the database in DATABASE_URL. Tests create clearly-labelled "QA" records
- * and remove them afterwards; point DATABASE_URL at a staging database when
- * the production data must not be touched.
+ * and the database in E2E_DATABASE_URL (else DATABASE_URL). Tests create clearly-labelled
+ * "QA" records and remove them afterwards. A Supabase URL is refused unless
+ * E2E_ALLOW_REMOTE=1 (see tests/e2e/helpers/db.ts).
  */
 export default defineConfig({
   testDir: "tests/e2e",
@@ -34,7 +39,10 @@ export default defineConfig({
   webServer: {
     command: `npx next dev -p ${PORT}`,
     url: `${BASE_URL}/robots.txt`,
-    reuseExistingServer: true,
+    // The app must write to the database the helpers read and clean. With E2E_DATABASE_URL set, start a
+    // fresh server pointed at it; reusing one already running on DATABASE_URL would split the two.
+    env: E2E_DATABASE_URL ? { DATABASE_URL: E2E_DATABASE_URL } : undefined,
+    reuseExistingServer: !E2E_DATABASE_URL,
     timeout: 180_000,
   },
 });

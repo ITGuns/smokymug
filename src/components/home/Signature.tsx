@@ -51,7 +51,7 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
                 <TiltCard max={3} className="group h-full">
                   <Link
                     href={`/menu?item=${lead.slug}`}
-                    className="relative block h-full min-h-[420px] overflow-hidden rounded-[28px] bg-charcoal-900 text-cream-50 shadow-card transition-shadow duration-500 hover:shadow-lift lg:min-h-[560px]"
+                    className="relative block h-full min-h-[420px] overflow-hidden rounded-2xl bg-charcoal-900 text-cream-50 shadow-card transition-shadow duration-500 hover:shadow-lift lg:min-h-[560px]"
                   >
                     <Image src={lead.image!} alt={lead.imageAlt ?? lead.name} fill sizes="(min-width: 1024px) 58vw, 84vw" className="object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-[1.04]" />
                     <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/90 via-charcoal-950/30 to-transparent" />
@@ -80,17 +80,18 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
               </RevealItem>
             )}
 
+            {/* C7: rows 3–4 pack as four 3-col cards so no empty cells remain at lg */}
             {rest.map((item, i) => (
               <RevealItem
                 key={item.id}
-                className={cn("w-[78vw] shrink-0 snap-start sm:w-[60vw] md:col-span-3 md:w-auto lg:col-span-5", i >= 2 && "lg:col-span-4")}
+                className={cn("w-[78vw] shrink-0 snap-start sm:w-[60vw] md:col-span-3 md:w-auto", i < 2 ? "lg:col-span-5" : "lg:col-span-3")}
               >
                 <TiltCard max={5} className="group h-full">
                   <Link
                     href={`/menu?item=${item.slug}`}
                     className={cn(
-                      "flex h-full flex-col overflow-hidden rounded-[22px] shadow-card transition-shadow duration-500 hover:shadow-lift",
-                      item.image ? "bg-cream-50" : "bg-charcoal-900 text-cream-50",
+                      "flex h-full flex-col overflow-hidden rounded-2xl shadow-card transition-shadow duration-500 hover:shadow-lift",
+                      item.image ? "bg-cream-50" : "bg-teal-800 text-cream-50",
                     )}
                   >
                     {item.image ? (
@@ -100,12 +101,12 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
                       </div>
                     ) : (
                       <div className="relative flex items-center justify-between px-6 pt-6">
-                        <span className="font-display text-6xl font-semibold leading-none text-ember-400/90 display-wonk">{item.name[0]}</span>
+                        <span className="font-display text-6xl font-semibold leading-none text-teal-300/90 display-wonk">{item.name[0]}</span>
                         {item.availabilityLabel && <Pill tone="emberOnDark">{item.availabilityLabel}</Pill>}
                       </div>
                     )}
                     <div className="flex flex-1 flex-col p-6">
-                      <p className={cn("eyebrow", item.image ? "text-charcoal-500" : "text-cream-100/50")}>{item.sectionName}</p>
+                      <p className={cn("eyebrow", item.image ? "text-charcoal-500" : "text-cream-100/75")}>{item.sectionName}</p>
                       <div className="mt-2 flex items-start justify-between gap-4">
                         <h3 className="font-display text-2xl font-semibold leading-tight">{item.name}</h3>
                         <Price item={item} dark={!item.image} />

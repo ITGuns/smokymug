@@ -22,6 +22,19 @@ describe("storeStatus", () => {
     expect(storeStatus(storeHours, clock({ dayOfWeek: 3, time: "06:00", minutes: 360 })).detail).toBe("Opens today at 7 AM");
     expect(storeStatus(storeHours, clock({ dayOfWeek: 1, time: "13:00", minutes: 780 })).detail).toBe("Opens tomorrow at 7 AM");
   });
+  it("a blackout override closes the store regardless of weekly hours", () => {
+    const override = { id: 1, date: "2026-09-23", closed: true, startTime: null, endTime: null, reason: "Private event", createdAt: "", updatedAt: "" };
+    expect(storeStatus(storeHours, clock({ dayOfWeek: 3, minutes: 600 }), override)).toMatchObject({ isOpen: false, label: "Closed today", detail: "Private event" });
+  });
+  it("a special-hours override replaces the weekly window", () => {
+    const override = { id: 1, date: "2026-09-23", closed: false, startTime: "17:00", endTime: "20:00", reason: null, createdAt: "", updatedAt: "" };
+    expect(storeStatus(storeHours, clock({ dayOfWeek: 3, minutes: 600 }), override)).toMatchObject({ isOpen: false, detail: "Opens today at 5 PM" });
+    expect(storeStatus(storeHours, clock({ dayOfWeek: 3, time: "18:00", minutes: 1080 }), override)).toMatchObject({ isOpen: true, detail: "Closes 8 PM" });
+  });
+  it("an override for another date is ignored", () => {
+    const override = { id: 1, date: "2026-09-24", closed: true, startTime: null, endTime: null, reason: null, createdAt: "", updatedAt: "" };
+    expect(storeStatus(storeHours, clock({ dayOfWeek: 3, minutes: 600 }), override).isOpen).toBe(true);
+  });
 });
 
 describe("isHappyHour", () => {

@@ -6,6 +6,7 @@ import { saveHoursCategory } from "@/actions/hours";
 import type { Hours, HoursCategory } from "@/db/schema";
 import { HOURS_CATEGORIES } from "@/db/schema";
 import { useToast } from "@/components/admin/toast";
+import { useAction } from "@/components/admin/useAction";
 import { Btn, Card, Input } from "@/components/admin/ui";
 import { DAY_NAMES, HOURS_CATEGORY_LABELS } from "@/lib/constants";
 import { cn } from "@/lib/cn";
@@ -33,16 +34,14 @@ export function HoursEditor({ hours }: { hours: Hours[] }) {
   const [category, setCategory] = useState<HoursCategory>("store");
   const [state, setState] = useState<Record<HoursCategory, Row[]>>(() => Object.fromEntries(HOURS_CATEGORIES.map((c) => [c, toRows(hours, c)])) as Record<HoursCategory, Row[]>);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const rows = state[category];
   const update = (i: number, patch: Partial<Row>) => setState({ ...state, [category]: rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)) });
 
   const save = async () => {
-    setBusy(true);
     setErrors({});
     const payload = rows.filter((r) => !(r.isClosed && !r.note)).map((r) => ({ ...r, opensAt: r.opensAt || null, closesAt: r.closesAt || null }));
-    const res = await saveHoursCategory(category, payload);
-    setBusy(false);
+    const res = await run(() => saveHoursCategory(category, payload));
     if (res.ok) {
       toast.success(`${HOURS_CATEGORY_LABELS[category]} saved`, "Live on the website now.");
       router.refresh();

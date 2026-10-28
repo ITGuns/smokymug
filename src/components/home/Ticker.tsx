@@ -6,7 +6,7 @@ export function Ticker({ items }: { items: string[] }) {
         {row.map((t, i) => (
           <span key={i} className="flex items-center gap-10 font-label text-[15px] uppercase tracking-[0.24em] text-charcoal-700">
             {t}
-            <span className="h-1.5 w-1.5 rounded-full bg-ember-500" />
+            <span className="h-1.5 w-1.5 rounded-full bg-red-600" />
           </span>
         ))}
       </div>

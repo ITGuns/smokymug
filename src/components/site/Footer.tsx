@@ -16,12 +16,12 @@ const LINKS = [
 export function Footer({ restaurant: r, hours, phoneHref, todayDow }: { restaurant: RestaurantInfo; hours: Hours[]; phoneHref: string; todayDow: number }) {
   const year = new Date().getFullYear();
   return (
-    <footer className="grain relative overflow-hidden bg-charcoal-950 pb-28 pt-16 text-cream-100 lg:pb-12 lg:pt-20">
-      <div aria-hidden className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-ember-500/10 blur-3xl" />
+    <footer className="grain relative overflow-hidden bg-teal-950 pb-28 pt-16 text-cream-100 lg:pb-12 lg:pt-20">
+      <div aria-hidden className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-teal-400/10 blur-3xl" />
       <div className="container-site relative z-[2] grid gap-12 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-4">
           <Logo invert width={170} />
-          <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-cream-100/70">{r.tagline}</p>
+          <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-cream-100/70">{r.footerTagline ?? r.tagline}</p>
           <address className="mt-6 not-italic text-[15px] leading-relaxed text-cream-100/85">
             <a href={mapsUrl(r)} target="_blank" rel="noopener noreferrer" className="hover:text-cream-50">
               {r.addressLine1}
@@ -41,12 +41,12 @@ export function Footer({ restaurant: r, hours, phoneHref, todayDow }: { restaura
             instagramUrl={r.instagramUrl}
             facebookUrl={r.facebookUrl}
             className="mt-6 gap-3"
-            linkClassName="flex h-10 w-10 items-center justify-center rounded-full border border-cream-50/15 text-cream-100 transition hover:border-ember-400 hover:text-ember-300"
+            linkClassName="flex h-10 w-10 items-center justify-center rounded-full border border-cream-50/15 text-cream-100 transition hover:border-teal-300 hover:text-teal-300"
           />
         </div>
 
         <div className="lg:col-span-2">
-          <h2 className="eyebrow text-ember-300">Explore</h2>
+          <h2 className="eyebrow text-teal-300">Explore</h2>
           <ul className="mt-5 space-y-3">
             {LINKS.map((l) => (
               <li key={l.href}>
@@ -59,7 +59,7 @@ export function Footer({ restaurant: r, hours, phoneHref, todayDow }: { restaura
         </div>
 
         <div className="lg:col-span-2">
-          <h2 className="eyebrow text-ember-300">Programs</h2>
+          <h2 className="eyebrow text-teal-300">Programs</h2>
           <ul className="mt-5 space-y-3">
             {r.giftCardUrl && (
               <li>
@@ -107,7 +107,7 @@ export function Footer({ restaurant: r, hours, phoneHref, todayDow }: { restaura
         </div>
 
         <div className="lg:col-span-4">
-          <h2 className="eyebrow text-ember-300">Hours</h2>
+          <h2 className="eyebrow text-teal-300">Hours</h2>
           <HoursTable hours={hours} tone="dark" className="mt-4" todayDow={todayDow} />
           <p className="mt-3 text-[13px] text-cream-100/50">BBQ may sell out early. Call ahead or follow Instagram.</p>
         </div>

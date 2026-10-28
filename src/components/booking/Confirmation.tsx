@@ -39,7 +39,7 @@ export function Confirmation({
 
   return (
     <div className="mx-auto max-w-xl text-center" role="status" aria-live="polite">
-      <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 260, damping: 18 }} className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-ember-500 text-cream-50 shadow-glow">
+      <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 260, damping: 18 }} className={`mx-auto flex h-20 w-20 items-center justify-center rounded-full text-cream-50 ${cancelled ? "bg-red-600 shadow-glow" : "bg-teal-600 shadow-lift"}`}>
         {cancelled ? (
           <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
         ) : (
@@ -59,7 +59,7 @@ export function Confirmation({
             : "Reservation confirmed. We've saved your table and can't wait to feed you."}
       </p>
 
-      <div className="mt-8 rounded-[24px] border border-charcoal-900/10 bg-cream-50 p-6 text-left shadow-card sm:p-8">
+      <div className="mt-8 rounded-2xl border border-charcoal-900/10 bg-cream-50 p-6 text-left shadow-card sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="eyebrow text-charcoal-500">Confirmation</span>
           <span className="font-label text-2xl tracking-[0.12em] text-charcoal-900">#{r.confirmationCode}</span>
@@ -107,7 +107,7 @@ export function Confirmation({
       <p className="mt-6 text-[13px] text-charcoal-500">
         Need to change something? Call us at <a href={`tel:+1${restaurant.phone.replace(/\D/g, "")}`} className="font-semibold text-charcoal-900">{restaurant.phone}</a>.
       </p>
-      <Link href="/" className="mt-4 inline-block text-[14px] font-semibold text-ember-600 hover:underline">← Back to the smokehouse</Link>
+      <Link href="/" className="mt-4 inline-block text-[14px] font-semibold text-teal-600 hover:underline">← Back to the smokehouse</Link>
     </div>
   );
 }

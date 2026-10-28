@@ -20,23 +20,24 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
           <Reveal delay={0.1} className="mt-8 space-y-6">
             <div>
               <p className="eyebrow text-charcoal-500">Address</p>
-              <a href={mapsUrl(r)} target="_blank" rel="noopener noreferrer" className="mt-1 block font-display text-2xl font-medium text-charcoal-900 hover:text-ember-600">
+              <a href={mapsUrl(r)} target="_blank" rel="noopener noreferrer" className="mt-1 block font-display text-2xl font-medium text-charcoal-900 hover:text-teal-600">
                 {r.addressLine1}
                 <br />
                 {r.city}, {r.state} {r.zip}
               </a>
             </div>
+            {/* C11: email first, phone second; emails stack instead of dropping letters; Call button removed */}
             <div className="grid gap-6 sm:grid-cols-2">
-              <div>
-                <p className="eyebrow text-charcoal-500">Phone</p>
-                <a href={phoneHref} className="mt-1 block text-lg font-semibold text-charcoal-900 hover:text-ember-600">
-                  {r.phone}
+              <div className="min-w-0">
+                <p className="eyebrow text-charcoal-500">Email</p>
+                <a href={`mailto:${r.email}`} className="mt-1 block wrap-anywhere text-lg font-semibold text-charcoal-900 hover:text-teal-600">
+                  {r.email}
                 </a>
               </div>
-              <div>
-                <p className="eyebrow text-charcoal-500">Email</p>
-                <a href={`mailto:${r.email}`} className="mt-1 block break-all text-lg font-semibold text-charcoal-900 hover:text-ember-600">
-                  {r.email}
+              <div className="min-w-0">
+                <p className="eyebrow text-charcoal-500">Phone</p>
+                <a href={phoneHref} className="mt-1 block text-lg font-semibold text-charcoal-900 hover:text-teal-600">
+                  {r.phone}
                 </a>
               </div>
             </div>
@@ -44,21 +45,18 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
               <ButtonLink href={mapsUrl(r)} variant="secondary" arrow>
                 Get Directions
               </ButtonLink>
-              <ButtonLink href={phoneHref} variant="outline" className="text-charcoal-900">
-                Call
-              </ButtonLink>
               <ButtonLink href={`mailto:${r.email}`} variant="outline" className="text-charcoal-900">
                 Email
               </ButtonLink>
             </div>
             <div className="flex gap-4 pt-2 text-[14px] font-semibold text-charcoal-700">
               {r.instagramUrl && (
-                <a href={r.instagramUrl} target="_blank" rel="noopener noreferrer" className="hover:text-ember-600">
+                <a href={r.instagramUrl} target="_blank" rel="noopener noreferrer" className="hover:text-teal-600">
                   Instagram ↗
                 </a>
               )}
               {r.facebookUrl && (
-                <a href={r.facebookUrl} target="_blank" rel="noopener noreferrer" className="hover:text-ember-600">
+                <a href={r.facebookUrl} target="_blank" rel="noopener noreferrer" className="hover:text-teal-600">
                   Facebook ↗
                 </a>
               )}
@@ -72,7 +70,7 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
           )}
         </div>
         <Reveal delay={0.1} className="lg:col-span-7" amount={0.2}>
-          <div className="relative h-[360px] overflow-hidden rounded-[28px] bg-cream-200 shadow-card sm:h-[460px] lg:h-full lg:min-h-[560px]">
+          <div className="relative h-[360px] overflow-hidden rounded-2xl bg-cream-200 shadow-card sm:h-[460px] lg:h-full lg:min-h-[560px]">
             <iframe
               title={`Map showing ${r.name} at ${r.addressLine1}, ${r.city}`}
               src={mapsEmbedUrl(r)}

@@ -145,7 +145,7 @@ export function ImageCarousel({
                 {i === index && (
                   <motion.span
                     key={cycle}
-                    className="block h-full bg-ember-300"
+                    className="block h-full bg-red-400"
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: paused || !animated ? 1 : 1 }}
                     transition={{ duration: animated && !paused ? interval / 1000 : 0, ease: "linear" }}

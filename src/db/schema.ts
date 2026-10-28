@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, customType, index, integer, jsonb, pgTable, primaryKey, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { boolean, check, customType, index, integer, jsonb, pgTable, primaryKey, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 /* ------------------------------------------------------------------ */
 /* Shared vocab                                                        */
@@ -22,7 +22,7 @@ export type AvailabilityType = (typeof AVAILABILITY_TYPES)[number];
 export const RESERVATION_STATUSES = ["pending", "confirmed", "cancelled", "completed", "no_show"] as const;
 export type ReservationStatus = (typeof RESERVATION_STATUSES)[number];
 
-export const HOURS_CATEGORIES = ["store", "breakfast", "cafe_fare", "cafe_drinks", "bbq", "brunch", "happy_hour", "wine_wednesday"] as const;
+export const HOURS_CATEGORIES = ["store", "breakfast", "cafe_fare", "cafe_drinks", "bbq", "tex_mex", "brunch", "happy_hour", "wine_wednesday"] as const;
 export type HoursCategory = (typeof HOURS_CATEGORIES)[number];
 
 export const SECTION_TYPES = ["items", "addons"] as const;
@@ -49,6 +49,9 @@ export const restaurantInfo = pgTable("restaurant_info", {
   id: integer("id").primaryKey(),
   name: text("name").notNull(),
   tagline: text("tagline").notNull(),
+  // C10: the footer tagline is its own editable string (falls back to tagline),
+  // so the copy-sheet replacement can't ripple into the hero.
+  footerTagline: text("footer_tagline"),
   category: text("category").notNull(),
   description: text("description").notNull(),
   addressLine1: text("address_line1").notNull(),
@@ -66,6 +69,8 @@ export const restaurantInfo = pgTable("restaurant_info", {
   loyaltyUrl: text("loyalty_url"),
   marketingSignupUrl: text("marketing_signup_url"),
   brunchReservationUrl: text("brunch_reservation_url"),
+  // C2/Q8: SpotOn online-ordering link. ORDER NOW buttons hide while this is empty.
+  orderUrl: text("order_url"),
   logoUrl: text("logo_url"),
   ogImageUrl: text("og_image_url"),
   features: jsonArray<string[]>("features"),
@@ -172,6 +177,12 @@ export const reservations = pgTable(
     uniqueIndex("reservations_idem_idx").on(t.idempotencyKey),
     index("reservations_date_idx").on(t.date, t.time),
     index("reservations_status_idx").on(t.status),
+    // Integrity the app also checks; the DB enforces it against raw writes and races.
+    check("reservations_party_size_check", sql`${t.partySize} between 1 and 50`),
+    check("reservations_status_check", sql`${t.status} in ('pending', 'confirmed', 'cancelled', 'completed', 'no_show')`),
+    uniqueIndex("reservations_active_slot_idx")
+      .on(t.email, t.date, t.time)
+      .where(sql`${t.status} in ('pending', 'confirmed')`),
   ],
 );
 
@@ -369,6 +380,8 @@ export const adminUsers = pgTable(
     /** scrypt: salt:hash (hex) */
     passwordHash: text("password_hash").notNull(),
     role: text("role").notNull().default("admin"),
+    /** Bumped on password change; sessions carrying an older value are rejected. */
+    sessionVersion: integer("session_version").notNull().default(1),
     lastLoginAt: text("last_login_at"),
     ...timestamps,
   },

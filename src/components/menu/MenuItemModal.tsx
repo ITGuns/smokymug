@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import type { AvailabilityInfo } from "@/lib/availability";
 import type { ItemNode } from "@/lib/data/menu";
 import { DietaryBadge, Pill } from "@/components/ui/Badge";
@@ -10,6 +10,7 @@ import { DIETARY_LABELS } from "@/lib/constants";
 import { priceAdjustment } from "@/lib/format";
 import { PriceTag } from "./PriceTag";
 import { cn } from "@/lib/cn";
+import { useFocusTrap } from "@/components/useFocusTrap";
 
 export function MenuItemModal({
   item,
@@ -24,37 +25,7 @@ export function MenuItemModal({
 }) {
   const reduce = useReducedMotion();
   const panelRef = useRef<HTMLDivElement>(null);
-  const lastFocused = useRef<Element | null>(null);
-
-  useEffect(() => {
-    if (!item) return;
-    lastFocused.current = document.activeElement;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "Tab" && panelRef.current) {
-        const focusables = panelRef.current.querySelectorAll<HTMLElement>('button, [href], input, [tabindex]:not([tabindex="-1"])');
-        if (!focusables.length) return;
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    const t = setTimeout(() => panelRef.current?.querySelector<HTMLElement>("[data-autofocus]")?.focus(), 30);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-      clearTimeout(t);
-      (lastFocused.current as HTMLElement | null)?.focus?.();
-    };
-  }, [item, onClose]);
+  useFocusTrap(!!item, panelRef, { onClose });
 
   return (
     <AnimatePresence>
@@ -78,7 +49,7 @@ export function MenuItemModal({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative flex max-h-[92svh] w-full max-w-2xl flex-col overflow-hidden rounded-t-[28px] bg-cream-50 shadow-lift sm:rounded-[28px]"
+            className="relative flex max-h-[92svh] w-full max-w-2xl flex-col overflow-hidden rounded-t-2xl bg-cream-50 shadow-lift sm:rounded-2xl"
           >
             <button
               type="button"
@@ -98,8 +69,8 @@ export function MenuItemModal({
                   <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/50 to-transparent" />
                 </div>
               ) : (
-                <div className="grain relative flex h-28 items-end bg-charcoal-900 px-6 pb-4 sm:h-32 sm:px-8">
-                  <span className="relative z-[2] font-display text-6xl font-semibold leading-none text-ember-400/80 display-wonk sm:text-7xl">{item.name[0]}</span>
+                <div className="grain relative flex h-28 items-end bg-teal-900 px-6 pb-4 sm:h-32 sm:px-8">
+                  <span className="relative z-[2] font-display text-6xl font-semibold leading-none text-teal-300/80 display-wonk sm:text-7xl">{item.name[0]}</span>
                 </div>
               )}
               <div className="p-6 sm:p-8">

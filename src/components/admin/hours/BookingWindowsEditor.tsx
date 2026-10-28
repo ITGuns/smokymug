@@ -6,6 +6,7 @@ import { deleteBookingWindow, saveBookingWindow } from "@/actions/hours";
 import type { BookingWindow } from "@/db/schema";
 import { ConfirmDialog, Drawer } from "@/components/admin/overlays";
 import { useToast } from "@/components/admin/toast";
+import { useAction } from "@/components/admin/useAction";
 import { Btn, Card, EmptyState, Field, Input, Select, Tag, Toggle } from "@/components/admin/ui";
 import { DAY_NAMES } from "@/lib/constants";
 import { time12 } from "@/lib/format";
@@ -16,14 +17,12 @@ export function BookingWindowsEditor({ windows, slotInterval }: { windows: Booki
   const toast = useToast();
   const [editing, setEditing] = useState<BookingWindow | null | "new">(null);
   const [deleting, setDeleting] = useState<BookingWindow | null>(null);
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const byDay = [1, 2, 3, 4, 5, 6, 0].map((d) => ({ day: d, list: windows.filter((w) => w.dayOfWeek === d) }));
 
   const remove = async () => {
     if (!deleting) return;
-    setBusy(true);
-    const res = await deleteBookingWindow(deleting.id);
-    setBusy(false);
+    const res = await run(() => deleteBookingWindow(deleting.id));
     setDeleting(null);
     if (res.ok) {
       toast.success("Window removed");
@@ -66,12 +65,10 @@ function WindowForm({ w, onDone, onDelete }: { w: BookingWindow | null; onDone: 
   const toast = useToast();
   const [f, setF] = useState({ dayOfWeek: String(w?.dayOfWeek ?? 5), startTime: w?.startTime ?? "17:00", endTime: w?.endTime ?? "20:00", label: w?.label ?? "", active: w?.active ?? true });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBusy(true);
-    const res = await saveBookingWindow({ ...f, id: w?.id });
-    setBusy(false);
+    const res = await run(() => saveBookingWindow({ ...f, id: w?.id }));
     if (res.ok) {
       toast.success("Window saved");
       onDone();

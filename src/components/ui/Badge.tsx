@@ -7,8 +7,8 @@ const dietaryStyles: Record<DietaryTag, string> = {
   "vegetarian-option": "bg-sage-500/10 text-sage-700 ring-sage-500/25",
   vegan: "bg-sage-600/20 text-sage-700 ring-sage-600/35",
   "vegan-option": "bg-sage-600/10 text-sage-700 ring-sage-600/25",
-  "gluten-free": "bg-gold-400/25 text-wood-700 ring-gold-500/40",
-  "gluten-free-option": "bg-gold-400/15 text-wood-700 ring-gold-500/30",
+  "gluten-free": "bg-teal-600/15 text-teal-700 ring-teal-600/35",
+  "gluten-free-option": "bg-teal-600/8 text-teal-700 ring-teal-600/25",
   "non-alcoholic": "bg-charcoal-900/8 text-charcoal-700 ring-charcoal-900/15",
 };
 
@@ -39,14 +39,17 @@ export function Pill({
   tone?: "neutral" | "ember" | "emberOnDark" | "sage" | "gold" | "brick" | "dark" | "light";
   className?: string;
 }) {
+  /* Rev 1 retheme (handoff 6.1): tone keys are legacy names kept so call sites
+     don't break. "ember"/"emberOnDark" now render the red accent tag, "gold"
+     renders a teal info tag. Red is tags/highlights only; never red text on teal. */
   const tones = {
     neutral: "bg-charcoal-900/6 text-charcoal-700 ring-charcoal-900/10",
-    ember: "bg-ember-500/12 text-ember-700 ring-ember-500/30",
-    emberOnDark: "bg-ember-400/15 text-ember-300 ring-ember-400/35",
+    ember: "bg-red-600 text-cream-50 ring-red-600",
+    emberOnDark: "bg-red-500 text-cream-50 ring-red-300/50",
     sage: "bg-sage-500/15 text-sage-700 ring-sage-500/30",
-    gold: "bg-gold-400/25 text-wood-700 ring-gold-500/40",
+    gold: "bg-teal-600/10 text-teal-700 ring-teal-600/25",
     brick: "bg-brick-600/10 text-brick-600 ring-brick-600/25",
-    dark: "bg-charcoal-900 text-cream-100 ring-charcoal-900",
+    dark: "bg-teal-800 text-cream-100 ring-teal-800",
     light: "bg-cream-50/90 text-charcoal-900 ring-cream-300 backdrop-blur",
   };
   return (

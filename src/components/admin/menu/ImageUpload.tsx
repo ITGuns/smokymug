@@ -19,15 +19,26 @@ export function ImageUpload({ value, onChange }: { value: string; onChange: (v: 
   const [showLibrary, setShowLibrary] = useState(false);
 
   const upload = async (file: File) => {
+    // Stay under the 4 MB server-action body limit (form encoding adds overhead).
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error("That image is over 3 MB. Resize it and try again.");
+      return;
+    }
     setBusy(true);
-    const fd = new FormData();
-    fd.append("file", file);
-    const res = await uploadImage(fd);
-    setBusy(false);
-    if (res.ok) {
-      onChange(res.data.path);
-      toast.success("Image uploaded");
-    } else toast.error(res.error);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await uploadImage(fd);
+      if (res.ok) {
+        onChange(res.data.path);
+        toast.success("Image uploaded");
+      } else toast.error(res.error);
+    } catch {
+      toast.error("Upload failed. Check your connection and try again.");
+    } finally {
+      setBusy(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
   };
 
   return (
@@ -44,7 +55,7 @@ export function ImageUpload({ value, onChange }: { value: string; onChange: (v: 
             <Btn size="sm" variant="ghost" onClick={() => setShowLibrary((v) => !v)}>{showLibrary ? "Hide library" : "Choose from library"}</Btn>
             {value && <Btn size="sm" variant="ghost" className="text-red-600" onClick={() => onChange("")}>Remove</Btn>}
           </div>
-          <p className="text-[12px] text-zinc-500">JPG, PNG or WebP up to 6 MB.</p>
+          <p className="text-[12px] text-zinc-500">JPG, PNG or WebP up to 3 MB.</p>
         </div>
       </div>
       {showLibrary && (

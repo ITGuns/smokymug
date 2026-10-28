@@ -1,4 +1,4 @@
-import type { Hours, HoursCategory, MenuCategory, MenuItem, Modifier } from "@/db/schema";
+import type { DateOverride, Hours, HoursCategory, MenuCategory, MenuItem, Modifier } from "@/db/schema";
 import { DAY_NAMES } from "./constants";
 import { daysLabel, time12, toMinutes } from "./format";
 
@@ -65,8 +65,30 @@ export type StoreStatus = {
   today: Hours | undefined;
 };
 
-export function storeStatus(rows: Hours[], clock: Clock): StoreStatus {
+export function storeStatus(rows: Hours[], clock: Clock, override?: DateOverride | null): StoreStatus {
   const today = hoursFor(rows, "store", clock.dayOfWeek);
+  // A blackout or special-hours override for today outranks the weekly table,
+  // so the header never says "Open now" on a holiday closure.
+  if (override && override.date === clock.date) {
+    if (override.closed) {
+      return { isOpen: false, label: "Closed today", detail: override.reason ?? "", today };
+    }
+    if (override.startTime && override.endTime) {
+      const open = toMinutes(override.startTime);
+      const close = toMinutes(override.endTime);
+      if (clock.minutes >= open && clock.minutes < close) {
+        return {
+          isOpen: true,
+          label: close - clock.minutes <= 60 ? "Closing soon" : "Open now",
+          detail: `Closes ${time12(override.endTime, { compact: true })}`,
+          today,
+        };
+      }
+      return clock.minutes < open
+        ? { isOpen: false, label: "Closed", detail: `Opens today at ${time12(override.startTime, { compact: true })}`, today }
+        : { isOpen: false, label: "Closed", detail: "", today };
+    }
+  }
   const win = resolveWindow(rows, today);
   if (win && clock.minutes >= win.open && clock.minutes < win.close) {
     const closingSoon = win.close - clock.minutes <= 60;
