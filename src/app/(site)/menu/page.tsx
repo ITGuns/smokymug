@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Suspense } from "react";
 import { MenuExplorer } from "@/components/menu/MenuExplorer";
+import { MenuFootnotes } from "@/components/menu/MenuFootnotes";
 import { Pill } from "@/components/ui/Badge";
 import { isHappyHour, itemAvailability, type AvailabilityInfo } from "@/lib/availability";
 import { getMenuTree } from "@/lib/data/menu";
@@ -62,6 +63,7 @@ export default async function MenuPage({ searchParams }: { searchParams: Promise
       <Suspense fallback={<div className="container-site py-20 text-charcoal-500">Loading menu…</div>}>
         <MenuExplorer categories={tree.categories} availability={availability} happyHourNow={happyHourNow} initialCategory={params.category} initialItem={params.item} />
       </Suspense>
+      <MenuFootnotes />
     </>
   );
 }
