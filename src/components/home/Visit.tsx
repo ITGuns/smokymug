@@ -30,8 +30,16 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="min-w-0">
                 <p className="eyebrow text-charcoal-500">Email</p>
+                {/* Board H10/CO02: stack at the @ instead of dropping letters mid-word */}
                 <a href={`mailto:${r.email}`} className="mt-1 block wrap-anywhere text-lg font-semibold text-charcoal-900 hover:text-teal-600">
-                  {r.email}
+                  {r.email.includes("@") ? (
+                    <>
+                      {r.email.split("@")[0]}
+                      <wbr />@{r.email.split("@").slice(1).join("@")}
+                    </>
+                  ) : (
+                    r.email
+                  )}
                 </a>
               </div>
               <div className="min-w-0">

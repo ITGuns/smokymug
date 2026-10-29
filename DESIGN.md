@@ -66,6 +66,17 @@ Rules (handoff 6.1):
 - **L6-A calendar**: month grid with pop-out. Event-type icons are CHECK — do not
   build without scope sign-off.
 
+## 4b. Confirmed from the client's board markup (captured 2026-10-30)
+
+Source: FEEDBACK-discovery-board.md. The client marked choices as green X's on the
+option circles; these confirm the layouts above (L1-A, L2-D, L4-A, L5-A, L6-A) plus
+the dials: corners Round 16px, spacing Standard, photos full color except under
+text (keep scrims where type sits on photos), headings Bigger with copy sized up
+on mobile. Client copy now seeded: hero tagline, footer tagline, intro paragraph,
+menu H1 ends "Brew.", gallery subline, catering contact bookings.smokymug@gmail.com.
+Order Now on menu cards: anchored bottom left, red (featured-action color), tags and
+Options one row up; hidden until the SpotOn URL is set (Q8).
+
 ## 5. Motion
 
 Keep the existing restrained motion system (smoke layers, reveals, carousels);

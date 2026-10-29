@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function MenuPage({ searchParams }: { searchParams: Promise<{ category?: string; item?: string }> }) {
-  const [{ hours, clock, status }, tree, params] = await Promise.all([getSiteChrome(), getMenuTree(), searchParams]);
+  const [{ hours, clock, status, restaurant }, tree, params] = await Promise.all([getSiteChrome(), getMenuTree(), searchParams]);
   const availability: Record<number, AvailabilityInfo> = {};
   for (const cat of tree.categories) {
     for (const sec of cat.sections) {
@@ -41,8 +41,9 @@ export default async function MenuPage({ searchParams }: { searchParams: Promise
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/90 via-charcoal-950/65 to-charcoal-950/45" />
         <div className="container-site relative z-[2]">
           <p className="eyebrow text-teal-300">The menu</p>
+          {/* Board MB01/MD01: "Brew." appended to the menu headline (client's blue markup) */}
           <h1 className="mt-4 font-display text-[clamp(2.8rem,7vw,6rem)] font-semibold leading-[0.95] tracking-[-0.02em] display-wonk">
-            Breakfast. Barbecue. Brunch. Bar.
+            Breakfast. Barbecue. Brunch. Bar. Brew.
           </h1>
           <div className="mt-6 flex flex-wrap items-center gap-2">
             <Pill tone="light">
@@ -60,7 +61,7 @@ export default async function MenuPage({ searchParams }: { searchParams: Promise
         </div>
       </section>
       <Suspense fallback={<div className="container-site py-20 text-charcoal-500">Loading menu…</div>}>
-        <MenuExplorer categories={tree.categories} availability={availability} happyHourNow={happyHourNow} initialCategory={params.category} initialItem={params.item} />
+        <MenuExplorer categories={tree.categories} availability={availability} happyHourNow={happyHourNow} initialCategory={params.category} initialItem={params.item} orderUrl={restaurant.orderUrl} />
       </Suspense>
     </>
   );

@@ -4,12 +4,16 @@ import { FRI, MON, SAT, SUN, THU, TUE, WED } from "./types";
 export const RESTAURANT = {
   id: 1,
   name: "The Smoky Mug",
-  tagline: "Richmond's Best Texas Craft BBQ + Cafe in Brookland Park!",
-  // C10: footer tagline copy will be replaced by Dan via the copy sheet (E1)
-  footerTagline: null as string | null,
-  category: "Cafe & Craft Barbecue & Tex-Mex Kitchen",
+  // Discovery board H01: hero subheading replaced (blue markup, client's words)
+  tagline: "Craft Tex Mex & Barbecue Restaurant. Coffee, cocktail, and pastry programs included.",
+  // Discovery board H11: footer copy replaced (blue markup, client's words)
+  footerTagline: "Craft Tex-Mex & Barbecue Restaurant. Kitchen + Cafe + Bar. Breakfast + Lunch + Dinner." as string | null,
+  category: "All-Day Craft, Tex-Mex & Barbecue Kitchen",
+  // Discovery board H02: intro paragraph replaced (blue markup; board spells
+  // "epsresso", written here as espresso). Location prefix kept for SEO/JsonLd;
+  // the home page strips it before rendering the intro blurb.
   description:
-    "Cafe & Craft Barbecue & Tex-Mex Kitchen in Northside Richmond, VA. Coffee and elevated cafe fare served every day. Top class brisket, pulled pork, ribs, and more smoked on site and plated through a unique rotating Tex-mex menu.",
+    "All-Day Craft, Tex-Mex & Barbecue Kitchen in Northside Richmond, VA. A morning to night Tex-Mex experience including slow smoked brisket, pulled pork, ribs, and more. Accompanied by a full espresso bar, pastry program, and crafted cocktails.",
   addressLine1: "2930 North Avenue",
   city: "Richmond",
   state: "VA",
@@ -17,6 +21,8 @@ export const RESTAURANT = {
   neighborhood: "Brookland Park (Historic Brookland Park Blvd business corridor), Northside Richmond",
   phone: "(804) 562-3722",
   email: "thesmokymug@gmail.com",
+  // Discovery board CA03: catering page contact address (blue markup)
+  cateringEmail: "bookings.smokymug@gmail.com" as string | null,
   website: "https://www.smokymug.com",
   instagramUrl: "https://www.instagram.com/thesmokymug",
   facebookUrl: "https://www.facebook.com/thesmokymug",

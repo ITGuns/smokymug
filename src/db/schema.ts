@@ -61,6 +61,8 @@ export const restaurantInfo = pgTable("restaurant_info", {
   neighborhood: text("neighborhood"),
   phone: text("phone").notNull(),
   email: text("email").notNull(),
+  // Board CA03: catering inquiries address (falls back to email when empty)
+  cateringEmail: text("catering_email"),
   website: text("website"),
   instagramUrl: text("instagram_url"),
   facebookUrl: text("facebook_url"),

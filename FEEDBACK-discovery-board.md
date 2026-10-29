@@ -224,15 +224,19 @@ Client-confirmed but still CHECK items (Genrou must sign off scope before build)
   D1 menu item scheduling in admin (MB03), B6-adjacent calendar icon legend (L6).
 - "Brew" additions (MB01 H1 + MD01) answer held item C12/Q6 in the client's favor.
 
-New, small, buildable copy/UX changes not in the handoff:
-- H01 remove the hero script logo stamp (red X on the board).
-- H02 heading + intro copy swap, Pit before Cafe, new inset photo.
-- H01 hero subheading copy swap; footer tagline copy (H11); gallery hero copy (GA01).
-- Visit/Contact: swap phone and email columns, drop the Call button, fix email
-  wrapping by stacking lines rather than breaking the address.
-- Footer Calendar link (BK03), bookings.smokymug@gmail.com as catering contact (CA03).
-- H04 fill the empty right strip; GA03 masonry packing; bigger headings and bigger
-  mobile copy (dials).
+New, small, buildable copy/UX changes not in the handoff — APPLIED 30 Oct 2026
+(see CHANGELOG-discovery.md "Client board feedback applied"):
+- Hero/footer taglines, intro copy, menu H1 "Brew.", gallery subline: seeded.
+- bookings.smokymug@gmail.com on the catering page via a new admin-editable
+  "Catering inquiries email" setting (CA03).
+- Order Now pill bottom-left on menu cards, hidden until the SpotOn URL exists (NW04).
+- Email addresses break at the @, never mid-word (H10/CO02).
+- Already satisfied by the discovery-r1 rebuild, verified, no code change: hero
+  logo stamp removal, H02 heading/flip/inset photo, Call button removal and
+  email/phone swap, H04 full-width signature grid, GA03 masonry packing (column
+  bottoms within 95px at desktop), bigger headings + 17px body floor.
+- Deliberately NOT applied: footer Calendar link (no /calendar page yet), hours
+  edits (2026-menu conflict, Q9), CA01 Express Catering button (phase 2).
 
 Still undecided on the board:
 - Fonts and color palette (both choice boxes empty, nothing marked; the handoff's

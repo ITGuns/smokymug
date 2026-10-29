@@ -5,7 +5,7 @@ test.describe("Homepage", () => {
     await page.goto("/");
     await expect(page).toHaveTitle(/The Smoky Mug \| Texas Craft BBQ/);
     await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("Smoked low. Brewed slow.");
-    await expect(page.getByText("Richmond's Best Texas Craft BBQ + Cafe in Brookland Park!").first()).toBeVisible();
+    await expect(page.getByText("Craft Tex Mex & Barbecue Restaurant. Coffee, cocktail, and pastry programs included.").first()).toBeVisible();
 
     const nav = page.getByRole("navigation", { name: "Primary" });
     for (const label of ["Menu", "Our Story", "Catering", "Gallery", "Contact"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
