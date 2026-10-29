@@ -1,4 +1,5 @@
 import type { Hours, RestaurantInfo } from "@/db/schema";
+import { EmailLink } from "@/components/site/EmailLink";
 import { HoursTable } from "@/components/site/HoursTable";
 import { Reveal } from "@/components/ui/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
@@ -30,17 +31,7 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="min-w-0">
                 <p className="eyebrow text-charcoal-500">Email</p>
-                {/* Board H10/CO02: stack at the @ instead of dropping letters mid-word */}
-                <a href={`mailto:${r.email}`} className="mt-1 block wrap-anywhere text-lg font-semibold text-charcoal-900 hover:text-teal-600">
-                  {r.email.includes("@") ? (
-                    <>
-                      {r.email.split("@")[0]}
-                      <wbr />@{r.email.split("@").slice(1).join("@")}
-                    </>
-                  ) : (
-                    r.email
-                  )}
-                </a>
+                <EmailLink email={r.email} className="mt-1 block text-lg font-semibold text-charcoal-900 hover:text-teal-600" />
               </div>
               <div className="min-w-0">
                 <p className="eyebrow text-charcoal-500">Phone</p>

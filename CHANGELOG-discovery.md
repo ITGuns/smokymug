@@ -122,6 +122,11 @@ the small, unambiguous site changes were applied the same day:
   hidden until then (Q8 still open). Card markup restructured (button + link
   siblings) so the modal click target and the order link don't nest.
 - Visit/Contact email now breaks at the @ (never mid-word) via <wbr> (H10/CO02).
+  Follow-up same day: extracted as <EmailLink> (wrap-break-word + <wbr>) and used
+  for every rendered address (Visit, footer, catering); the old wrap-anywhere
+  utility (which allowed mid-word breaks) is removed. Responsive sweep of all six
+  public pages at 320/390/768px found no horizontal overflow and no mid-word
+  wraps; stacking verified by forcing a 150px container (breaks exactly at the @).
 - Verified already satisfied by the rebuild, no change: hero logo stamp removed
   (red X = C1), H02 heading/intro flip (C4/C5), Call button removed + email/phone
   swap (C11), signature grid packs full width (C7/H04), gallery masonry bottoms

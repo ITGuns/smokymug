@@ -193,10 +193,8 @@
 @utility text-shadow-hero {
   text-shadow: 0 2px 24px rgb(0 0 0 / 0.45), 0 1px 2px rgb(0 0 0 / 0.5);
 }
-/* 6.2: emails/URLs stack instead of dropping letters; pair with min-w-0 on the row */
-@utility wrap-anywhere {
-  overflow-wrap: anywhere;
-}
+/* 6.2: emails stack at the @ instead of dropping letters — use <EmailLink>
+   (wrap-break-word + <wbr>); pair with min-w-0 on the row */
 @utility mask-fade-b {
   mask-image: linear-gradient(to bottom, black 70%, transparent);
 }
