@@ -13,7 +13,7 @@ export function RestaurantForm({ info }: { info: RestaurantInfo }) {
   const toast = useToast();
   const [f, setF] = useState({
     name: info.name, tagline: info.tagline, footerTagline: info.footerTagline ?? "", category: info.category, description: info.description, addressLine1: info.addressLine1, city: info.city, state: info.state, zip: info.zip,
-    neighborhood: info.neighborhood ?? "", phone: info.phone, email: info.email, website: info.website ?? "", instagramUrl: info.instagramUrl ?? "", facebookUrl: info.facebookUrl ?? "",
+    neighborhood: info.neighborhood ?? "", phone: info.phone, email: info.email, cateringEmail: info.cateringEmail ?? "", website: info.website ?? "", instagramUrl: info.instagramUrl ?? "", facebookUrl: info.facebookUrl ?? "",
     giftCardUrl: info.giftCardUrl ?? "", giftCardBalanceUrl: info.giftCardBalanceUrl ?? "", loyaltyUrl: info.loyaltyUrl ?? "", marketingSignupUrl: info.marketingSignupUrl ?? "", brunchReservationUrl: info.brunchReservationUrl ?? "", orderUrl: info.orderUrl ?? "",
     features: info.features.join("\n"), cafeSummary: info.cafeSummary ?? "", bbqSummary: info.bbqSummary ?? "",
   });
@@ -51,6 +51,7 @@ export function RestaurantForm({ info }: { info: RestaurantInfo }) {
           </div>
           <Field label="Phone" htmlFor="r-phone" error={errors.phone} required><Input {...t("phone")} required /></Field>
           <Field label="Email" htmlFor="r-email" error={errors.email} required><Input type="email" {...t("email")} required /></Field>
+          <Field label="Catering inquiries email" htmlFor="r-cateringEmail" error={errors.cateringEmail} hint="Shown on the catering page. Leave blank to reuse the main email."><Input type="email" {...t("cateringEmail")} /></Field>
           <Field label="Cafe summary" htmlFor="r-cafeSummary" error={errors.cafeSummary} className="sm:col-span-2"><Input {...t("cafeSummary")} /></Field>
           <Field label="BBQ summary" htmlFor="r-bbqSummary" error={errors.bbqSummary} className="sm:col-span-2"><Input {...t("bbqSummary")} /></Field>
           <Field label="Features (one per line)" htmlFor="r-features" className="sm:col-span-2"><Textarea {...t("features")} className="min-h-[140px]" /></Field>

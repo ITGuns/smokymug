@@ -101,6 +101,41 @@ hot Mocha 4.75|5.50, hot Matcha Latte 6.25|7.95, iced Matcha Latte 4.35|8.05,
 Dirty Soda single 4.75; happy hour Tue-Sat (bar page) vs "daily" (BBQ/Tex Mex
 pages); Meat Market units no longer printed; sampler choice count assumed 4.
 
+## Client board feedback applied (30 Oct 2026, from FEEDBACK-discovery-board.md)
+
+The client's Excalidraw markup was captured in full to FEEDBACK-discovery-board.md;
+the small, unambiguous site changes were applied the same day:
+
+- Copy (client's blue markup, verbatim): hero tagline "Craft Tex Mex & Barbecue
+  Restaurant. Coffee, cocktail, and pastry programs included."; footer tagline
+  "Craft Tex-Mex & Barbecue Restaurant. Kitchen + Cafe + Bar. Breakfast + Lunch +
+  Dinner."; intro paragraph ("A morning to night Tex-Mex experience...", espresso
+  spelling fixed); menu H1 now ends "Brew." (MB01/MD01); gallery subline "Eat with
+  your eyes. Then come give your mouth a turn." All seeded: apply with
+  `npm run db:reseed` + cache clear, same caveats as the 2026 menu entry.
+- Catering contact (CA03): new `catering_email` column + admin Settings field
+  ("Catering inquiries email", falls back to the main email), seeded with
+  bookings.smokymug@gmail.com; the catering page and form hint use it.
+  Schema change: run `npm run db:push` before reseeding.
+- NW04 order buttons: menu item cards show a red "Order Now" pill anchored bottom
+  left (tags/Options row sits above it) once the SpotOn URL is set in Settings;
+  hidden until then (Q8 still open). Card markup restructured (button + link
+  siblings) so the modal click target and the order link don't nest.
+- Visit/Contact email now breaks at the @ (never mid-word) via <wbr> (H10/CO02).
+  Follow-up same day: extracted as <EmailLink> (wrap-break-word + <wbr>) and used
+  for every rendered address (Visit, footer, catering); the old wrap-anywhere
+  utility (which allowed mid-word breaks) is removed. Responsive sweep of all six
+  public pages at 320/390/768px found no horizontal overflow and no mid-word
+  wraps; stacking verified by forcing a 150px container (breaks exactly at the @).
+- Verified already satisfied by the rebuild, no change: hero logo stamp removed
+  (red X = C1), H02 heading/intro flip (C4/C5), Call button removed + email/phone
+  swap (C11), signature grid packs full width (C7/H04), gallery masonry bottoms
+  within 95px at desktop (GA03), bigger headings + 17px body floor (dials).
+- NOT built (still gated): CHECK items C9/C13/C14/D1/B6 (client confirmed wanting
+  them on the board; Genrou's written scope sign-off still required), hours edits
+  (board conflicts with the 2026 menu, Q9), phase-2 pages NW01/NW02/NW03 and the
+  CA01 Express Catering button, footer Calendar link (no /calendar page yet).
+
 ## Open inputs still needed (handoff §4)
 
 Q1 final teal/red values · Q2 Roadstore file + license · Q4 confirm dropdown

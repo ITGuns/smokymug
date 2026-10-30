@@ -36,6 +36,17 @@ function isHttpUrl(v: string): boolean {
     return false;
   }
 }
+/** Optional email: "" → null, otherwise a valid address. */
+const optionalEmail = (max = 120) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .refine((v) => !v || z.email().safeParse(v).success, "Enter a valid email")
+    .transform((v) => (v ? v : null))
+    .nullable()
+    .optional();
+
 /** External link: "" → null, otherwise an absolute http(s) URL. A bare "smokymug.com" would render as a broken relative link. */
 const optionalHttpUrl = (max = 500) =>
   z
@@ -239,6 +250,7 @@ export const restaurantInfoInput = z.object({
   neighborhood: emptyToNull(200),
   phone: z.string().trim().min(7).max(25),
   email: z.email().max(120),
+  cateringEmail: optionalEmail(120),
   website: optionalHttpUrl(200),
   instagramUrl: optionalHttpUrl(200),
   facebookUrl: optionalHttpUrl(200),

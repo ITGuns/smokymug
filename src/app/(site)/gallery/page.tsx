@@ -21,7 +21,8 @@ export default async function GalleryPage({ searchParams }: { searchParams: Prom
           <div className="container-site absolute inset-x-0 bottom-0 z-[2] pb-14">
             <p className="eyebrow text-teal-300">Gallery</p>
             <SplitText as="h1" delay={0.2} lines={[{ text: "Come hungry." }]} className="mt-3 font-display text-[clamp(3rem,8vw,7rem)] font-semibold leading-[0.95] tracking-[-0.02em] display-wonk text-shadow-hero" />
-            <p className="mt-4 max-w-lg text-[15px] text-cream-100/80">{images.length} photos from the pit, the kitchen and the espresso bar.</p>
+            {/* Board GA01: subline replaced (client's blue markup) */}
+            <p className="mt-4 max-w-lg text-[15px] text-cream-100/80">Eat with your eyes. Then come give your mouth a turn.</p>
           </div>
         </ParallaxImage>
       </section>

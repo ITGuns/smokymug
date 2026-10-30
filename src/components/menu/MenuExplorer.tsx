@@ -20,12 +20,14 @@ export function MenuExplorer({
   happyHourNow,
   initialCategory,
   initialItem,
+  orderUrl,
 }: {
   categories: CategoryNode[];
   availability: Record<number, AvailabilityInfo>;
   happyHourNow: boolean;
   initialCategory?: string;
   initialItem?: string;
+  orderUrl?: string | null;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -275,7 +277,7 @@ export function MenuExplorer({
                             <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                               {items.map((item) => (
                                 <li key={item.id}>
-                                  <MenuItemCard item={item} availability={availability[item.id]} happyHourNow={happyHourNow} onOpen={openModal} />
+                                  <MenuItemCard item={item} availability={availability[item.id]} happyHourNow={happyHourNow} onOpen={openModal} orderUrl={orderUrl} />
                                 </li>
                               ))}
                             </ul>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { CateringForm } from "@/components/catering/CateringForm";
+import { EmailLink } from "@/components/site/EmailLink";
 import { ImageCarousel } from "@/components/motion/ImageCarousel";
 import { ParallaxImage } from "@/components/motion/ParallaxImage";
 import { SplitText } from "@/components/motion/SplitText";
@@ -24,6 +25,7 @@ const ICONS: Record<string, React.ReactNode> = {
 
 export default async function CateringPage() {
   const r = await getRestaurant();
+  const cateringEmail = r.cateringEmail ?? r.email;
   return (
     <>
       <section className="relative isolate flex min-h-[80svh] items-end overflow-hidden bg-charcoal-950 text-cream-50">
@@ -96,9 +98,10 @@ export default async function CateringPage() {
               <p className="eyebrow text-teal-300">Plan your event</p>
               <h2 className="mt-4 font-display text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.02em] display-sharp">Tell us the occasion, the date, and the headcount.</h2>
               <p className="mt-5 text-[15px] leading-relaxed text-cream-100/75">We&apos;ll reply with a catering menu and a quote. Pick-up, delivery, or full service with setup, line service and cleanup.</p>
-              <div className="mt-8 space-y-2 text-[15px]">
+              {/* Board CA03: catering inquiries use the bookings address */}
+              <div className="mt-8 min-w-0 space-y-2 text-[15px]">
                 <a href={`tel:+1${r.phone.replace(/\D/g, "")}`} className="block font-semibold hover:text-teal-300">{r.phone}</a>
-                <a href={`mailto:${r.email}`} className="block font-semibold hover:text-teal-300">{r.email}</a>
+                <EmailLink email={cateringEmail} className="block font-semibold hover:text-teal-300" />
               </div>
             </Reveal>
             <Reveal delay={0.15} className="relative mt-10 hidden aspect-[4/3] overflow-hidden rounded-2xl lg:block">
@@ -106,7 +109,7 @@ export default async function CateringPage() {
             </Reveal>
           </div>
           <Reveal delay={0.1} className="rounded-2xl bg-cream-100 p-6 text-charcoal-900 shadow-lift sm:p-8 lg:col-span-7">
-            <CateringForm email={r.email} phone={r.phone} />
+            <CateringForm email={cateringEmail} phone={r.phone} />
           </Reveal>
         </div>
       </section>

@@ -37,7 +37,7 @@ export default async function HomePage() {
     return { ...item, availabilityLabel: a.label, availableNow: a.availableNow };
   });
 
-  const blurb = restaurant.description.replace(/^Cafe & Craft Barbecue & Tex-Mex Kitchen in Northside Richmond, VA\.\s*/i, "");
+  const blurb = restaurant.description.replace(/^All-Day Craft, Tex-Mex & Barbecue Kitchen in Northside Richmond, VA\.\s*/i, "");
 
   return (
     <>

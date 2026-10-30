@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Hours, RestaurantInfo } from "@/db/schema";
+import { EmailLink } from "./EmailLink";
 import { Logo } from "./Logo";
 import { SocialLinks } from "./SocialLinks";
 import { HoursTable } from "./HoursTable";
@@ -33,9 +34,7 @@ export function Footer({ restaurant: r, hours, phoneHref, todayDow }: { restaura
               {r.phone}
             </a>
             <br />
-            <a href={`mailto:${r.email}`} className="inline-flex min-h-6 items-center hover:text-cream-50">
-              {r.email}
-            </a>
+            <EmailLink email={r.email} className="inline-block min-h-6 py-0.5 hover:text-cream-50" />
           </address>
           <SocialLinks
             instagramUrl={r.instagramUrl}
