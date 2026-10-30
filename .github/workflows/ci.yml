@@ -31,12 +31,15 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # src/db/index.ts creates the pg pool when the module is imported, and booking.ts
+      # imports it, so unit tests need a DATABASE_URL to exist even though no test connects.
       - name: Unit tests
         run: npm run test:unit
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/smokymug_test?sslmode=disable
 
-      # src/db/index.ts creates the pg pool when the module is imported, so the build needs a
-      # DATABASE_URL to exist. Nothing connects during the build (site pages are force-dynamic),
-      # so this dummy URL points at a database that is not there.
+      # Same story for the build: the pool is created at import time but nothing connects
+      # (site pages are force-dynamic), so this dummy URL points at a database that is not there.
       - name: Build
         run: npm run build
         env:
