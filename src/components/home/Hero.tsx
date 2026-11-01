@@ -72,6 +72,7 @@ export function Hero({
             delay={0.35}
             lines={[
               { text: "Smoked low." },
+              // The one teal accent the 1 Nov brick-orange revert keeps (coffee wink)
               { text: "Brewed slow.", className: "text-teal-300" },
             ]}
             className="font-display text-[clamp(3.25rem,10vw,8.5rem)] font-semibold leading-[0.92] tracking-[-0.02em] display-wonk text-shadow-hero"
@@ -81,7 +82,12 @@ export function Hero({
             variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 1, ease, delay: 0.7 } } }}
             className="mt-6 max-w-xl text-lg leading-relaxed text-cream-100/85 md:text-xl"
           >
-            {tagline}
+            {/* R2-01: the board writes the subhead as two lines, so each sentence gets its own line */}
+            {tagline.split(/(?<=\.)\s+/).map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </motion.p>
 
           <motion.div
@@ -131,7 +137,7 @@ export function Hero({
       >
         <span className="eyebrow [writing-mode:vertical-rl]">Scroll</span>
         <span className="h-10 w-px overflow-hidden bg-cream-100/20">
-          <motion.span className="block h-full w-full bg-red-400" animate={{ y: ["-100%", "100%"] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} />
+          <motion.span className="block h-full w-full bg-ember-400" animate={{ y: ["-100%", "100%"] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} />
         </span>
       </motion.div>
     </section>

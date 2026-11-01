@@ -22,7 +22,10 @@ export type AvailabilityType = (typeof AVAILABILITY_TYPES)[number];
 export const RESERVATION_STATUSES = ["pending", "confirmed", "cancelled", "completed", "no_show"] as const;
 export type ReservationStatus = (typeof RESERVATION_STATUSES)[number];
 
-export const HOURS_CATEGORIES = ["store", "breakfast", "cafe_fare", "cafe_drinks", "bbq", "tex_mex", "brunch", "happy_hour", "wine_wednesday"] as const;
+// R2-03 / board H05: taco_tuesday is its own public window ("Taco Tuesdays,
+// Tues 11:30AM - 9PM"); it overlaps the Tex Mex Tuesday window on purpose
+// until Genrou reconciles the hours (Q9).
+export const HOURS_CATEGORIES = ["store", "breakfast", "cafe_fare", "cafe_drinks", "bbq", "tex_mex", "taco_tuesday", "brunch", "happy_hour", "wine_wednesday"] as const;
 export type HoursCategory = (typeof HOURS_CATEGORIES)[number];
 
 export const SECTION_TYPES = ["items", "addons"] as const;
@@ -355,6 +358,47 @@ export const cateringInquiries = pgTable("catering_inquiries", {
   ...timestamps,
 });
 
+/** NW01 (base scope): events shown on /calendar. The event-type icons and
+ *  their legend (B6) are CHECK-gated and deliberately have no column yet. */
+export const events = pgTable(
+  "events",
+  {
+    id: autoId(),
+    title: text("title").notNull(),
+    /** YYYY-MM-DD */
+    date: text("date").notNull(),
+    /** "HH:MM" 24h; null = all day (or see description) */
+    startTime: text("start_time"),
+    endTime: text("end_time"),
+    description: text("description"),
+    linkUrl: text("link_url"),
+    linkLabel: text("link_label"),
+    active: boolean("active").notNull().default(true),
+    ...timestamps,
+  },
+  (t) => [index("events_date_idx").on(t.date)],
+);
+
+/** NW02 (base scope): the Special Events page switch and its editable copy.
+ *  While `enabled` is false, /special-events returns 404 (dev spec). The D2
+ *  top-bar specials link is CHECK-gated and not built. */
+export const specialEvents = pgTable("special_events", {
+  id: integer("id").primaryKey(),
+  enabled: boolean("enabled").notNull().default(false),
+  title: text("title").notNull(),
+  subtitle: text("subtitle"),
+  ...timestamps,
+});
+
+/** NW02: uploaded flyers/menus shown as the Special Events image grid. */
+export const specialEventImages = pgTable("special_event_images", {
+  id: autoId(),
+  file: text("file").notNull(),
+  alt: text("alt").notNull(),
+  displayOrder: integer("display_order").notNull().default(0),
+  ...timestamps,
+});
+
 /** Admin-uploaded images, stored in Postgres so deployments need no disk or bucket. */
 export const uploads = pgTable(
   "uploads",
@@ -408,6 +452,9 @@ export type NewMenuItem = typeof menuItems.$inferInsert;
 export type ModifierGroup = typeof modifierGroups.$inferSelect;
 export type Modifier = typeof modifiers.$inferSelect;
 export type GalleryImage = typeof galleryImages.$inferSelect;
+export type SiteEvent = typeof events.$inferSelect;
+export type SpecialEventsSettings = typeof specialEvents.$inferSelect;
+export type SpecialEventImage = typeof specialEventImages.$inferSelect;
 export type Review = typeof reviews.$inferSelect;
 export type CateringInquiry = typeof cateringInquiries.$inferSelect;
 export type Upload = typeof uploads.$inferSelect;

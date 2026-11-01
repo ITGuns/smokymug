@@ -235,8 +235,15 @@ New, small, buildable copy/UX changes not in the handoff — APPLIED 30 Oct 2026
   logo stamp removal, H02 heading/flip/inset photo, Call button removal and
   email/phone swap, H04 full-width signature grid, GA03 masonry packing (column
   bottoms within 95px at desktop), bigger headings + 17px body floor.
-- Deliberately NOT applied: footer Calendar link (no /calendar page yet), hours
-  edits (2026-menu conflict, Q9), CA01 Express Catering button (phase 2).
+- Deliberately NOT applied: hours edits beyond the Taco Tuesdays window (2026-menu
+  conflict, Q9), CA01 Express Catering button (phase 2).
+- 1 Nov 2026, after Genrou's live-site audit confirmed base scope: menu rebuilt
+  to L2-D (featured column + clean list rows), /calendar built (NW01, grid +
+  list + pop-out + admin CRUD), /special-events toggle built (NW02), footer
+  CALENDAR link added, Taco Tuesdays service window added (overlap with Tex Mex
+  Tuesday flagged for Genrou under Q9), hero subhead rendered as two lines and
+  the footer tagline as three. Theme reverted to brick orange with teal as
+  accents only (Guns's 1 Nov instruction; see DESIGN.md §1).
 
 Still undecided on the board:
 - Fonts and color palette (both choice boxes empty, nothing marked; the handoff's

@@ -12,21 +12,29 @@ the Roadstore file). They ship as CSS design tokens so the final values are a
 one-line change. Roadstore is NOT shipped until a web license is confirmed; the
 existing Fraunces display stack stays as the heading face until then.
 
-## 1. Color tokens (PROPOSED, WCAG AA checked in the handoff)
+## 1. Color tokens (PROPOSED; brick-orange revert ordered by Guns, 1 Nov 2026)
+
+Guns's call, 1 Nov 2026 chat: "the teal was too much, teal should be accents
+only, back to the brick orange." This SUPERSEDES the Rev 1 teal-carries-the-page
+scheme below the table. Q1 (Dan's own palette pick) is still open; the board's
+COLOR CHOICE box was left empty.
 
 | Token | Hex | Use |
 |---|---|---|
-| `--color-teal-600` (`--teal`) | `#0B5D5E` | Primary brand: headers, links, section accents |
-| `--color-teal-800` (`--teal-deep`) | `#07403F` | Footer, dark panels, hover states |
-| `--color-red-600` (`--red`) | `#B3261E` | Accent ONLY: buttons, tags, small highlights |
+| `--color-ember-600` (brick orange) | `#A54F1F` | Primary accent: buttons, links, tags, eyebrows on cream |
+| `--color-ember-300/400/500` | `#F0A06A` `#E07A3A` `#C8642A` | Hovers, eyebrows on dark, highlights, focus ring (500) |
+| `--color-charcoal-950/900` | `#0F0D0B` `#161311` | Header, footer, dark sections, panels; ink on cream |
+| `--color-wood-700` | `#52321C` | Warm dark sections (catering teaser + inquiry) |
 | `--color-cream-100` | `#F6EEE1` | Page background |
-| `--color-charcoal-900` (ink) | `#161311` | Body text on cream |
+| `--color-teal-300/600` | `#8FC0BC` `#0B5D5E` | ACCENT ONLY: hero "Brewed slow." line, footer eyebrows, text selection |
+| `--color-red-*` | `#B3261E` scale | Admin/error contexts only, no longer a site brand accent |
 
-Rules (handoff 6.1):
-- Red is an accent only. Teal carries the page.
-- Never red text on teal.
-- Replace the old ember/orange accent everywhere on the public site; no leftover
-  orange except where Dan chose to keep it.
+Rules (1 Nov):
+- Ember carries the accents, charcoal carries the dark surfaces, cream the page.
+- Teal appears ONLY in the three listed spots. Adding teal anywhere else needs
+  Guns's say-so.
+- Gold/sage/brick keep their semantic jobs (stars/info tags, open/dietary,
+  closed/error).
 
 ## 2. Typography (handoff 6.2)
 
@@ -52,8 +60,12 @@ Rules (handoff 6.1):
 ## 4. Layouts chosen by Dan
 
 - **L1-A hero**: full photo, text left. No large logo in the hero (C1).
-- **L2-D menu**: tabs, featured dish, list. Featured = first item in each tab
-  (Q10 default) until Genrou clears an admin pin.
+- **L2-D menu** (built 1 Nov): tabs + search kept; featured dish in its own
+  column beside the list (photo side ~40%, sticky on desktop; stacks on top on
+  phones); the list is clean rows — name, short description, price right, no
+  photo per row, no card shadows; badges/OPTIONS as small text in the row,
+  Order Now bottom left when the SpotOn URL exists. Featured = first item in
+  each tab (Q10 default) until Genrou clears an admin pin.
 - **Navigation**: desktop L3-A (logo left, inline links, ORDER NOW + Book a Table
   right). Compressed mode (collapse by FIT, not device; test 1024px): hamburger
   left, logo centered, left slide-out drawer (85% width, max 360px, scrim, closes
@@ -63,8 +75,14 @@ Rules (handoff 6.1):
   header button; Book a Table secondary.
 - **L5-A gallery**: masonry, no fixed heights, no gap taller than one row at
   1280px. Admin drag-to-reorder (reorder only; anything more is CHECK).
-- **L6-A calendar**: month grid with pop-out. Event-type icons are CHECK — do not
-  build without scope sign-off.
+- **L6-A calendar** (built 1 Nov, NW01, base scope): /calendar month grid with
+  hover highlight + pop-out covering the grid (X exits), "List by date" panel
+  whose rows drop open; phone stack = list on top, calendar below. Admin CRUD
+  at /admin/calendar. Event-type icons + legend are CHECK — do not build
+  without scope sign-off.
+- **Special Events (NW02, base scope, built 1 Nov)**: /special-events 404s
+  while the admin switch is off; title/subtitle and the flyer grid are edited
+  at /admin/special-events. The D2 top-bar specials link is CHECK — not built.
 
 ## 4b. Confirmed from the client's board markup (captured 2026-10-30)
 
@@ -74,8 +92,9 @@ the dials: corners Round 16px, spacing Standard, photos full color except under
 text (keep scrims where type sits on photos), headings Bigger with copy sized up
 on mobile. Client copy now seeded: hero tagline, footer tagline, intro paragraph,
 menu H1 ends "Brew.", gallery subline, catering contact bookings.smokymug@gmail.com.
-Order Now on menu cards: anchored bottom left, red (featured-action color), tags and
-Options one row up; hidden until the SpotOn URL is set (Q8).
+Order Now on menu rows: anchored bottom left in the featured-action color (brick
+orange since 1 Nov), tags and Options one row up; hidden until the SpotOn URL is
+set (Q8).
 
 ## 5. Motion
 

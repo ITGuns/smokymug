@@ -101,7 +101,7 @@ export function MenuDropdown({ links, label = "Explore Menu", className }: { lin
         aria-controls={listId}
         onClick={() => setOpen((v) => !v)}
         onKeyDown={onButtonKeyDown}
-        className="group/btn inline-flex h-13 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-cream-50/15 bg-teal-950/70 px-8 text-base font-semibold tracking-tight text-cream-50 backdrop-blur transition-all duration-300 ease-out-expo select-none hover:bg-teal-900 active:scale-[0.98]"
+        className="group/btn inline-flex h-13 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-cream-50/15 bg-charcoal-950/70 px-8 text-base font-semibold tracking-tight text-cream-50 backdrop-blur transition-all duration-300 ease-out-expo select-none hover:bg-charcoal-900 active:scale-[0.98]"
       >
         {label}
         <svg
@@ -127,7 +127,7 @@ export function MenuDropdown({ links, label = "Explore Menu", className }: { lin
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, ease }}
             onKeyDown={onListKeyDown}
-            className="absolute bottom-full left-0 z-20 mb-2 min-w-[240px] rounded-2xl border border-cream-50/10 bg-teal-950/95 p-2 shadow-lift backdrop-blur-xl"
+            className="absolute bottom-full left-0 z-20 mb-2 min-w-[240px] rounded-2xl border border-cream-50/10 bg-charcoal-950/95 p-2 shadow-lift backdrop-blur-xl"
           >
             <Link
               href="/menu"

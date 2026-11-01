@@ -8,19 +8,32 @@ async function expectNoBlockingViolations(page: Page) {
   expect(summary, summary.join("\n")).toEqual([]);
 }
 
-const PAGES = ["/", "/menu", "/book", "/catering", "/contact", "/gallery", "/admin/login"];
+const PAGES = ["/", "/menu", "/book", "/catering", "/contact", "/gallery", "/calendar", "/admin/login"];
+
+// Colors are identical with reduced motion; scanning without it lets axe sample
+// the ticker/marquee mid-transform and report phantom contrast failures.
+test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+});
+
+/** networkidle never settles when the Google Maps iframe keeps streaming
+ *  (contact + home), so give it a bounded chance and scan anyway. */
+async function settled(page: Page) {
+  await page.waitForLoadState("load");
+  await page.waitForLoadState("networkidle", { timeout: 15_000 }).catch(() => {});
+}
 
 for (const path of PAGES) {
   test(`accessibility: ${path} has no serious or critical violations`, async ({ page }) => {
     await page.goto(path);
-    await page.waitForLoadState("networkidle");
+    await settled(page);
     await expectNoBlockingViolations(page);
   });
 }
 
 test("accessibility: home scrolled (banner collapsed, gallery marquee in view)", async ({ page }) => {
   await page.goto("/");
-  await page.waitForLoadState("networkidle");
+  await settled(page);
   // Scroll in small steps so every scroll-triggered reveal fires, then let animations finish before scanning.
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y < height; y += 450) {

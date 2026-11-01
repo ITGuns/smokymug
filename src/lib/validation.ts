@@ -265,6 +265,38 @@ export const restaurantInfoInput = z.object({
   bbqSummary: emptyToNull(300),
 });
 
+/* ---------------- Admin: calendar + special events ---------------- */
+
+export const eventInput = z.object({
+  id: z.coerce.number().int().optional(),
+  title: z.string().trim().min(1, "Title is required").max(120),
+  date: ymd,
+  startTime: optionalHhmm.optional(),
+  endTime: optionalHhmm.optional(),
+  description: emptyToNull(600),
+  linkUrl: optionalHttpUrl(300),
+  linkLabel: emptyToNull(60),
+  active: z.coerce.boolean().default(true),
+});
+export type EventInput = z.infer<typeof eventInput>;
+
+export const specialEventsInput = z.object({
+  enabled: z.coerce.boolean(),
+  title: z.string().trim().min(1, "Title is required").max(120),
+  subtitle: emptyToNull(300),
+});
+
+/** Full flyer set, in display order; existing rows carry their id. */
+export const specialEventImagesInput = z
+  .array(
+    z.object({
+      id: z.coerce.number().int().optional(),
+      file: z.string().trim().min(1).max(300),
+      alt: z.string().trim().min(1, "Describe the image").max(200),
+    }),
+  )
+  .max(60);
+
 /* ---------------- Admin: reservations ---------------- */
 
 export const adminReservationInput = z.object({

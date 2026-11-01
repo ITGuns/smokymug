@@ -91,7 +91,7 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
                     href={`/menu?item=${item.slug}`}
                     className={cn(
                       "flex h-full flex-col overflow-hidden rounded-2xl shadow-card transition-shadow duration-500 hover:shadow-lift",
-                      item.image ? "bg-cream-50" : "bg-teal-800 text-cream-50",
+                      item.image ? "bg-cream-50" : "bg-charcoal-900 text-cream-50",
                     )}
                   >
                     {item.image ? (
@@ -101,7 +101,7 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
                       </div>
                     ) : (
                       <div className="relative flex items-center justify-between px-6 pt-6">
-                        <span className="font-display text-6xl font-semibold leading-none text-teal-300/90 display-wonk">{item.name[0]}</span>
+                        <span className="font-display text-6xl font-semibold leading-none text-ember-400/90 display-wonk">{item.name[0]}</span>
                         {item.availabilityLabel && <Pill tone="emberOnDark">{item.availabilityLabel}</Pill>}
                       </div>
                     )}

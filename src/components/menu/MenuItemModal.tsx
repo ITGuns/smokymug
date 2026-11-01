@@ -69,8 +69,8 @@ export function MenuItemModal({
                   <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/50 to-transparent" />
                 </div>
               ) : (
-                <div className="grain relative flex h-28 items-end bg-teal-900 px-6 pb-4 sm:h-32 sm:px-8">
-                  <span className="relative z-[2] font-display text-6xl font-semibold leading-none text-teal-300/80 display-wonk sm:text-7xl">{item.name[0]}</span>
+                <div className="grain relative flex h-28 items-end bg-charcoal-900 px-6 pb-4 sm:h-32 sm:px-8">
+                  <span className="relative z-[2] font-display text-6xl font-semibold leading-none text-ember-400/80 display-wonk sm:text-7xl">{item.name[0]}</span>
                 </div>
               )}
               <div className="p-6 sm:p-8">
