@@ -220,7 +220,7 @@ export function MenuExplorer({
             className="space-y-16"
           >
             {visibleCategories.map((cat) => {
-              const featuredDish = searching ? undefined : firstItem(cat);
+              const featuredDish = searching ? undefined : featuredPick(cat);
               return (
               <section key={cat.id} aria-labelledby={`cat-${cat.id}`} className="scroll-mt-40">
                 <header className="mb-8 max-w-3xl">
@@ -246,13 +246,16 @@ export function MenuExplorer({
                 <div className={cn(featuredDish && "lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start lg:gap-12")}>
                   {featuredDish && (
                     <div className="mb-10 lg:sticky lg:top-[164px] lg:mb-0">
-                      <FeaturedDish item={featuredDish} availability={availability[featuredDish.id]} onOpen={openModal} />
+                      <FeaturedDish item={featuredDish} availability={availability[featuredDish.id]} happyHourNow={happyHourNow} onOpen={openModal} orderUrl={orderUrl} />
                     </div>
                   )}
                   <div className="space-y-12">
                     {cat.sections.map((sec) => {
                       const isCollapsed = collapsed.has(sec.id);
                       const items = sec.items.filter((i) => i.id !== featuredDish?.id);
+                      // A section whose only item became the featured dish (or
+                      // was filtered out) would render a heading over nothing.
+                      if (sec.sectionType === "items" && items.length === 0) return null;
                       return (
                         <section key={sec.id} aria-labelledby={`sec-${sec.id}`}>
                           <div className="mb-4 flex items-end justify-between gap-4 border-b border-charcoal-900/10 pb-3">
@@ -303,12 +306,13 @@ export function MenuExplorer({
   );
 }
 
-/** Q10 default: the featured dish is the first item in the tab (after filters). */
-function firstItem(cat: { sections: { sectionType: string; items: ItemNode[] }[] }): ItemNode | undefined {
-  for (const sec of cat.sections) {
-    if (sec.sectionType === "items" && sec.items.length) return sec.items[0];
-  }
-  return undefined;
+/** Q10 default, photo first: the board draws the featured dish as a large
+ *  photo, so prefer the tab's first Signature item with an image, then any
+ *  item with an image, then the plain first item (text-only panel until
+ *  Dan's photos arrive, Q7). */
+function featuredPick(cat: { sections: { sectionType: string; items: ItemNode[] }[] }): ItemNode | undefined {
+  const items = cat.sections.filter((s) => s.sectionType === "items").flatMap((s) => s.items);
+  return items.find((i) => i.featured && i.image) ?? items.find((i) => i.image) ?? items[0];
 }
 
 function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {

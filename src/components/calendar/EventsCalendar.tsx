@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SiteEvent } from "@/db/schema";
 import { cn } from "@/lib/cn";
 import { longDate, parseDate, time12 } from "@/lib/format";
@@ -42,6 +42,8 @@ export function EventsCalendar({
   const [openDate, setOpenDate] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<number | null>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  /** The day button that opened the pop-out, so closing can hand focus back. */
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const cells = useMemo(() => monthGridCells(month), [month]);
   const byDate = useMemo(() => {
@@ -59,13 +61,19 @@ export function EventsCalendar({
     setExpanded(null);
   }, [month.year, month.month]);
 
+  const closePopout = useCallback(() => {
+    setOpenDate(null);
+    const t = triggerRef.current;
+    if (t?.isConnected) t.focus();
+  }, []);
+
   useEffect(() => {
     if (!openDate) return;
     requestAnimationFrame(() => closeRef.current?.focus());
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpenDate(null);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closePopout();
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [openDate]);
+  }, [openDate, closePopout]);
 
   const openEvents = openDate ? (byDate.get(openDate) ?? []) : [];
 
@@ -172,8 +180,10 @@ export function EventsCalendar({
 
         <div className="relative lg:order-1 lg:col-span-7">
           {/* Plain markup, not an ARIA grid: each day with events is a labelled
-              button, which reads better than grid/gridcell semantics here. */}
-          <div aria-label={`${label} calendar`}>
+              button, which reads better than grid/gridcell semantics here.
+              While the pop-out covers the grid, the grid goes inert so Tab
+              can't land on the buttons underneath. */}
+          <div role="group" aria-label={`${label} calendar`} inert={openDate ? true : undefined}>
             <div className="grid grid-cols-7 gap-1.5">
               {WEEKDAYS.map((d) => (
                 <span key={d} className="pb-2 text-center font-label text-[12px] tracking-[0.18em] text-charcoal-500">
@@ -201,7 +211,10 @@ export function EventsCalendar({
                   <button
                     key={cell.date}
                     type="button"
-                    onClick={() => setOpenDate(cell.date)}
+                    onClick={(e) => {
+                      triggerRef.current = e.currentTarget;
+                      setOpenDate(cell.date);
+                    }}
                     aria-label={`${longDate(cell.date, { weekday: true })}: ${dayEvents.length} ${dayEvents.length === 1 ? "event" : "events"}`}
                     className={cn(base, "transition-colors hover:border-ember-500/50 hover:bg-ember-600/10")}
                   >
@@ -235,7 +248,7 @@ export function EventsCalendar({
                     ref={closeRef}
                     type="button"
                     aria-label="Back to calendar view"
-                    onClick={() => setOpenDate(null)}
+                    onClick={closePopout}
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-cream-50/20 text-cream-50 transition hover:border-ember-300 hover:text-ember-300"
                   >
                     <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

@@ -11,7 +11,7 @@ const SERVICES = ["Pick-up", "Delivery", "Full service", "Restaurant rental"];
 export function CateringTeaser() {
   return (
     <section className="grain relative overflow-hidden bg-wood-700 py-24 text-cream-50 lg:py-32">
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_80%_20%,rgb(78_151_148/0.25),transparent_70%)]" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_80%_20%,rgb(224_122_58/0.25),transparent_70%)]" />
       <div className="container-site relative z-[2] grid items-center gap-12 lg:grid-cols-12">
         <div className="order-2 lg:order-1 lg:col-span-6">
           <Reveal>

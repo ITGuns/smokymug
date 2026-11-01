@@ -10,6 +10,12 @@ async function expectNoBlockingViolations(page: Page) {
 
 const PAGES = ["/", "/menu", "/book", "/catering", "/contact", "/gallery", "/calendar", "/admin/login"];
 
+// Colors are identical with reduced motion; scanning without it lets axe sample
+// the ticker/marquee mid-transform and report phantom contrast failures.
+test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+});
+
 for (const path of PAGES) {
   test(`accessibility: ${path} has no serious or critical violations`, async ({ page }) => {
     await page.goto(path);

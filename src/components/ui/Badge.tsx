@@ -44,7 +44,9 @@ export function Pill({
   const tones = {
     neutral: "bg-charcoal-900/6 text-charcoal-700 ring-charcoal-900/10",
     ember: "bg-ember-600 text-cream-50 ring-ember-600",
-    emberOnDark: "bg-ember-500 text-cream-50 ring-ember-300/50",
+    // Tinted, not solid: ember-300 text clears 4.5:1 on the dark panels this
+    // tone sits on (solid ember-500 + cream text was 3.7:1, axe serious).
+    emberOnDark: "bg-ember-400/15 text-ember-300 ring-ember-400/35",
     sage: "bg-sage-500/15 text-sage-700 ring-sage-500/30",
     gold: "bg-gold-400/25 text-wood-700 ring-gold-500/40",
     brick: "bg-brick-600/10 text-brick-600 ring-brick-600/25",

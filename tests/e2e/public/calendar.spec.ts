@@ -9,7 +9,8 @@ test.describe("Calendar page (NW01)", () => {
     await expect(page.getByText("Events and special programming: Do things. Meet people.")).toBeVisible();
     // Nothing is seeded on the calendar, so the list panel shows the empty state.
     await expect(page.getByText(/Nothing on the calendar for /)).toBeVisible();
-    await expect(page.getByText("Sun", { exact: true })).toBeVisible();
+    // Scoped to main: the footer hours table also contains an exact "Sun".
+    await expect(page.locator("main").getByText("Sun", { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "Next month" })).toBeVisible();
   });
 

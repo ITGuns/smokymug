@@ -13,8 +13,9 @@ test("the Special Events switch drives /special-events (NW02)", async ({ page, r
 
   await gotoReady(page, "/admin/special-events");
   await page.getByRole("switch", { name: "Show the Special Events page" }).click();
-  await page.getByLabel("Title").fill("QA Specials Board");
-  await page.getByLabel("Subtitle").fill("QA subtitle: flyers land below.");
+  // getByLabel("Title") would substring-match "Subtitle" too; target the ids.
+  await page.locator("#se-title").fill("QA Specials Board");
+  await page.locator("#se-subtitle").fill("QA subtitle: flyers land below.");
   await page.getByRole("button", { name: "Save settings" }).click();
   await expectToast(page, "Page settings saved");
 

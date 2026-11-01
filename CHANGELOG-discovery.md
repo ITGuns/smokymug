@@ -29,21 +29,28 @@ stated default behind a named setting), HELD (not built, per handoff rules).
 | C9 | HELD (CHECK Q12) | Reviews freshness system not built. | |
 | C10 | BUILT | Footer tagline is its own editable string (`restaurant_info.footer_tagline`, falls back to the main tagline); current copy left in place for the copy sheet. | |
 | C11 | BUILT | Contact blocks: email first, phone second; Call button removed; emails wrap (`wrap-anywhere` + `min-w-0`) instead of dropping letters, checked at 320/390/768/1280. | |
-| C12 | HELD (Q6) | "Brew" not built. | |
+| C12 | BUILT (30 Oct) | "Brew." appended to the menu H1 per the client's board marks (MB01/MD01), answering Q6 in the client's favor. | |
 | C13 | HELD (CHECK Q13) | Extra inquiry emails not built. | |
 | C14 | HELD (CHECK Q8) | SpotOn reservations box not built; native booking remains as currently shipped. | |
 | D1 | HELD (CHECK) | Menu-item scheduling not built. NOTE for scope call: items already support availability rules (`always/days/schedule/seasonal`) — D1 may be a smaller delta than the handoff assumes. | |
-| D2 | HELD (CHECK Q11) | Specials top-bar link not built. NOTE: no Special Events toggle/page exists in this codebase at all — flag the dev-spec mismatch to Genrou. | |
+| D2 | HELD (CHECK Q11) | Specials top-bar link not built. (The Special Events toggle + page it extends was built 1 Nov, base scope — see the audit-fix section below.) | |
 | E1 | PENDING | Copy sheet regeneration happens after demo recapture (phase 6-7, separate session). | |
 
 ## Repo-vs-handoff baseline mismatches (for Genrou)
 
 The handoff assumes the demo-spec baseline (three menus, Special Events toggle +
 404, SpotOn links only, reservations behind a feature flag). This repository is a
-fuller build: one structured menu with five categories, a native reservation
-system (admin-managed, `bookingsEnabled` pause toggle, no 404), no specials page,
-and Toast (not SpotOn) links seeded for gift cards/loyalty. Defaults above were
-applied against the repo as it exists; where the two disagree, Genrou decides.
+fuller build: one structured menu with six categories, a native reservation
+system (admin-managed, `bookingsEnabled` pause toggle, no 404), and Toast (not
+SpotOn) links seeded for gift cards/loyalty. Defaults above were applied against
+the repo as it exists; where the two disagree, Genrou decides. (1 Nov: the
+Special Events toggle + page and the calendar are now built, base scope.)
+Still for Genrou: the base-scope phrase "gallery admin" - the gallery admin does
+reorder only (B5); upload/remove/alt-edit is not in the agreed CHECK set either.
+Say whether it belongs in base; the upload pipeline from Special Events flyers
+can be reused in under an hour. Also note: catering inquiries save to a table
+and notify nobody by email yet, so C13's "copy extra recipients" has no mail to
+copy until an email path is cleared.
 
 ## Hardening pass (28 Oct 2026, after a full repo audit)
 
@@ -180,16 +187,23 @@ the BASE build, and its acceptance list includes "Menu L2-D". Corrected below.
   already built and are dark only because `order_url` is unset (Q8) — same for
   R2-17 card buttons, now row buttons. R2-13 Explore Menu dropdown kept as the
   menu-tab list until Genrou decides (NW03 target is phase 2). C14 SpotOn box
-  and C8's menu-tab "Cafe Fare" note: unchanged, awaiting Genrou/Dan.
+  stays CHECK. C8's menu-tab "Cafe Fare" note: already gone - the 2026 menu
+  seed replaced the breakfast note, so a prod reseed removes it from the live
+  menu page too.
 - Audit section D answers (admin items the auditor could not see): gallery drag
   reorder EXISTS; D1 scheduled menu items, C13 extra catering recipients and C9
   reviews freshness are NOT built (CHECK); the Special Events switch and
   calendar admin now exist (this entry).
 - Deploy notes for Guns: `npm run db:push` (new tables + hours category), then
-  `npm run db:reseed` (surfaces the 2026 menu + all Rev 2 copy; keeps
-  reservations, calendar events, flyers and the Special Events switch; wipes
-  admin menu edits), then redeploy or hit save in admin so the Next data cache
-  revalidates. Admins may need to sign in again.
+  `npm run db:reseed`, then redeploy (or hit save in admin) so the Next data
+  cache revalidates. Admins may need to sign in again. BE PRECISE about what
+  reseed does: it KEEPS reservations, calendar events, Special Events flyers
+  and the Special Events switch; it WIPES AND RESEEDS everything else content-
+  side - the whole menu (admin menu edits lost), restaurant Settings including
+  any `order_url` / catering email already typed in, hours, booking windows and
+  booking settings (`bookingsEnabled` returns to on), gallery images and their
+  drag order, and reviews. If anything was hand-edited in prod admin, note it
+  down first and re-enter it after the reseed.
 
 ## Open inputs still needed (handoff §4)
 
