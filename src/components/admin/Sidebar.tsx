@@ -19,6 +19,8 @@ const NAV = [
     ],
   },
   { href: "/admin/gallery", label: "Gallery", icon: "M4 5h16v14H4zM4 16l5-5 5 5M13 14l2-2 5 5M15.5 8.5h.01" },
+  { href: "/admin/calendar", label: "Calendar", icon: "M4 5h16v15H4zM4 10h16M8 3v4M16 3v4M8 14h.01M12 14h.01M16 14h.01" },
+  { href: "/admin/special-events", label: "Special Events", icon: "M12 3l2.5 5.3 5.5.8-4 4 1 5.9-5-2.8-5 2.8 1-5.9-4-4 5.5-.8z" },
   { href: "/admin/hours", label: "Hours", icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2" },
   { href: "/admin/settings", label: "Settings", icon: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.4 1a7 7 0 0 0-1.7-1L14.5 3h-5l-.3 2.5a7 7 0 0 0-1.7 1l-2.4-1-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.4-1a7 7 0 0 0 1.7 1l.3 2.5h5l.3-2.5a7 7 0 0 0 1.7-1l2.4 1 2-3.5-2-1.5c.1-.3.1-.7.1-1z" },
 ];

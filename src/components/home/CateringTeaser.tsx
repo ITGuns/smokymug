@@ -10,13 +10,13 @@ const SERVICES = ["Pick-up", "Delivery", "Full service", "Restaurant rental"];
 
 export function CateringTeaser() {
   return (
-    <section className="grain relative overflow-hidden bg-teal-800 py-24 text-cream-50 lg:py-32">
+    <section className="grain relative overflow-hidden bg-wood-700 py-24 text-cream-50 lg:py-32">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_80%_20%,rgb(78_151_148/0.25),transparent_70%)]" />
       <div className="container-site relative z-[2] grid items-center gap-12 lg:grid-cols-12">
         <div className="order-2 lg:order-1 lg:col-span-6">
           <Reveal>
             <h2 className="font-display text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] display-sharp">Catering & events</h2>
-            <blockquote className="mt-6 max-w-lg border-l-2 border-teal-300 pl-5 font-display text-xl italic leading-relaxed text-cream-100/85 sm:text-2xl">
+            <blockquote className="mt-6 max-w-lg border-l-2 border-ember-400 pl-5 font-display text-xl italic leading-relaxed text-cream-100/85 sm:text-2xl">
               {CATERING.quote}
             </blockquote>
             <ul className="mt-6 flex flex-wrap gap-2">

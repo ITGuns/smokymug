@@ -10,12 +10,12 @@ type Shape = "pill" | "soft";
 const base =
   "group/btn inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold tracking-tight transition-all duration-300 ease-out-expo select-none disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
 const variants: Record<Variant, string> = {
-  primary: "bg-red-600 text-cream-50 shadow-[0_8px_24px_-8px_rgb(143_30_24/0.7)] hover:bg-red-500 hover:shadow-glow",
-  secondary: "bg-teal-800 text-cream-50 hover:bg-teal-700",
-  ghost: "bg-transparent text-current hover:bg-teal-900/5",
+  primary: "bg-ember-600 text-cream-50 shadow-[0_8px_24px_-8px_rgb(165_79_31/0.7)] hover:bg-ember-500 hover:shadow-glow",
+  secondary: "bg-charcoal-900 text-cream-50 hover:bg-charcoal-700",
+  ghost: "bg-transparent text-current hover:bg-charcoal-900/5",
   outline: "border border-current/30 text-current hover:border-current hover:bg-current/5",
   light: "bg-cream-50 text-charcoal-900 hover:bg-white",
-  dark: "bg-teal-950/70 text-cream-50 backdrop-blur border border-cream-50/15 hover:bg-teal-900",
+  dark: "bg-charcoal-950/70 text-cream-50 backdrop-blur border border-cream-50/15 hover:bg-charcoal-900",
 };
 const sizes: Record<Size, string> = {
   sm: "h-9 px-4 text-[13px]",

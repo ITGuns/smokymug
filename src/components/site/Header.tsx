@@ -134,18 +134,18 @@ export function Header({
           scrolled ? "max-h-0 opacity-0" : "max-h-10 opacity-100",
           // 85%: keeps the glass look over the hero while the strip's small text
           // still clears 4.5:1 even against the cream page behind a slow-loading photo
-          solid && !scrolled ? "bg-teal-950" : "bg-teal-950/85 backdrop-blur-md",
+          solid && !scrolled ? "bg-charcoal-950" : "bg-charcoal-950/85 backdrop-blur-md",
         )}
       >
         {/* Compressed mode: phone only */}
         <div className="flex h-8 items-center justify-center lg:hidden">
-          <a href={phoneHref} className="font-label text-[13px] tracking-[0.16em] text-cream-50 transition hover:text-teal-300">
+          <a href={phoneHref} className="font-label text-[13px] tracking-[0.16em] text-cream-50 transition hover:text-ember-300">
             {phone}
           </a>
         </div>
         <div className="container-site hidden h-9 items-center justify-between font-label text-[12.5px] tracking-[0.16em] text-cream-100/85 lg:flex">
           <span className="inline-flex items-center gap-2">
-            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-teal-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-ember-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z" />
               <circle cx="12" cy="10" r="3" />
             </svg>
@@ -157,7 +157,7 @@ export function Header({
               <span className="text-cream-50">{status.label}</span>
               <span>· Today {hoursToday}</span>
             </span>
-            <a href={phoneHref} className="text-cream-50 transition hover:text-teal-300">
+            <a href={phoneHref} className="text-cream-50 transition hover:text-ember-300">
               {phone}
             </a>
             <SocialLinks
@@ -165,10 +165,10 @@ export function Header({
               facebookUrl={facebookUrl}
               email={email}
               className="-mr-1.5 -translate-y-px gap-0.5"
-              linkClassName="flex h-7 w-7 items-center justify-center rounded-full text-cream-100/80 transition hover:bg-cream-50/10 hover:text-teal-300 focus-visible:outline-offset-1"
+              linkClassName="flex h-7 w-7 items-center justify-center rounded-full text-cream-100/80 transition hover:bg-cream-50/10 hover:text-ember-300 focus-visible:outline-offset-1"
               iconClassName="h-[15px] w-[15px]"
             />
-            <MotionToggle className="flex h-7 w-7 items-center justify-center rounded-full text-cream-100/80 transition hover:bg-cream-50/10 hover:text-teal-300 focus-visible:outline-offset-1" />
+            <MotionToggle className="flex h-7 w-7 items-center justify-center rounded-full text-cream-100/80 transition hover:bg-cream-50/10 hover:text-ember-300 focus-visible:outline-offset-1" />
           </div>
         </div>
         <div className="h-px bg-gradient-to-r from-transparent via-cream-50/15 to-transparent" />
@@ -179,8 +179,8 @@ export function Header({
         className={cn(
           "transition-[background-color,box-shadow,backdrop-filter] duration-500",
           solid
-            ? "bg-teal-950/90 shadow-[0_1px_0_rgb(255_255_255/0.07),0_12px_40px_-20px_rgb(0_0_0/0.6)] backdrop-blur-xl"
-            : "bg-gradient-to-b from-teal-950/70 via-teal-950/25 to-transparent",
+            ? "bg-charcoal-950/90 shadow-[0_1px_0_rgb(255_255_255/0.07),0_12px_40px_-20px_rgb(0_0_0/0.6)] backdrop-blur-xl"
+            : "bg-gradient-to-b from-charcoal-950/70 via-charcoal-950/25 to-transparent",
         )}
       >
         <div className="container-site relative flex h-[68px] items-center justify-between gap-6 md:h-[82px]">
@@ -223,7 +223,7 @@ export function Header({
                   <span
                     aria-hidden
                     className={cn(
-                      "absolute inset-x-0 -bottom-0.5 h-[2px] origin-left bg-red-400 transition-transform duration-500 ease-out-expo",
+                      "absolute inset-x-0 -bottom-0.5 h-[2px] origin-left bg-ember-400 transition-transform duration-500 ease-out-expo",
                       active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
                     )}
                   />
@@ -271,7 +271,7 @@ export function Header({
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ duration: 0.35, ease }}
-              className="grain fixed inset-y-0 left-0 z-[60] w-[85%] max-w-[360px] overflow-y-auto bg-teal-950 lg:hidden"
+              className="grain fixed inset-y-0 left-0 z-[60] w-[85%] max-w-[360px] overflow-y-auto bg-charcoal-950 lg:hidden"
             >
               <div className="relative z-[2] flex min-h-full flex-col px-6 pb-10 pt-4">
                 <div className="mb-2 flex items-center justify-between">
@@ -305,7 +305,7 @@ export function Header({
                       <motion.span
                         aria-hidden
                         animate={{ rotate: menuOpen ? 90 : 0 }}
-                        className="font-label text-lg tracking-[0.2em] text-red-300"
+                        className="font-label text-lg tracking-[0.2em] text-ember-300"
                       >
                         →
                       </motion.span>
@@ -349,7 +349,7 @@ export function Header({
                         className="flex items-center justify-between border-b border-cream-50/10 py-4 font-display text-[1.8rem] font-medium text-cream-50 display-sharp"
                       >
                         {item.label}
-                        <span aria-hidden className="font-label text-lg tracking-[0.2em] text-red-300">
+                        <span aria-hidden className="font-label text-lg tracking-[0.2em] text-ember-300">
                           →
                         </span>
                       </Link>
@@ -381,7 +381,7 @@ export function Header({
                         facebookUrl={facebookUrl}
                         email={email}
                         className="gap-2"
-                        linkClassName="flex h-11 w-11 items-center justify-center rounded-full border border-cream-50/15 text-cream-50 transition hover:border-teal-300 hover:text-teal-300"
+                        linkClassName="flex h-11 w-11 items-center justify-center rounded-full border border-cream-50/15 text-cream-50 transition hover:border-ember-300 hover:text-ember-300"
                       />
                     </div>
                   </div>

@@ -21,7 +21,7 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
           <Reveal delay={0.1} className="mt-8 space-y-6">
             <div>
               <p className="eyebrow text-charcoal-500">Address</p>
-              <a href={mapsUrl(r)} target="_blank" rel="noopener noreferrer" className="mt-1 block font-display text-2xl font-medium text-charcoal-900 hover:text-teal-600">
+              <a href={mapsUrl(r)} target="_blank" rel="noopener noreferrer" className="mt-1 block font-display text-2xl font-medium text-charcoal-900 hover:text-ember-600">
                 {r.addressLine1}
                 <br />
                 {r.city}, {r.state} {r.zip}
@@ -31,11 +31,11 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="min-w-0">
                 <p className="eyebrow text-charcoal-500">Email</p>
-                <EmailLink email={r.email} className="mt-1 block text-lg font-semibold text-charcoal-900 hover:text-teal-600" />
+                <EmailLink email={r.email} className="mt-1 block text-lg font-semibold text-charcoal-900 hover:text-ember-600" />
               </div>
               <div className="min-w-0">
                 <p className="eyebrow text-charcoal-500">Phone</p>
-                <a href={phoneHref} className="mt-1 block text-lg font-semibold text-charcoal-900 hover:text-teal-600">
+                <a href={phoneHref} className="mt-1 block text-lg font-semibold text-charcoal-900 hover:text-ember-600">
                   {r.phone}
                 </a>
               </div>
@@ -50,12 +50,12 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
             </div>
             <div className="flex gap-4 pt-2 text-[14px] font-semibold text-charcoal-700">
               {r.instagramUrl && (
-                <a href={r.instagramUrl} target="_blank" rel="noopener noreferrer" className="hover:text-teal-600">
+                <a href={r.instagramUrl} target="_blank" rel="noopener noreferrer" className="hover:text-ember-600">
                   Instagram ↗
                 </a>
               )}
               {r.facebookUrl && (
-                <a href={r.facebookUrl} target="_blank" rel="noopener noreferrer" className="hover:text-teal-600">
+                <a href={r.facebookUrl} target="_blank" rel="noopener noreferrer" className="hover:text-ember-600">
                   Facebook ↗
                 </a>
               )}

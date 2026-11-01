@@ -6,8 +6,9 @@ export const RESTAURANT = {
   name: "The Smoky Mug",
   // Discovery board H01: hero subheading replaced (blue markup, client's words)
   tagline: "Craft Tex Mex & Barbecue Restaurant. Coffee, cocktail, and pastry programs included.",
-  // Discovery board H11: footer copy replaced (blue markup, client's words)
-  footerTagline: "Craft Tex-Mex & Barbecue Restaurant. Kitchen + Cafe + Bar. Breakfast + Lunch + Dinner." as string | null,
+  // Discovery board H11 / R2-04: footer copy replaced (blue markup, client's
+  // words), three lines exactly as drawn
+  footerTagline: "Craft Tex-Mex & Barbecue Restaurant.\nKitchen + Cafe + Bar\nBreakfast + Lunch + Dinner." as string | null,
   category: "All-Day Craft, Tex-Mex & Barbecue Kitchen",
   // Discovery board H02: intro paragraph replaced (blue markup; board spells
   // "epsresso", written here as espresso). Location prefix kept for SEO/JsonLd;
@@ -105,6 +106,10 @@ export const HOURS: HoursRow[] = [
     note: "Taco Tuesdays: happy hour tacos all day",
   }),
 
+  // Taco Tuesdays — board H05 blue addition / R2-03: "Taco Tuesdays, Tues
+  // 11:30AM - 9PM". Overlaps the Tex Mex Tuesday window; flagged for Genrou (Q9).
+  { category: "taco_tuesday", dayOfWeek: TUE, opensAt: "11:30", closesAt: "21:00", note: "Happy hour tacos all day" },
+
   // Brunch
   { category: "brunch", dayOfWeek: SUN, opensAt: "09:30", closesAt: "14:30", note: "Reservations via TablesReady" },
 
@@ -118,6 +123,15 @@ export const HOURS: HoursRow[] = [
   }),
   // Wine Wednesdays is not on the 2026 menu; no rows seeded.
 ];
+
+/** NW02 defaults: the Special Events page ships switched OFF (/special-events
+ *  404s) with neutral copy; title, subtitle and flyers are edited in Admin. */
+export const SPECIAL_EVENTS = {
+  id: 1,
+  enabled: false,
+  title: "Specials & Events",
+  subtitle: null as string | null,
+};
 
 /**
  * Default reservation rules. These are NOT from the scrape (the old site only

@@ -5,12 +5,12 @@ import { Pill } from "@/components/ui/Badge";
 export function Intro({ blurb, cafeSummary, bbqSummary, features }: { blurb: string; cafeSummary: string | null; bbqSummary: string | null; features: string[] }) {
   return (
     <section id="story" className="relative scroll-mt-20 overflow-hidden bg-cream-100 py-24 lg:py-36">
-      <div aria-hidden className="pointer-events-none absolute -right-40 top-10 h-[520px] w-[520px] rounded-full bg-teal-400/10 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -right-40 top-10 h-[520px] w-[520px] rounded-full bg-ember-400/10 blur-3xl" />
       <div className="container-site grid items-center gap-16 lg:grid-cols-12 lg:gap-10">
         <div className="lg:col-span-5">
           {/* C4: exact heading from the board; sized to hold two lines on desktop */}
           <h2 className="font-display text-[clamp(2.2rem,3.2vw,2.9rem)] font-semibold leading-[1.06] text-charcoal-900 display-sharp">
-            All-Day Craft, Tex-Mex &amp; <span className="text-teal-600">Barbecue Kitchen</span>
+            All-Day Craft, Tex-Mex &amp; <span className="text-wood-600">Barbecue Kitchen</span>
           </h2>
           <Reveal delay={0.1}>
             <p className="mt-7 max-w-md text-[17px] leading-relaxed text-charcoal-700">{blurb}</p>
@@ -19,11 +19,11 @@ export function Intro({ blurb, cafeSummary, bbqSummary, features }: { blurb: str
             {/* C5 (Q5 default): columns swapped — The pit reads first, then The cafe */}
             <dl className="mt-8 grid gap-5 border-t border-charcoal-900/10 pt-7 sm:grid-cols-2">
               <div>
-                <dt className="font-label text-[13px] tracking-[0.2em] text-teal-600">The pit</dt>
+                <dt className="font-label text-[13px] tracking-[0.2em] text-ember-600">The pit</dt>
                 <dd className="mt-1.5 text-[15px] leading-relaxed text-charcoal-800">{bbqSummary}</dd>
               </div>
               <div>
-                <dt className="font-label text-[13px] tracking-[0.2em] text-teal-600">The cafe</dt>
+                <dt className="font-label text-[13px] tracking-[0.2em] text-ember-600">The cafe</dt>
                 <dd className="mt-1.5 text-[15px] leading-relaxed text-charcoal-800">{cafeSummary}</dd>
               </div>
             </dl>

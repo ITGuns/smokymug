@@ -2,7 +2,7 @@ import { config as loadEnv } from "dotenv";
 import { sql } from "drizzle-orm";
 import { MENU } from "./seed-data/menu";
 import { MODIFIER_GROUPS } from "./seed-data/modifiers";
-import { BOOKING_SETTINGS, BOOKING_WINDOWS, GALLERY, HOURS, RESTAURANT, REVIEWS } from "./seed-data/restaurant";
+import { BOOKING_SETTINGS, BOOKING_WINDOWS, GALLERY, HOURS, RESTAURANT, REVIEWS, SPECIAL_EVENTS } from "./seed-data/restaurant";
 import { hashPassword } from "../lib/password";
 import { slugify } from "../lib/slug";
 
@@ -12,7 +12,7 @@ loadEnv();
 async function main() {
   // Imported after env is loaded so DATABASE_URL is available to the client.
   const { db, schema } = await import("./index");
-  const { adminUsers, bookingSettings, bookingWindows, galleryImages, hours, menuCategories, menuItemModifierGroups, menuItems, menuSections, modifierGroups, modifiers, restaurantInfo, reviews } = schema;
+  const { adminUsers, bookingSettings, bookingWindows, galleryImages, hours, menuCategories, menuItemModifierGroups, menuItems, menuSections, modifierGroups, modifiers, restaurantInfo, reviews, specialEvents } = schema;
 
   const force = process.argv.includes("--force");
   const existing = await db.select({ id: menuCategories.id }).from(menuCategories).limit(1);
@@ -34,6 +34,9 @@ async function main() {
     await tx.insert(hours).values(HOURS.map((h) => ({ ...h, isClosed: h.isClosed ?? false })));
     await tx.insert(bookingSettings).values(BOOKING_SETTINGS);
     await tx.insert(bookingWindows).values(BOOKING_WINDOWS);
+    // Admin-owned data stays through reseeds: calendar events and flyer images
+    // are never seeded or wiped, and the Special Events switch keeps its state.
+    await tx.insert(specialEvents).values(SPECIAL_EVENTS).onConflictDoNothing();
 
     /* ---- modifier groups ---- */
     const groupIdByKey = new Map<string, number>();

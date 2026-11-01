@@ -136,6 +136,61 @@ the small, unambiguous site changes were applied the same day:
   (board conflicts with the 2026 menu, Q9), phase-2 pages NW01/NW02/NW03 and the
   CA01 Express Catering button, footer Calendar link (no /calendar page yet).
 
+## Live-site audit fixes + brick-orange revert (1 Nov 2026)
+
+Trigger: Genrou's `SmokyMug-Live-Site-Audit-INTERNAL.pdf` (checked 1 Nov against
+Rev 1, Rev 2 and the board) plus Guns's chat instruction the same evening. The
+audit's eight "missing Rev 2 items" split two ways: five (R2-01/02/04/08 and the
+Tex Mex window) were already in this repo's seed data and are invisible on the
+live site only because prod has not run `npm run db:reseed`; three (plus B2 and
+NW02) were real build gaps. The 30 Oct entry above wrongly filed NW01/NW02 as
+phase-2: the dev handoff page 1 lists calendar and the Special Events toggle in
+the BASE build, and its acceptance list includes "Menu L2-D". Corrected below.
+
+- Theme (Guns, 1 Nov: "teal too much, accents only, back to the brick orange"):
+  site-wide revert to the original warm scheme — charcoal dark surfaces, ember
+  (brick orange) CTAs/accents/eyebrows, wood catering sections, gold stars/info
+  tags. Teal kept ONLY as: hero "Brewed slow." line, footer column eyebrows,
+  text selection. Red is admin/error only now. Supersedes Rev 1 item A1;
+  DESIGN.md §1 rewritten. Q1 (Dan's palette) still open.
+- B2 menu L2-D (audit section A, was missed): /menu rebuilt — featured dish in
+  a sticky ~40% column beside the list (stacks on top on phones), clean list
+  rows (name, description, price right; no photos, no card shadows; badges +
+  OPTIONS small in the row; Order Now bottom left when the SpotOn URL exists).
+  `MenuItemCard.tsx` replaced by `MenuItemRow.tsx` + `FeaturedDish.tsx`.
+- R2-14 / NW01 calendar (was missed, base scope): /calendar built per the board
+  sketch — month grid with hover highlight, click pops details out OVER the
+  grid with an X to exit, "List by date" panel with drop-open rows, phone stack
+  list-first, month navigation via ?month=YYYY-MM. New `events` table +
+  /admin/calendar CRUD. No invented events are seeded. B6 event-type icons
+  remain CHECK and unbuilt.
+- R2-10: footer Explore column gains CALENDAR between Catering and Gallery.
+- NW02 Special Events (was missed, base scope): `special_events` +
+  `special_event_images` tables, /special-events page (404 while the switch is
+  off, per dev spec), /admin/special-events (toggle, title, subtitle, flyer
+  uploads with reorder). D2 top-bar specials link remains CHECK and unbuilt.
+- R2-01: hero subhead now renders as two lines (one per sentence), matching the
+  board's line break. R2-04: footer tagline stored and rendered as three lines
+  (admin field is a textarea; line breaks preserved).
+- R2-03: new `taco_tuesday` hours category + seeded window "Taco Tuesdays,
+  Tues 11:30AM - 9PM" on the public service chips, right after Tex Mex. It
+  overlaps the Tex Mex Tuesday window on purpose; Genrou reconciles under Q9.
+  Wine Wednesdays stays retired (2026 menu dropped it; audit asked to confirm).
+- Audit section B answers: R2-12 header ORDER NOW and R2-11 hero ORDER NOW were
+  already built and are dark only because `order_url` is unset (Q8) — same for
+  R2-17 card buttons, now row buttons. R2-13 Explore Menu dropdown kept as the
+  menu-tab list until Genrou decides (NW03 target is phase 2). C14 SpotOn box
+  and C8's menu-tab "Cafe Fare" note: unchanged, awaiting Genrou/Dan.
+- Audit section D answers (admin items the auditor could not see): gallery drag
+  reorder EXISTS; D1 scheduled menu items, C13 extra catering recipients and C9
+  reviews freshness are NOT built (CHECK); the Special Events switch and
+  calendar admin now exist (this entry).
+- Deploy notes for Guns: `npm run db:push` (new tables + hours category), then
+  `npm run db:reseed` (surfaces the 2026 menu + all Rev 2 copy; keeps
+  reservations, calendar events, flyers and the Special Events switch; wipes
+  admin menu edits), then redeploy or hit save in admin so the Next data cache
+  revalidates. Admins may need to sign in again.
+
 ## Open inputs still needed (handoff §4)
 
 Q1 final teal/red values · Q2 Roadstore file + license · Q4 confirm dropdown

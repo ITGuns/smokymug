@@ -10,6 +10,8 @@ const LINKS = [
   { href: "/menu", label: "Menu" },
   { href: "/book", label: "Book a Table" },
   { href: "/catering", label: "Catering" },
+  // R2-10 / board BK03: CALENDAR sits between Catering and Gallery
+  { href: "/calendar", label: "Calendar" },
   { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Contact" },
 ];
@@ -17,12 +19,13 @@ const LINKS = [
 export function Footer({ restaurant: r, hours, phoneHref, todayDow }: { restaurant: RestaurantInfo; hours: Hours[]; phoneHref: string; todayDow: number }) {
   const year = new Date().getFullYear();
   return (
-    <footer className="grain relative overflow-hidden bg-teal-950 pb-28 pt-16 text-cream-100 lg:pb-12 lg:pt-20">
-      <div aria-hidden className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-teal-400/10 blur-3xl" />
+    <footer className="grain relative overflow-hidden bg-charcoal-950 pb-28 pt-16 text-cream-100 lg:pb-12 lg:pt-20">
+      <div aria-hidden className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-ember-400/10 blur-3xl" />
       <div className="container-site relative z-[2] grid gap-12 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-4">
           <Logo invert width={170} />
-          <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-cream-100/70">{r.footerTagline ?? r.tagline}</p>
+          {/* R2-04 / board H11: the footer tagline renders its stored line breaks */}
+          <p className="mt-5 max-w-sm whitespace-pre-line text-[15px] leading-relaxed text-cream-100/70">{r.footerTagline ?? r.tagline}</p>
           <address className="mt-6 not-italic text-[15px] leading-relaxed text-cream-100/85">
             <a href={mapsUrl(r)} target="_blank" rel="noopener noreferrer" className="hover:text-cream-50">
               {r.addressLine1}
@@ -40,11 +43,12 @@ export function Footer({ restaurant: r, hours, phoneHref, todayDow }: { restaura
             instagramUrl={r.instagramUrl}
             facebookUrl={r.facebookUrl}
             className="mt-6 gap-3"
-            linkClassName="flex h-10 w-10 items-center justify-center rounded-full border border-cream-50/15 text-cream-100 transition hover:border-teal-300 hover:text-teal-300"
+            linkClassName="flex h-10 w-10 items-center justify-center rounded-full border border-cream-50/15 text-cream-100 transition hover:border-ember-300 hover:text-ember-300"
           />
         </div>
 
         <div className="lg:col-span-2">
+          {/* Footer eyebrows stay teal: part of the small teal-accent set (1 Nov) */}
           <h2 className="eyebrow text-teal-300">Explore</h2>
           <ul className="mt-5 space-y-3">
             {LINKS.map((l) => (

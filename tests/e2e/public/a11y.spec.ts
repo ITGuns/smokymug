@@ -8,7 +8,7 @@ async function expectNoBlockingViolations(page: Page) {
   expect(summary, summary.join("\n")).toEqual([]);
 }
 
-const PAGES = ["/", "/menu", "/book", "/catering", "/contact", "/gallery", "/admin/login"];
+const PAGES = ["/", "/menu", "/book", "/catering", "/contact", "/gallery", "/calendar", "/admin/login"];
 
 for (const path of PAGES) {
   test(`accessibility: ${path} has no serious or critical violations`, async ({ page }) => {

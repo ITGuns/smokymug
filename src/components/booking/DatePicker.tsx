@@ -66,8 +66,8 @@ export function DatePicker({
               aria-label={parseDate(d).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) + (disabled ? " (unavailable)" : "")}
               className={cn(
                 "relative flex aspect-square items-center justify-center rounded-full text-[15px] font-medium transition-all",
-                selected ? "bg-red-600 text-cream-50 shadow-glow" : disabled ? "text-charcoal-900/25 line-through decoration-charcoal-900/20" : "text-charcoal-900 hover:bg-charcoal-900/8",
-                isToday && !selected && "ring-1 ring-inset ring-teal-600/60",
+                selected ? "bg-ember-600 text-cream-50 shadow-glow" : disabled ? "text-charcoal-900/25 line-through decoration-charcoal-900/20" : "text-charcoal-900 hover:bg-charcoal-900/8",
+                isToday && !selected && "ring-1 ring-inset ring-ember-600/60",
               )}
             >
               {Number(d.slice(-2))}

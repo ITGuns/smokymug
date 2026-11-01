@@ -29,6 +29,7 @@ export const HOURS_CATEGORY_LABELS: Record<HoursCategory, string> = {
   cafe_drinks: "Cafe + drinks",
   bbq: "Craft barbecue",
   tex_mex: "Tex Mex",
+  taco_tuesday: "Taco Tuesdays",
   brunch: "Sunday brunch",
   happy_hour: "Happy hour",
   wine_wednesday: "Wine Wednesdays",
