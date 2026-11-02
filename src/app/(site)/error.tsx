@@ -12,7 +12,7 @@ export default function SiteError({ error, reset }: { error: Error & { digest?: 
   return (
     <section className="flex min-h-[70svh] items-center bg-cream-100 pt-28">
       <div className="container-site max-w-xl py-20 text-center">
-        <p className="eyebrow text-ember-600">Something went wrong</p>
+        <p className="eyebrow text-teal-600">Something went wrong</p>
         <h1 className="mt-4 font-display text-[clamp(2rem,5vw,3rem)] font-semibold text-charcoal-900">
           We couldn&apos;t load this page.
         </h1>

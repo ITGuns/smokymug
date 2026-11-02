@@ -19,11 +19,11 @@ export function Intro({ blurb, cafeSummary, bbqSummary, features }: { blurb: str
             {/* C5 (Q5 default): columns swapped — The pit reads first, then The cafe */}
             <dl className="mt-8 grid gap-5 border-t border-charcoal-900/10 pt-7 sm:grid-cols-2">
               <div>
-                <dt className="font-label text-[13px] tracking-[0.2em] text-ember-600">The pit</dt>
+                <dt className="font-label text-[13px] tracking-[0.2em] text-teal-600">The pit</dt>
                 <dd className="mt-1.5 text-[15px] leading-relaxed text-charcoal-800">{bbqSummary}</dd>
               </div>
               <div>
-                <dt className="font-label text-[13px] tracking-[0.2em] text-ember-600">The cafe</dt>
+                <dt className="font-label text-[13px] tracking-[0.2em] text-teal-600">The cafe</dt>
                 <dd className="mt-1.5 text-[15px] leading-relaxed text-charcoal-800">{cafeSummary}</dd>
               </div>
             </dl>

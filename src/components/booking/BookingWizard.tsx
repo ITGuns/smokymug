@@ -352,7 +352,7 @@ export function BookingWizard({
       {/* Summary rail */}
       <aside className="hidden lg:col-span-4 lg:block">
         <div className="sticky top-28 rounded-2xl bg-charcoal-900 p-6 text-cream-50 shadow-lift">
-          <p className="eyebrow text-ember-300">Your reservation</p>
+          <p className="eyebrow text-teal-300">Your reservation</p>
           <dl className="mt-4 space-y-3">
             <SummaryRow label="Date" value={date ? longDate(date) : "…"} onEdit={date ? () => go(0) : undefined} />
             <SummaryRow label="Guests" value={party ? `${party}` : "…"} onEdit={party ? () => go(1) : undefined} />

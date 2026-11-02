@@ -109,7 +109,7 @@ export function EventsCalendar({
       {/* Phone stack (NW01 note): list on top, calendar below. Desktop: grid left, list right. */}
       <div className="mt-8 flex flex-col gap-10 lg:grid lg:grid-cols-12 lg:items-start lg:gap-12">
         <section aria-label="List by date" className="lg:order-2 lg:col-span-5">
-          <p className="eyebrow text-ember-600">List by date</p>
+          <p className="eyebrow text-teal-600">List by date</p>
           {events.length === 0 ? (
             <div className="mt-5 rounded-2xl border border-dashed border-charcoal-900/15 p-8 text-[15px] text-charcoal-500">
               Nothing on the calendar for {label} yet. Check back soon, or follow us on Instagram for pop-ups and specials.
@@ -127,7 +127,7 @@ export function EventsCalendar({
                       onClick={() => setExpanded(open ? null : e.id)}
                       className="group flex w-full items-baseline gap-4 text-left"
                     >
-                      <span className="w-16 shrink-0 font-label text-[13px] tracking-[0.14em] text-ember-600">{monthDay(e.date)}</span>
+                      <span className="w-16 shrink-0 font-label text-[13px] tracking-[0.14em] text-teal-600">{monthDay(e.date)}</span>
                       <span className="flex-1">
                         <span className="block font-display text-[1.15rem] font-semibold leading-tight text-charcoal-900 transition-colors group-hover:text-ember-600">
                           {e.title}
@@ -199,7 +199,8 @@ export function EventsCalendar({
                 const base = cn(
                   "relative flex aspect-square flex-col items-start justify-between rounded-xl border p-2 text-[14px] sm:p-2.5",
                   cell.inMonth ? "border-charcoal-900/8 bg-cream-50 text-charcoal-900" : "border-transparent text-charcoal-500/40",
-                  isToday && "ring-1 ring-inset ring-ember-500/60",
+                  // Teal today-ring: info marker, not an action (2 Nov accent set)
+                  isToday && "ring-1 ring-inset ring-teal-500/70",
                 );
                 if (!has)
                   return (
@@ -243,7 +244,7 @@ export function EventsCalendar({
                 className="absolute inset-0 z-10 overflow-y-auto rounded-2xl bg-charcoal-900 p-6 text-cream-50 shadow-lift sm:p-8"
               >
                 <div className="flex items-start justify-between gap-4">
-                  <p className="eyebrow text-ember-300">{longDate(openDate, { weekday: true, year: true })}</p>
+                  <p className="eyebrow text-teal-300">{longDate(openDate, { weekday: true, year: true })}</p>
                   <button
                     ref={closeRef}
                     type="button"

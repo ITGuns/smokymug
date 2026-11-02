@@ -55,7 +55,7 @@ export default async function CateringPage() {
       <section id="services" className="scroll-mt-20 bg-cream-100 py-24 lg:py-32">
         <div className="container-site">
           <Reveal className="max-w-2xl">
-            <p className="eyebrow text-ember-600">What we cater</p>
+            <p className="eyebrow text-teal-600">What we cater</p>
             <h2 className="mt-4 font-display text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.02em] text-charcoal-900 display-sharp">Parties, professional events, holidays. Or rent the whole restaurant.</h2>
           </Reveal>
           <RevealGroup className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -95,7 +95,7 @@ export default async function CateringPage() {
         <div className="container-site relative z-[2] grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Reveal>
-              <p className="eyebrow text-ember-300">Plan your event</p>
+              <p className="eyebrow text-teal-300">Plan your event</p>
               <h2 className="mt-4 font-display text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.02em] display-sharp">Tell us the occasion, the date, and the headcount.</h2>
               <p className="mt-5 text-[15px] leading-relaxed text-cream-100/75">We&apos;ll reply with a catering menu and a quote. Pick-up, delivery, or full service with setup, line service and cleanup.</p>
               {/* Board CA03: catering inquiries use the bookings address */}

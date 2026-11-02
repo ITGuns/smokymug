@@ -12,27 +12,30 @@ the Roadstore file). They ship as CSS design tokens so the final values are a
 one-line change. Roadstore is NOT shipped until a web license is confirmed; the
 existing Fraunces display stack stays as the heading face until then.
 
-## 1. Color tokens (PROPOSED; brick-orange revert ordered by Guns, 1 Nov 2026)
+## 1. Color tokens (PROPOSED; brick-orange scheme per Guns, amended 2 Nov 2026)
 
-Guns's call, 1 Nov 2026 chat: "the teal was too much, teal should be accents
-only, back to the brick orange." This SUPERSEDES the Rev 1 teal-carries-the-page
-scheme below the table. Q1 (Dan's own palette pick) is still open; the board's
-COLOR CHOICE box was left empty.
+Guns's calls: 1 Nov chat, "the teal was too much, teal should be accents only,
+back to the brick orange." 2 Nov chat (screenshot with circles on Book a Table
+and Explore Menu): those CTAs go brick orange "para mas naka highlight", and
+"more teal accents sa color scheme". Net scheme: ember owns every ACTION, teal
+owns the quiet INFO layer. Q1 (Dan's own palette pick) is still open; the
+board's COLOR CHOICE box was left empty.
 
 | Token | Hex | Use |
 |---|---|---|
-| `--color-ember-600` (brick orange) | `#A54F1F` | Primary accent: buttons, links, tags, eyebrows on cream |
-| `--color-ember-300/400/500` | `#F0A06A` `#E07A3A` `#C8642A` | Hovers, eyebrows on dark, highlights, focus ring (500) |
+| `--color-ember-600` (brick orange) | `#A54F1F` | Action color: ALL primary CTAs (Book a Table, Explore Menu, Order Now), links, hovers, tags |
+| `--color-ember-300/400/500` | `#F0A06A` `#E07A3A` `#C8642A` | Hovers on dark, highlights, event dots, focus ring (500) |
 | `--color-charcoal-950/900` | `#0F0D0B` `#161311` | Header, footer, dark sections, panels; ink on cream |
 | `--color-wood-700` | `#52321C` | Warm dark sections (catering teaser + inquiry) |
 | `--color-cream-100` | `#F6EEE1` | Page background |
-| `--color-teal-300/600` | `#8FC0BC` `#0B5D5E` | ACCENT ONLY: hero "Brewed slow." line, footer eyebrows, text selection |
+| `--color-teal-600` (on light) / `--color-teal-300` (on dark) | `#0B5D5E` `#8FC0BC` | Secondary accent, info layer: section eyebrows + micro-labels sitewide, hours borders, calendar today-ring + date chips, header pin, hero "Brewed slow.", selection |
 | `--color-red-*` | `#B3261E` scale | Admin/error contexts only, no longer a site brand accent |
 
-Rules (1 Nov):
-- Ember carries the accents, charcoal carries the dark surfaces, cream the page.
-- Teal appears ONLY in the three listed spots. Adding teal anywhere else needs
-  Guns's say-so.
+Rules (2 Nov):
+- Ember = action. If it's clickable emphasis or a CTA, it's ember. Both header
+  and hero CTAs are solid ember so they pop off the dark surfaces.
+- Teal = information. Eyebrows, micro-labels, today markers, hours accents.
+  Teal is never a button fill or a hover.
 - Gold/sage/brick keep their semantic jobs (stars/info tags, open/dietary,
   closed/error).
 
@@ -40,6 +43,11 @@ Rules (1 Nov):
 
 - Headings: Roadstore **when licensed** (Q2); until then the current Fraunces stack.
   Keep a fallback stack; layout must not shift if the font fails to load.
+- Buttons (Guns 2 Nov: "use roadhouse font on the buttons... or at least a
+  children font of that"): all CTA buttons use `--font-western` = **Rye**
+  (Google Fonts, free), the closest Roadstore relative we can ship today.
+  Single 400 weight, so no `font-semibold` on buttons (faux bold). Swap the
+  family to Roadstore in one token when the license lands.
 - Bigger headings, optimized for mobile:
   - H1 `clamp(2.25rem, 6vw, 4rem)`
   - H2 `clamp(1.75rem, 4.5vw, 2.75rem)`

@@ -227,7 +227,7 @@ export function MenuExplorer({
                   <h2 id={`cat-${cat.id}`} className="font-display text-[clamp(2.2rem,4.5vw,3.6rem)] font-semibold leading-[1.02] tracking-[-0.02em] text-charcoal-900 display-sharp">
                     {cat.name}
                   </h2>
-                  {cat.hoursNote && <p className="mt-3 font-label text-[15px] tracking-[0.16em] text-ember-600">{cat.hoursNote}</p>}
+                  {cat.hoursNote && <p className="mt-3 font-label text-[15px] tracking-[0.16em] text-teal-600">{cat.hoursNote}</p>}
                   {cat.description && <p className="mt-2 text-[16px] leading-relaxed text-charcoal-700">{cat.description}</p>}
                 </header>
 

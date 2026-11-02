@@ -41,7 +41,7 @@ export default async function MenuPage({ searchParams }: { searchParams: Promise
         />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/90 via-charcoal-950/65 to-charcoal-950/45" />
         <div className="container-site relative z-[2]">
-          <p className="eyebrow text-ember-300">The menu</p>
+          <p className="eyebrow text-teal-300">The menu</p>
           {/* Board MB01/MD01: "Brew." appended to the menu headline (client's blue markup) */}
           <h1 className="mt-4 font-display text-[clamp(2.8rem,7vw,6rem)] font-semibold leading-[0.95] tracking-[-0.02em] display-wonk">
             Breakfast. Barbecue. Brunch. Bar. Brew.

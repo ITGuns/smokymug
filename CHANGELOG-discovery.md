@@ -205,6 +205,29 @@ the BASE build, and its acceptance list includes "Menu L2-D". Corrected below.
   drag order, and reviews. If anything was hand-edited in prod admin, note it
   down first and re-enter it after the reseed.
 
+## CTA + accent polish (2 Nov 2026, Guns's screenshot round)
+
+Guns's chat, 2 Nov (screenshot with red circles on the header Book a Table and
+the hero Explore Menu): make the circled buttons brick orange "para mas naka
+highlight", add "more teal accents sa color scheme", and "dili ma gamit tung
+roadhouse na font?" on the buttons.
+
+- Both circled CTAs are now solid ember-600 (brick orange): header/drawer Book
+  a Table dropped its charcoal `secondary` variant for primary; the hero
+  Explore Menu trigger swapped its dark-glass pill for the primary ember style
+  (`Header.tsx`, `MenuDropdown.tsx`). Shapes unchanged (soft square vs pill).
+- Teal promoted from "three spots only" to the site's secondary accent, the
+  info layer: all section eyebrows + micro-labels (19 swapped ember→teal),
+  Intro pit/cafe labels, menu hours notes, ServiceHours left borders, calendar
+  date chips + today ring, header address pin. Ember keeps every action:
+  CTAs, links, hovers, nav underline, event dots. Rule written into
+  DESIGN.md §1 (Rules, 2 Nov).
+- Buttons wear the Roadstore look: Q2's license is still unresolved, so
+  `--font-western` ships **Rye** (Google Fonts, free, closest Roadstore
+  relative) on all site CTA buttons (`ui/Button` base + the Explore Menu
+  trigger). Single 400 weight, Fraunces fallback, one-token swap to Roadstore
+  when Dan supplies the file. Headings unchanged (still Fraunces per Q2).
+
 ## Open inputs still needed (handoff §4)
 
 Q1 final teal/red values · Q2 Roadstore file + license · Q4 confirm dropdown

@@ -47,7 +47,8 @@ export function ServiceHours({ hours, tone = "light" }: { hours: Hours[]; tone?:
         const rows = summarizeHours(hours, c);
         if (!rows.length) return null;
         return (
-          <li key={c} className={cn("flex flex-col gap-0.5 border-l-2 pl-3", dark ? "border-ember-400/70" : "border-ember-500/60")}>
+          // Teal border: info accent, part of the 2 Nov secondary-accent set
+          <li key={c} className={cn("flex flex-col gap-0.5 border-l-2 pl-3", dark ? "border-teal-400/70" : "border-teal-500/60")}>
             <span className={cn("eyebrow", dark ? "text-cream-100/60" : "text-charcoal-500")}>{HOURS_CATEGORY_LABELS[c]}</span>
             <span className={cn("text-[15px]", dark ? "text-cream-50" : "text-charcoal-900")}>
               {rows.map((r) => `${r.days} ${r.hours}`).join(" · ")}

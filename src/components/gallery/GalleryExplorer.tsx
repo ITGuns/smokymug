@@ -66,7 +66,7 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
       <section className="overflow-hidden bg-charcoal-950 py-14 text-cream-50">
         <div className="container-site flex items-end justify-between">
           <div>
-            <p className="eyebrow text-ember-300">Off the pit</p>
+            <p className="eyebrow text-teal-300">Off the pit</p>
             <h2 className="mt-2 font-display text-3xl font-semibold display-soft">Swipe through the smoke.</h2>
           </div>
           <span className="hidden text-[12px] uppercase tracking-[0.16em] text-cream-100/70 sm:block">Scroll →</span>

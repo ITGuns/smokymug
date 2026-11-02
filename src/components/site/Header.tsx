@@ -145,7 +145,7 @@ export function Header({
         </div>
         <div className="container-site hidden h-9 items-center justify-between font-label text-[12.5px] tracking-[0.16em] text-cream-100/85 lg:flex">
           <span className="inline-flex items-center gap-2">
-            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-ember-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-teal-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z" />
               <circle cx="12" cy="10" r="3" />
             </svg>
@@ -238,7 +238,8 @@ export function Header({
                 Order Now
               </ButtonLink>
             )}
-            <ButtonLink href="/book" variant="secondary" shape="soft" size="sm" className="h-10 px-5" arrow>
+            {/* Guns 2 Nov: brick orange so it reads as THE action over the dark header */}
+            <ButtonLink href="/book" shape="soft" size="sm" className="h-10 px-5" arrow>
               Book a Table
             </ButtonLink>
           </div>
@@ -362,7 +363,7 @@ export function Header({
                       Order Now
                     </ButtonLink>
                   )}
-                  <ButtonLink href="/book" variant="secondary" shape="soft" size="lg" className="w-full" arrow onClick={close}>
+                  <ButtonLink href="/book" shape="soft" size="lg" className="w-full" arrow onClick={close}>
                     Book a Table
                   </ButtonLink>
                   <div className="grid gap-4 rounded-2xl border border-cream-50/10 p-5 text-[14px] text-cream-100/75">

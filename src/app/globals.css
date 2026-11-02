@@ -36,7 +36,9 @@
   --color-gold-500: #c9a26b;
   --color-gold-600: #a8834f;
 
-  /* Teal — ACCENT ONLY (Guns 1 Nov): hero second line, footer eyebrows, selection */
+  /* Teal — the SECONDARY accent (Guns 2 Nov: "more teal accents"): section
+     eyebrows + micro-labels sitewide, info markers (today ring, hours borders),
+     hero second line, selection. CTAs and interactive emphasis stay ember. */
   --color-teal-50: #eef6f5;
   --color-teal-100: #dcecea;
   --color-teal-200: #b9d9d6;
@@ -71,6 +73,9 @@
   --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
   --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
   --font-label: var(--font-bebas), "Oswald", Impact, sans-serif;
+  /* Roadstore stand-in (Q2 license still open with Dan): Rye carries the saloon
+     look on CTA buttons — Guns 2 Nov. Swap the first family when Roadstore lands. */
+  --font-western: var(--font-rye), var(--font-fraunces), Georgia, serif;
 
   --shadow-card: 0 1px 2px rgb(15 13 11 / 0.06), 0 10px 30px -12px rgb(15 13 11 / 0.25);
   --shadow-lift: 0 2px 4px rgb(15 13 11 / 0.08), 0 24px 48px -16px rgb(15 13 11 / 0.35);

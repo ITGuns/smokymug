@@ -25,7 +25,7 @@ export default async function SpecialEventsPage() {
       <section className="grain relative overflow-hidden bg-charcoal-950 pb-12 pt-32 text-cream-50 md:pt-40">
         <div aria-hidden className="pointer-events-none absolute -left-24 top-0 h-[420px] w-[420px] rounded-full bg-ember-500/15 blur-3xl" />
         <div className="container-site relative z-[2]">
-          <p className="eyebrow text-ember-300">Specials &amp; events</p>
+          <p className="eyebrow text-teal-300">Specials &amp; events</p>
           <h1 className="mt-4 font-display text-[clamp(2.8rem,7vw,6rem)] font-semibold leading-[0.95] tracking-[-0.02em] display-wonk">
             {settings.title}
           </h1>
