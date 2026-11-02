@@ -71,11 +71,10 @@ Rules (2 Nov):
 
 - Corners: 16px radius on cards, panels, images.
 - Buttons: L4-A pill. Exception: **Book a Table is a soft square** (10–12px radius).
-- Primary CTAs carry the brick running-bond texture (`brick-texture` in
-  globals.css): an inline SVG mortar-line tile over the ember fill, positioned
-  from the button's center so the label sits inside one clear brick row.
-  Decorative justification: literal brick for the brick-orange brand read
-  (Guns 2 Nov).
+- NO brick texture on CTAs. A literal running-bond texture shipped 2 Nov and
+  Guns pulled it 3 Nov: "color lang na brick orange". Brick orange is the
+  COLOR; primary CTAs are a plain ember fill. Do not re-add a texture without
+  Guns asking for one.
 - Spacing: Standard — keep the current rhythm, do not tighten or loosen.
 - Photos: full color. Text over a photo needs a scrim/gradient to 4.5:1. Photos
   without text stay unfiltered.

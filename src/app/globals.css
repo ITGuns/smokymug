@@ -213,16 +213,8 @@
   background-size: 400% 100%;
   animation: var(--animate-shimmer);
 }
-/* Guns 2 Nov: rectangle-brick texture on primary CTAs. Running-bond mortar
-   lines as an inline SVG tile over the ember fill; lines are DARKER than the
-   fill, so text contrast on top only improves. 16px rows positioned from the
-   button's center (finish-gate fix): the label always sits inside one clear
-   brick row instead of under a mortar line, at every button height. */
-@utility brick-texture {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32'%3E%3Cpath d='M0 .75h64M0 16.75h64M32 0v16M16 16v16M48 16v16' stroke='rgba(63,28,10,0.45)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
-  background-size: 64px 32px;
-  background-position: 0 calc(50% + 8px);
-}
+/* No brick texture on CTAs: tried 2 Nov, pulled by Guns 3 Nov ("color lang
+   na brick orange"). Brick orange means the COLOR, plain ember fill only. */
 @utility text-shadow-hero {
   text-shadow: 0 2px 24px rgb(0 0 0 / 0.45), 0 1px 2px rgb(0 0 0 / 0.5);
 }

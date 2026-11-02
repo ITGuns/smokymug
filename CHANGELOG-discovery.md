@@ -229,6 +229,9 @@ roadhouse na font?" on the buttons.
   when Dan supplies the file. Headings unchanged (still Fraunces per Q2).
 - Brick running-bond texture on every primary CTA (`brick-texture` utility in
   globals.css): inline SVG mortar tile over the ember fill, no image requests.
+  PULLED 3 Nov on Guns's check ("color lang na brick orange"): brick orange
+  means the color, so CTAs returned to the plain ember fill. The rest of this
+  section (colors, teal layer, Rye, finish-gate fixes) stands.
 - An opus finish-gate review ran before push and its findings landed: the
   phone sticky-bar Menu/Book a Table got the full treatment; the mortar tile
   re-centered off button middles so no line crosses a label; utility/flow
