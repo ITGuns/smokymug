@@ -214,6 +214,14 @@
   background-size: 400% 100%;
   animation: var(--animate-shimmer);
 }
+/* Guns 2 Nov: rectangle-brick texture on primary CTAs. Running-bond mortar
+   lines as an inline SVG tile over the ember fill; lines are DARKER than the
+   fill, so text contrast on top only improves. Fixed 48x20 tile reads as brick
+   at every button size and breakpoint. */
+@utility brick-texture {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='20'%3E%3Cpath d='M0 .75h48M0 10.75h48M24 0v10M12 10v10M36 10v10' stroke='rgba(63,28,10,0.45)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-size: 48px 20px;
+}
 @utility text-shadow-hero {
   text-shadow: 0 2px 24px rgb(0 0 0 / 0.45), 0 1px 2px rgb(0 0 0 / 0.5);
 }
