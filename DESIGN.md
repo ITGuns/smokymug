@@ -38,15 +38,27 @@ Rules (2 Nov):
   Teal is never a button fill or a hover.
 - Gold/sage/brick keep their semantic jobs (stars/info tags, open/dietary,
   closed/error).
+- Ember exceptions that are brand emphasis, not info: the Featured tag on the
+  menu's featured dish, and single accent words inside display headlines
+  (ember-300). The hero headline's accent line stays teal.
+- Deliberate secondary: inside the contact page's Events & catering card the
+  primary action is the inquiry, so its Book a Table stays the dark variant.
+- One brick primary per cluster (DESIGN-STANDARD 3.2/3.3): when the SpotOn
+  orderUrl lands (Q8), Order Now drops to the dark variant in the header,
+  drawer and hero beside the brick Book a Table / Explore Menu. Recorded
+  here 2 Nov; confirm with Guns before flipping.
 
 ## 2. Typography (handoff 6.2)
 
 - Headings: Roadstore **when licensed** (Q2); until then the current Fraunces stack.
   Keep a fallback stack; layout must not shift if the font fails to load.
 - Buttons (Guns 2 Nov: "use roadhouse font on the buttons... or at least a
-  children font of that"): all CTA buttons use `--font-western` = **Rye**
-  (Google Fonts, free), the closest Roadstore relative we can ship today.
-  Single 400 weight, so no `font-semibold` on buttons (faux bold). Swap the
+  children font of that"): filled CTA variants (primary/light/dark) use
+  `--font-western` = **Rye** (Google Fonts, free), the closest Roadstore
+  relative we can ship today. Single 400 weight, so no `font-semibold` on
+  western buttons (faux bold). Quiet utility variants (secondary/ghost/outline:
+  booking steps, cancel dialogs, downloads) keep the UI sans via the Button
+  `face` default; Rye's subset also lacks their U+2190 back-arrow. Swap the
   family to Roadstore in one token when the license lands.
 - Bigger headings, optimized for mobile:
   - H1 `clamp(2.25rem, 6vw, 4rem)`
@@ -59,6 +71,11 @@ Rules (2 Nov):
 
 - Corners: 16px radius on cards, panels, images.
 - Buttons: L4-A pill. Exception: **Book a Table is a soft square** (10–12px radius).
+- Primary CTAs carry the brick running-bond texture (`brick-texture` in
+  globals.css): an inline SVG mortar-line tile over the ember fill, positioned
+  from the button's center so the label sits inside one clear brick row.
+  Decorative justification: literal brick for the brick-orange brand read
+  (Guns 2 Nov).
 - Spacing: Standard — keep the current rhythm, do not tighten or loosen.
 - Photos: full color. Text over a photo needs a scrim/gradient to 4.5:1. Photos
   without text stay unfiltered.

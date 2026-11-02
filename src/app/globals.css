@@ -1,11 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  /* Palette — Guns, 1 Nov 2026: back to the brick-orange scheme (ember carries
-     the page: CTAs, accents, eyebrows) with charcoal dark surfaces and cream
-     background. Teal survives as a small accent only (hero "Brewed slow." line,
-     footer eyebrows, text selection). Q1 (Dan's palette pick) is still open —
-     tweak hex values here only. */
+  /* Palette (Guns, 1 Nov 2026, amended 2 Nov): brick-orange scheme. Ember =
+     every ACTION (CTAs, links, hovers), teal = the INFO layer (eyebrows,
+     micro-labels, today markers), charcoal dark surfaces, cream page. Q1
+     (Dan's palette pick) is still open; tweak hex values here only. */
   --color-charcoal-950: #0f0d0b;
   --color-charcoal-900: #161311;
   --color-charcoal-800: #1f1a17;
@@ -24,7 +23,7 @@
   --color-wood-600: #6e4527;
   --color-wood-700: #52321c;
 
-  /* Ember (brick orange) — the primary accent: buttons, tags, highlights */
+  /* Ember (brick orange): the action accent (buttons, links, highlights) */
   --color-ember-300: #f0a06a;
   --color-ember-400: #e07a3a;
   --color-ember-500: #c8642a;
@@ -36,7 +35,7 @@
   --color-gold-500: #c9a26b;
   --color-gold-600: #a8834f;
 
-  /* Teal — the SECONDARY accent (Guns 2 Nov: "more teal accents"): section
+  /* Teal, the SECONDARY accent (Guns 2 Nov: "more teal accents"): section
      eyebrows + micro-labels sitewide, info markers (today ring, hours borders),
      hero second line, selection. CTAs and interactive emphasis stay ember. */
   --color-teal-50: #eef6f5;
@@ -51,7 +50,7 @@
   --color-teal-900: #053231;
   --color-teal-950: #032423;
 
-  /* Red — admin/error contexts only since the 1 Nov brick-orange revert */
+  /* Red: admin/error contexts only since the 1 Nov brick-orange revert */
   --color-red-300: #e08a84;
   --color-red-400: #cc5049;
   --color-red-500: #bf3a32;
@@ -74,7 +73,7 @@
   --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
   --font-label: var(--font-bebas), "Oswald", Impact, sans-serif;
   /* Roadstore stand-in (Q2 license still open with Dan): Rye carries the saloon
-     look on CTA buttons — Guns 2 Nov. Swap the first family when Roadstore lands. */
+     look on CTA buttons, per Guns 2 Nov. Swap the first family when Roadstore lands. */
   --font-western: var(--font-rye), var(--font-fraunces), Georgia, serif;
 
   --shadow-card: 0 1px 2px rgb(15 13 11 / 0.06), 0 10px 30px -12px rgb(15 13 11 / 0.25);
@@ -216,11 +215,13 @@
 }
 /* Guns 2 Nov: rectangle-brick texture on primary CTAs. Running-bond mortar
    lines as an inline SVG tile over the ember fill; lines are DARKER than the
-   fill, so text contrast on top only improves. Fixed 48x20 tile reads as brick
-   at every button size and breakpoint. */
+   fill, so text contrast on top only improves. 16px rows positioned from the
+   button's center (finish-gate fix): the label always sits inside one clear
+   brick row instead of under a mortar line, at every button height. */
 @utility brick-texture {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='20'%3E%3Cpath d='M0 .75h48M0 10.75h48M24 0v10M12 10v10M36 10v10' stroke='rgba(63,28,10,0.45)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
-  background-size: 48px 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32'%3E%3Cpath d='M0 .75h64M0 16.75h64M32 0v16M16 16v16M48 16v16' stroke='rgba(63,28,10,0.45)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-size: 64px 32px;
+  background-position: 0 calc(50% + 8px);
 }
 @utility text-shadow-hero {
   text-shadow: 0 2px 24px rgb(0 0 0 / 0.45), 0 1px 2px rgb(0 0 0 / 0.5);

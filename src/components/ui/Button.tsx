@@ -7,12 +7,29 @@ type Size = "sm" | "md" | "lg";
 /* B4: buttons are L4-A pills; Book a Table is the one soft square (handoff 6.3) */
 type Shape = "pill" | "soft";
 
-/* Guns 2 Nov: CTAs carry the saloon display font (Roadstore stand-in, single 400
-   weight — no font-semibold, it would synthesize a faux bold) */
+/* Guns 2 Nov: CTAs carry the saloon display font (Roadstore stand-in, single
+   400 weight, so no font-semibold: it would synthesize a faux bold). */
+type Face = "western" | "ui";
+
 const base =
-  "group/btn inline-flex items-center justify-center gap-2 whitespace-nowrap font-western tracking-[0.02em] transition-all duration-300 ease-out-expo select-none disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
+  "group/btn inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all duration-300 ease-out-expo select-none disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
+const faces: Record<Face, string> = {
+  western: "font-western tracking-[0.02em]",
+  ui: "font-semibold tracking-tight",
+};
+/* Finish-gate rule: filled CTA variants wear the western face; quiet utility
+   variants (booking steps, cancel dialogs, downloads) keep the UI sans. Rye's
+   subset also lacks the U+2190 back-arrow those labels use. Override with `face`. */
+const defaultFace: Record<Variant, Face> = {
+  primary: "western",
+  secondary: "ui",
+  ghost: "ui",
+  outline: "ui",
+  light: "western",
+  dark: "western",
+};
 const variants: Record<Variant, string> = {
-  primary: "bg-ember-600 brick-texture text-cream-50 shadow-[0_8px_24px_-8px_rgb(165_79_31/0.7)] hover:bg-ember-500 hover:shadow-glow",
+  primary: "bg-ember-600 brick-texture text-cream-50 shadow-[0_8px_24px_-8px_rgb(165_79_31/0.7)] hover:bg-ember-700 hover:shadow-glow",
   secondary: "bg-charcoal-900 text-cream-50 hover:bg-charcoal-700",
   ghost: "bg-transparent text-current hover:bg-charcoal-900/5",
   outline: "border border-current/30 text-current hover:border-current hover:bg-current/5",
@@ -29,7 +46,7 @@ const shapes: Record<Shape, string> = {
   soft: "rounded-[10px]",
 };
 
-type Common = { variant?: Variant; size?: Size; shape?: Shape; className?: string; children: ReactNode; arrow?: boolean };
+type Common = { variant?: Variant; size?: Size; shape?: Shape; face?: Face; className?: string; children: ReactNode; arrow?: boolean };
 
 export function Arrow({ className }: { className?: string }) {
   return (
@@ -48,9 +65,9 @@ export function Arrow({ className }: { className?: string }) {
   );
 }
 
-export function Button({ variant = "primary", size = "md", shape = "pill", className, children, arrow, ...rest }: Common & ComponentProps<"button">) {
+export function Button({ variant = "primary", size = "md", shape = "pill", face, className, children, arrow, ...rest }: Common & ComponentProps<"button">) {
   return (
-    <button className={cn(base, variants[variant], sizes[size], shapes[shape], className)} {...rest}>
+    <button className={cn(base, faces[face ?? defaultFace[variant]], variants[variant], sizes[size], shapes[shape], className)} {...rest}>
       {children}
       {arrow && <Arrow />}
     </button>
@@ -61,6 +78,7 @@ export function ButtonLink({
   variant = "primary",
   size = "md",
   shape = "pill",
+  face,
   className,
   children,
   arrow,
@@ -71,7 +89,7 @@ export function ButtonLink({
   return (
     <Link
       href={href}
-      className={cn(base, variants[variant], sizes[size], shapes[shape], className)}
+      className={cn(base, faces[face ?? defaultFace[variant]], variants[variant], sizes[size], shapes[shape], className)}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       {...rest}
     >

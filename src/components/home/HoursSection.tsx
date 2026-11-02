@@ -22,7 +22,7 @@ export function HoursSection({ hours, todayDow, status }: { hours: Hours[]; toda
         </div>
         <div className="lg:col-span-7 lg:pl-8">
           <Reveal delay={0.05}>
-            <p className="font-label text-[13px] tracking-[0.2em] text-charcoal-500">Service windows</p>
+            <p className="font-label text-[13px] tracking-[0.2em] text-teal-600">Service windows</p>
             <div className="mt-6">
               <ServiceHours hours={hours} />
             </div>
@@ -33,7 +33,7 @@ export function HoursSection({ hours, todayDow, status }: { hours: Hours[]; toda
                 <p className="font-display text-2xl font-semibold text-charcoal-900">Reservations</p>
                 <p className="mt-1 text-[15px] text-charcoal-700">Book online or call ahead. BBQ can sell out early.</p>
               </div>
-              <ButtonLink href="/book" arrow>
+              <ButtonLink href="/book" shape="soft" arrow>
                 Book a Table
               </ButtonLink>
             </div>

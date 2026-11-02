@@ -61,7 +61,7 @@ export default async function CateringPage() {
           <RevealGroup className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {CATERING.categories.map((c) => (
               <RevealItem key={c.name} className="flex h-full flex-col rounded-2xl border border-charcoal-900/8 bg-cream-50 p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:shadow-lift">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ember-600/10 text-ember-600">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-teal-600/10 text-teal-600">
                   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{ICONS[c.name]}</svg>
                 </span>
                 <h3 className="mt-5 font-display text-2xl font-semibold text-charcoal-900">{c.name}</h3>
@@ -72,11 +72,11 @@ export default async function CateringPage() {
 
           <div className="mt-16 grid items-center gap-10 lg:grid-cols-12">
             <Reveal className="lg:col-span-5">
-              <p className="eyebrow text-charcoal-500">How it works</p>
+              <p className="eyebrow text-teal-600">How it works</p>
               <ul className="mt-5 space-y-4">
                 {CATERING.serviceTypes.map((s, i) => (
-                  <li key={s} className="flex gap-4 border-l-2 border-ember-500/60 pl-4">
-                    <span className="font-label text-2xl leading-none text-ember-500">0{i + 1}</span>
+                  <li key={s} className="flex gap-4 border-l-2 border-teal-500/60 pl-4">
+                    <span className="font-label text-2xl leading-none text-teal-600">0{i + 1}</span>
                     <span className="text-[16px] text-charcoal-800">{s}</span>
                   </li>
                 ))}

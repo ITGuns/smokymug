@@ -27,13 +27,15 @@ export function MobileCta({ phoneHref }: { phoneHref: string }) {
         </a>
         <Link
           href="/menu"
-          className="flex h-12 flex-1 items-center justify-center rounded-full border border-cream-50/15 text-[15px] font-semibold text-cream-50"
+          className="flex h-12 flex-1 items-center justify-center rounded-full border border-cream-50/15 font-western text-[15px] tracking-[0.02em] text-cream-50"
         >
           Menu
         </Link>
+        {/* Same treatment as every primary CTA (brick texture + western face):
+            on phones this bar is the only Book a Table outside the drawer */}
         <Link
           href="/book"
-          className="flex h-12 flex-[1.4] items-center justify-center rounded-[10px] bg-ember-600 text-[15px] font-semibold text-cream-50 shadow-[0_8px_24px_-8px_rgb(165_79_31/0.8)]"
+          className="flex h-12 flex-[1.4] items-center justify-center rounded-[10px] bg-ember-600 brick-texture font-western text-[15px] tracking-[0.02em] text-cream-50 shadow-[0_8px_24px_-8px_rgb(165_79_31/0.8)]"
         >
           Book a Table
         </Link>

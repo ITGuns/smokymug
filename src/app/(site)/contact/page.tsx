@@ -40,7 +40,8 @@ export default async function ContactPage() {
             <p className="mt-3 text-[15px] text-cream-100/75">Parties, professional lunches, holidays, restaurant rental. Send us the occasion and headcount and we&apos;ll send a menu.</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <ButtonLink href="/catering#inquiry" arrow>Catering inquiry</ButtonLink>
-              <ButtonLink href="/book" variant="dark">Book a table</ButtonLink>
+              {/* Deliberate secondary: the card's primary action is the inquiry (DESIGN.md §1) */}
+              <ButtonLink href="/book" variant="dark" shape="soft">Book a Table</ButtonLink>
             </div>
           </Reveal>
         </div>

@@ -224,9 +224,23 @@ roadhouse na font?" on the buttons.
   DESIGN.md §1 (Rules, 2 Nov).
 - Buttons wear the Roadstore look: Q2's license is still unresolved, so
   `--font-western` ships **Rye** (Google Fonts, free, closest Roadstore
-  relative) on all site CTA buttons (`ui/Button` base + the Explore Menu
+  relative) on the site's filled CTA buttons (`ui/Button` + the Explore Menu
   trigger). Single 400 weight, Fraunces fallback, one-token swap to Roadstore
   when Dan supplies the file. Headings unchanged (still Fraunces per Q2).
+- Brick running-bond texture on every primary CTA (`brick-texture` utility in
+  globals.css): inline SVG mortar tile over the ember fill, no image requests.
+- An opus finish-gate review ran before push and its findings landed: the
+  phone sticky-bar Menu/Book a Table got the full treatment; the mortar tile
+  re-centered off button middles so no line crosses a label; utility/flow
+  buttons (booking steps, cancel dialog, calendar/.ics) returned to the UI
+  sans via a variant-derived Button `face` default (Rye also lacks their
+  back-arrow glyph); leftover ember info-accents went teal (catering
+  how-it-works + icon chips, calendar pop-out times, home Service windows
+  label); stray CTAs joined the rule (book/[code] hand-built pill became a
+  ButtonLink, HoursSection + contact Book a Table are soft squares, label
+  casing fixed); primary hover darkened to ember-700 (contrast); and the
+  "one brick primary per cluster" Order Now decision is written into
+  DESIGN.md §1 pending Guns's confirm before the SpotOn URL goes in.
 
 ## Open inputs still needed (handoff §4)
 

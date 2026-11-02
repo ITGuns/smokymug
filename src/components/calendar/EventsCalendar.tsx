@@ -263,7 +263,7 @@ export function EventsCalendar({
                     return (
                       <li key={e.id}>
                         <h3 className="font-display text-2xl font-semibold leading-tight">{e.title}</h3>
-                        {range && <p className="mt-1 font-label text-[13px] tracking-[0.16em] text-ember-300">{range}</p>}
+                        {range && <p className="mt-1 font-label text-[13px] tracking-[0.16em] text-teal-300">{range}</p>}
                         {e.description && <p className="mt-2 text-[14.5px] leading-relaxed text-cream-100/85">{e.description}</p>}
                         {e.linkUrl && (
                           <a
