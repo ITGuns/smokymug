@@ -7,6 +7,7 @@ import type { Reservation } from "@/db/schema";
 import { clientKey } from "@/lib/auth";
 import { computeAvailability, generateConfirmationCode, getAvailability, getBookableDates, loadAvailabilityContext, type AvailabilityResult } from "@/lib/booking";
 import { getClock } from "@/lib/availability";
+import { bookingWizardOn } from "@/lib/data/site-settings";
 import { getReservationByCode } from "@/lib/data/reservations";
 import { toMinutes } from "@/lib/format";
 import { rateLimit } from "@/lib/rate-limit";
@@ -37,18 +38,25 @@ const toPublic = (r: Reservation): PublicReservation => ({
   createdAt: r.createdAt,
 });
 
+/** BK02: while the site shows the SpotOn box, the native booking actions stay
+ *  shut too, so nothing can book through a hidden wizard. */
+const WIZARD_OFF = "Online booking is handled by our reservations partner. Please use the reservations box on the Book a Table page or call us.";
+
 export async function fetchSlots(date: string, partySize: number): Promise<AvailabilityResult> {
   const key = await clientKey();
   const rl = rateLimit(`slots:${key}`, 120, 60_000);
   if (!rl.ok) return { ok: false, code: "invalid_date", message: "Too many requests. Please slow down." };
+  if (!(await bookingWizardOn())) return { ok: false, code: "disabled", message: WIZARD_OFF };
   return getAvailability(date, Number(partySize));
 }
 
 export async function fetchBookableDates() {
+  if (!(await bookingWizardOn())) return null;
   return getBookableDates();
 }
 
 export async function createReservation(raw: ReservationInput): Promise<ActionResult<PublicReservation>> {
+  if (!(await bookingWizardOn())) return fail(WIZARD_OFF, { code: "disabled" });
   const key = await clientKey();
   const rl = rateLimit(`reserve:${key}`, 6, 10 * 60_000);
   if (!rl.ok) return fail(`Too many reservation attempts. Please try again in ${Math.ceil(rl.retryAfterSec / 60)} min.`, { code: "rate_limited" });

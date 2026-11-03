@@ -139,6 +139,27 @@
   :root[data-motion="paused"] *::after {
     animation-play-state: paused !important;
   }
+  /* Motion pieces that start hidden (Reveal, RevealItem, SplitText words, the page
+     template fade) carry data-reveal. For reduced-motion visitors and while the
+     header toggle is paused, pin them to their shown state. !important outranks
+     motion's inline style and a running fade, so the element never has to be
+     swapped for a plain one (a swap re-mounts its subtree: see Reveal.tsx).
+     transition: none stops a utility like transition-all (catering cards) from
+     easing into the pin over 500ms when the toggle flips. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+      transition: none !important;
+    }
+  }
+  :root[data-motion="paused"] [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
   body {
     @apply bg-cream-100 text-charcoal-900 font-sans antialiased;
   }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { EventsCalendar } from "@/components/calendar/EventsCalendar";
-import { getEventsBetween } from "@/lib/data/events";
+import { getEventsBetween, readEventKinds } from "@/lib/data/events";
 import { addMonths, monthBounds, monthKey, monthLabel, parseMonthParam } from "@/lib/month-grid";
 import { getSiteChrome } from "@/lib/site";
 
@@ -13,14 +13,16 @@ export const metadata: Metadata = {
 
 /** NW01 (base scope): month grid + list by date + pop-out details; the list
  *  stacks on top on phones. Board copy: "What's happening?" / "Events and
- *  special programming: Do things. Meet people." Event-type icons (B6) are
- *  CHECK-gated and not built. */
+ *  special programming: Do things. Meet people." Event-type icons + legend
+ *  (B6, board L6) built 3 Nov per Pol's strict-markup order. */
 export default async function CalendarPage({ searchParams }: { searchParams: Promise<{ month?: string }> }) {
   const [{ clock }, params] = await Promise.all([getSiteChrome(), searchParams]);
   const [y, m] = clock.date.split("-").map(Number);
   const ref = parseMonthParam(params.month, { year: y, month: m });
   const { from, to } = monthBounds(ref);
-  const events = await getEventsBetween(from, to);
+  const [events, allKinds] = await Promise.all([getEventsBetween(from, to), readEventKinds()]);
+  // Only this month's types travel to the client
+  const kinds = Object.fromEntries(events.filter((e) => allKinds[e.id]).map((e) => [e.id, allKinds[e.id]]));
 
   return (
     <>
@@ -46,6 +48,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
             nextMonth={monthKey(addMonths(ref, 1))}
             today={clock.date}
             events={events}
+            kinds={kinds}
           />
         </div>
       </section>

@@ -16,8 +16,9 @@ const ORDER = [1, 2, 3, 4, 5, 6, 0];
 
 const HELP: Partial<Record<HoursCategory, string>> = {
   store: "Drives the open/closed indicator, footer, structured data and every 'from opening' window below.",
-  breakfast: "Leave 'opens' blank to mean 'from store opening'. The scrape notes conflicting copy (website: Tue–Sat; menu image: Mon–Sat, grill Wed–Sat). Set what's true.",
-  happy_hour: "Website copy says Wed–Sat; the bar menu image says Wed–Sun. Add Sunday here if you run it.",
+  // S3-5 (3 Nov): help text describes the field; it no longer hands the owner
+  // conflicts from the old scrape to resolve (the 2026 menu is the source)
+  breakfast: "Leave 'opens' blank to mean 'from store opening'.",
   cafe_drinks: "'til 7pm (or close, if earlier). The earlier of this and store close is used.",
 };
 

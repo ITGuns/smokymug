@@ -34,7 +34,9 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
             <h2 className="font-display text-[clamp(2.4rem,5vw,4.4rem)] font-semibold leading-[1.02] text-charcoal-900 display-sharp">Signature plates</h2>
           </Reveal>
           <Reveal delay={0.1}>
-            <ButtonLink href="/menu" variant="secondary" arrow>
+            {/* S1-3 (2 Nov): page CTAs wear the Roadstore stand-in too, not only the
+                ember ones; the sans default is for booking-flow utilities */}
+            <ButtonLink href="/menu" variant="secondary" face="western" arrow>
               View Full Menu
             </ButtonLink>
           </Reveal>

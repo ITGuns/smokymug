@@ -133,6 +133,16 @@ export const SPECIAL_EVENTS = {
   subtitle: null as string | null,
 };
 
+/** BK02 / CA03 defaults (3 Nov): /book shows the SpotOn reservations box
+ *  (phone card until the link is entered in Admin, Settings); the native
+ *  wizard stays hidden; no inquiry CC addresses. */
+export const SITE_SETTINGS = {
+  id: 1,
+  reservationsUrl: null as string | null,
+  bookingWizard: false,
+  inquiryCc: [] as string[],
+};
+
 /**
  * Default reservation rules. These are NOT from the scrape (the old site only
  * linked out to TablesReady for brunch); they are derived from store hours and

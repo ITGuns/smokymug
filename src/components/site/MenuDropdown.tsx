@@ -9,8 +9,8 @@ import { cn } from "@/lib/cn";
 const ease = [0.16, 1, 0.3, 1] as const;
 
 /**
- * C3: "Explore Menu" as a keyboard- and touch-friendly dropdown listing the display
- * menus (Q4 default: the site's own menu pages, not online ordering).
+ * C3 / board H01 / NW03-1: "Explore Menu" as a keyboard- and touch-friendly
+ * dropdown of the ordering menus (src/lib/ordering-menus.ts).
  * Disclosure pattern: Enter/Space/ArrowDown open and focus the list, arrows cycle,
  * Esc closes and returns focus, outside tap closes.
  */
@@ -129,19 +129,12 @@ export function MenuDropdown({ links, label = "Explore Menu", className }: { lin
             onKeyDown={onListKeyDown}
             className="absolute bottom-full left-0 z-20 mb-2 min-w-[240px] rounded-2xl border border-cream-50/10 bg-charcoal-950/95 p-2 shadow-lift backdrop-blur-xl"
           >
-            <Link
-              href="/menu"
-              onClick={() => close()}
-              className="block rounded-xl px-4 py-2.5 text-[15px] font-semibold text-cream-50 transition hover:bg-cream-50/10"
-            >
-              Full menu
-            </Link>
             {links.map((m) => (
               <Link
                 key={m.href}
                 href={m.href}
                 onClick={() => close()}
-                className="block rounded-xl px-4 py-2.5 text-[15px] text-cream-100/85 transition hover:bg-cream-50/10 hover:text-cream-50"
+                className="block rounded-xl px-4 py-2.5 text-[15px] font-semibold text-cream-50 transition hover:bg-cream-50/10"
               >
                 {m.label}
               </Link>

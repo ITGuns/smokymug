@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { AVAILABILITY_TYPES, DIETARY_TAGS, HOURS_CATEGORIES, RESERVATION_STATUSES } from "@/db/schema";
+import { EVENT_KIND_KEYS } from "@/lib/event-kinds";
 
 const ymd = z
   .string()
@@ -277,8 +278,29 @@ export const eventInput = z.object({
   linkUrl: optionalHttpUrl(300),
   linkLabel: emptyToNull(60),
   active: z.coerce.boolean().default(true),
+  /** B6 event type; "" = no type */
+  kind: z
+    .union([z.enum(EVENT_KIND_KEYS), z.literal(""), z.null()])
+    .optional()
+    .transform((v) => (v ? v : null)),
 });
 export type EventInput = z.infer<typeof eventInput>;
+
+/** BK02: SpotOn reservations link + the native-wizard switch. */
+export const reservationSettingsInput = z.object({
+  reservationsUrl: optionalHttpUrl(500),
+  bookingWizard: z.coerce.boolean().default(false),
+});
+
+/** CA03: extra inquiry recipients, one per line or comma-separated (max 10). */
+export const inquiryCopiesInput = z.object({
+  inquiryCc: z
+    .string()
+    .max(2000)
+    .transform((s) => [...new Set(s.split(/[\s,;]+/).map((e) => e.trim().toLowerCase()).filter(Boolean))])
+    .refine((list) => list.length <= 10, "Up to 10 addresses")
+    .refine((list) => list.every((e) => z.email().safeParse(e).success), "One of these is not a valid email address"),
+});
 
 export const specialEventsInput = z.object({
   enabled: z.coerce.boolean(),

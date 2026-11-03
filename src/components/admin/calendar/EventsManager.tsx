@@ -7,12 +7,13 @@ import type { SiteEvent } from "@/db/schema";
 import { ConfirmDialog, Drawer } from "@/components/admin/overlays";
 import { useToast } from "@/components/admin/toast";
 import { useAction } from "@/components/admin/useAction";
-import { Btn, Card, Checkbox, EmptyState, Field, Input, Tag, Textarea } from "@/components/admin/ui";
+import { Btn, Card, Checkbox, EmptyState, Field, Input, Select, Tag, Textarea } from "@/components/admin/ui";
+import { EVENT_KINDS, eventKindLabel, type EventKind } from "@/lib/event-kinds";
 import { longDate, time12 } from "@/lib/format";
 
-/** NW01 admin: full CRUD for calendar events. Event-type icons (B6) wait on a
- *  scope sign-off, so there is deliberately no "type" field yet. */
-export function EventsManager({ events, today }: { events: SiteEvent[]; today: string }) {
+/** NW01 admin: full CRUD for calendar events, plus the optional event type
+ *  (B6, in scope per Pol 3 Nov) that picks the icon on /calendar. */
+export function EventsManager({ events, kinds, today }: { events: SiteEvent[]; kinds: Record<number, EventKind>; today: string }) {
   const router = useRouter();
   const toast = useToast();
   const [editing, setEditing] = useState<SiteEvent | null | "new">(null);
@@ -36,6 +37,7 @@ export function EventsManager({ events, today }: { events: SiteEvent[]; today: s
     <li key={e.id} className="flex flex-wrap items-center gap-3 px-4 py-2.5 text-[14px]">
       <span className="w-44 font-medium text-zinc-900">{longDate(e.date, { weekday: true, year: true })}</span>
       <span className="min-w-0 flex-1 truncate text-zinc-700">{e.title}</span>
+      {kinds[e.id] && <Tag tone="blue">{eventKindLabel(kinds[e.id])}</Tag>}
       {e.startTime && (
         <span className="text-zinc-500">
           {time12(e.startTime)}
@@ -73,7 +75,7 @@ export function EventsManager({ events, today }: { events: SiteEvent[]; today: s
 
       <Drawer open={editing !== null} onClose={() => setEditing(null)} title={editing === "new" ? "Add an event" : "Edit event"} width="max-w-md">
         {editing !== null && (
-          <EventForm key={editing === "new" ? "new" : editing.id} e={editing === "new" ? null : editing} onDone={() => { setEditing(null); router.refresh(); }} />
+          <EventForm key={editing === "new" ? "new" : editing.id} e={editing === "new" ? null : editing} kind={editing === "new" ? null : (kinds[editing.id] ?? null)} onDone={() => { setEditing(null); router.refresh(); }} />
         )}
       </Drawer>
       <ConfirmDialog
@@ -89,7 +91,7 @@ export function EventsManager({ events, today }: { events: SiteEvent[]; today: s
   );
 }
 
-function EventForm({ e, onDone }: { e: SiteEvent | null; onDone: () => void }) {
+function EventForm({ e, kind, onDone }: { e: SiteEvent | null; kind: EventKind | null; onDone: () => void }) {
   const toast = useToast();
   const [f, setF] = useState({
     title: e?.title ?? "",
@@ -100,6 +102,7 @@ function EventForm({ e, onDone }: { e: SiteEvent | null; onDone: () => void }) {
     linkUrl: e?.linkUrl ?? "",
     linkLabel: e?.linkLabel ?? "",
     active: e?.active ?? true,
+    kind: (kind ?? "") as EventKind | "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { busy, run } = useAction();
@@ -108,7 +111,8 @@ function EventForm({ e, onDone }: { e: SiteEvent | null; onDone: () => void }) {
     ev.preventDefault();
     const res = await run(() => saveEvent({ id: e?.id, ...f }));
     if (res.ok) {
-      toast.success("Event saved", "Live on the website now.");
+      if (res.data.kindSkipped) toast.success("Event saved", "The event type needs a one-time database update (npm run db:push) before it can be stored.");
+      else toast.success("Event saved", "Live on the website now.");
       onDone();
     } else {
       setErrors(res.fieldErrors ?? {});
@@ -123,6 +127,16 @@ function EventForm({ e, onDone }: { e: SiteEvent | null; onDone: () => void }) {
       </Field>
       <Field label="Date" htmlFor="e-date" error={errors.date} required>
         <Input id="e-date" type="date" value={f.date} onChange={(ev) => setF({ ...f, date: ev.target.value })} required />
+      </Field>
+      <Field label="Type" htmlFor="e-kind" error={errors.kind} hint="Picks the small icon on the public calendar">
+        <Select id="e-kind" value={f.kind} onChange={(ev) => setF({ ...f, kind: ev.target.value as EventKind | "" })}>
+          <option value="">No type</option>
+          {EVENT_KINDS.map((k) => (
+            <option key={k.key} value={k.key}>
+              {k.label}
+            </option>
+          ))}
+        </Select>
       </Field>
       <div className="grid grid-cols-2 gap-4">
         <Field label="Starts" htmlFor="e-start" error={errors.startTime} hint="Leave blank for all-day">

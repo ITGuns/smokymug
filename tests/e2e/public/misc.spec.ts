@@ -14,7 +14,7 @@ test.describe("Other public pages & routes", () => {
     await page.goto("/gallery");
     await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("Come hungry.");
     await page.getByRole("tab", { name: "Coffee" }).click();
-    const first = page.locator("ul.columns-2 button").first();
+    const first = page.locator("[data-gallery-grid] button").first();
     await first.click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
@@ -29,7 +29,7 @@ test.describe("Other public pages & routes", () => {
   test("gallery deep link opens the lightbox", async ({ page }) => {
     // Gallery ids are serial and shift on reseed, so take a real one from the page.
     await page.goto("/gallery");
-    await page.locator("ul.columns-2 button").first().click();
+    await page.locator("[data-gallery-grid] button").first().click();
     await expect(page).toHaveURL(/photo=(\d+)/);
     const url = page.url();
     await page.goto("/");

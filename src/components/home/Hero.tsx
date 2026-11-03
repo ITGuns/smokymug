@@ -6,11 +6,11 @@ import { useRef } from "react";
 import { ImageCarousel, type Slide } from "@/components/motion/ImageCarousel";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { SplitText } from "@/components/motion/SplitText";
-import type { MenuLink } from "@/components/site/Header";
 import { MenuDropdown } from "@/components/site/MenuDropdown";
 import { SmokeBackdrop } from "@/components/site/SmokeBackdrop";
 import { ButtonLink } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
+import { ORDERING_MENUS } from "@/lib/ordering-menus";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -26,14 +26,10 @@ export function Hero({
   tagline,
   status,
   addressShort,
-  orderUrl,
-  menuLinks = [],
 }: {
   tagline: string;
   status: { isOpen: boolean; label: string; detail: string };
   addressShort: string;
-  orderUrl?: string | null;
-  menuLinks?: MenuLink[];
 }) {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
@@ -94,15 +90,15 @@ export function Hero({
             variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 1, ease, delay: 0.85 } } }}
             className="mt-9 flex flex-wrap items-center gap-3"
           >
-            {/* L4 note: highlight the Menu and Ordering on the hero (C3 dropdown, Q4 default) */}
-            <MenuDropdown links={menuLinks} />
-            {orderUrl && (
-              <Magnetic>
-                <ButtonLink href={orderUrl} size="lg" arrow>
-                  Order Now
-                </ButtonLink>
-              </Magnetic>
-            )}
+            {/* L4 note: "Highlight the Menu and Ordering on the hero page". H01 +
+                NW03-1: Explore Menu drops to the ordering menus; NW03-2: Order Now
+                goes straight to the restaurant menu. */}
+            <MenuDropdown links={ORDERING_MENUS} />
+            <Magnetic>
+              <ButtonLink href="/menu" size="lg" arrow>
+                Order Now
+              </ButtonLink>
+            </Magnetic>
           </motion.div>
 
           <motion.div

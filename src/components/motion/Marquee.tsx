@@ -1,8 +1,9 @@
 "use client";
 
-import { motion, useAnimationFrame, useMotionValue, useReducedMotion } from "motion/react";
+import { motion, useAnimationFrame, useMotionValue } from "motion/react";
 import { Children, cloneElement, isValidElement, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { usePrefersReducedMotion } from "./usePrefersReducedMotion";
 
 /**
  * Infinite horizontal marquee that can be dragged. Content is rendered twice so
@@ -12,7 +13,8 @@ import { cn } from "@/lib/cn";
  * to be the focusable items (links); they receive tabIndex={-1} in the copy.
  */
 export function Marquee({ children, speed = 40, className, pauseOnHover = true }: { children: React.ReactNode; speed?: number; className?: string; pauseOnHover?: boolean }) {
-  const reduce = useReducedMotion();
+  // Hydration-safe: `drag` writes touch-action/user-select into the SSR style.
+  const reduce = usePrefersReducedMotion();
   const x = useMotionValue(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState(false);

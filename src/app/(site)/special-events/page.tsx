@@ -15,7 +15,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** NW02 (base scope): title and subtitle are edited in Admin, the grid shows
  *  admin-uploaded flyers/menus, and the page 404s while the switch is off
- *  (dev spec). The D2 top-bar specials link is CHECK-gated and not built. */
+ *  (dev spec). While it is on, the header and footer show a Specials link
+ *  (NW02 nav link, built 3 Nov). */
 export default async function SpecialEventsPage() {
   const { settings, images } = await getSpecialEvents();
   if (!settings.enabled) notFound();

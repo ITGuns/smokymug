@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { usePrefersReducedMotion } from "./usePrefersReducedMotion";
 
 export type Slide = { src: string; alt: string; caption?: string; position?: string };
 
@@ -34,7 +35,9 @@ export function ImageCarousel({
   overlay?: React.ReactNode;
   progressClassName?: string;
 }) {
-  const reduce = useReducedMotion();
+  // Hydration-safe: the Ken Burns transform is in the SSR style, so it must not
+  // depend on the reduced-motion setting until after hydration.
+  const reduce = usePrefersReducedMotion();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [cycle, setCycle] = useState(0); // bumps to restart the progress animation
@@ -89,7 +92,9 @@ export function ImageCarousel({
             className="absolute inset-0 will-change-transform"
             initial={{ scale: kenBurns && animated ? 1.06 : 1, x: 0 }}
             animate={{ scale: kenBurns && animated ? 1.16 : 1, x: kenBurns && animated ? (index % 2 ? "-1.5%" : "1.5%") : 0 }}
-            transition={{ duration: (interval + 1500) / 1000, ease: "linear" }}
+            // duration 0 when paused/reduced: motion's MotionConfig never reaches an
+            // already-mounted element, so without it pausing eased the zoom back over 8s
+            transition={{ duration: animated ? (interval + 1500) / 1000 : 0, ease: "linear" }}
           >
             <Image
               src={slide.src}

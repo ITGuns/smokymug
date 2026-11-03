@@ -36,7 +36,7 @@ export function BookingSettingsForm({ settings: s }: { settings: BookingSettings
     <form onSubmit={submit}>
       <Card title="Reservation rules" description="Capacity and pacing for online bookings. Reservation windows and blackout dates live under Hours." actions={<Btn type="submit" variant="primary" loading={busy}>Save rules</Btn>}>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          <Toggle checked={f.bookingsEnabled} onChange={(v) => setF({ ...f, bookingsEnabled: v })} label="Online booking enabled" description="Turn off to pause the /book page" />
+          <Toggle checked={f.bookingsEnabled} onChange={(v) => setF({ ...f, bookingsEnabled: v })} label="Online booking enabled" description="Pauses the built-in booking wizard (only used when it replaces SpotOn, see Reservations above)" />
           <Toggle checked={f.autoConfirm} onChange={(v) => setF({ ...f, autoConfirm: v })} label="Auto-confirm" description="Otherwise every booking waits as Pending" />
           <div />
           <Field label="Slot interval (min)" htmlFor="b-int" error={errors.slotIntervalMinutes}><Input id="b-int" min={5} max={120} {...num("slotIntervalMinutes")} /></Field>

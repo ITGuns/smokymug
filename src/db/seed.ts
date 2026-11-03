@@ -2,7 +2,7 @@ import { config as loadEnv } from "dotenv";
 import { sql } from "drizzle-orm";
 import { MENU } from "./seed-data/menu";
 import { MODIFIER_GROUPS } from "./seed-data/modifiers";
-import { BOOKING_SETTINGS, BOOKING_WINDOWS, GALLERY, HOURS, RESTAURANT, REVIEWS, SPECIAL_EVENTS } from "./seed-data/restaurant";
+import { BOOKING_SETTINGS, BOOKING_WINDOWS, GALLERY, HOURS, RESTAURANT, REVIEWS, SITE_SETTINGS, SPECIAL_EVENTS } from "./seed-data/restaurant";
 import { hashPassword } from "../lib/password";
 import { slugify } from "../lib/slug";
 
@@ -12,7 +12,7 @@ loadEnv();
 async function main() {
   // Imported after env is loaded so DATABASE_URL is available to the client.
   const { db, schema } = await import("./index");
-  const { adminUsers, bookingSettings, bookingWindows, galleryImages, hours, menuCategories, menuItemModifierGroups, menuItems, menuSections, modifierGroups, modifiers, restaurantInfo, reviews, specialEvents } = schema;
+  const { adminUsers, bookingSettings, bookingWindows, galleryImages, hours, menuCategories, menuItemModifierGroups, menuItems, menuSections, modifierGroups, modifiers, restaurantInfo, reviews, siteSettings, specialEvents } = schema;
 
   const force = process.argv.includes("--force");
   const existing = await db.select({ id: menuCategories.id }).from(menuCategories).limit(1);
@@ -37,6 +37,10 @@ async function main() {
     // Admin-owned data stays through reseeds: calendar events and flyer images
     // are never seeded or wiped, and the Special Events switch keeps its state.
     await tx.insert(specialEvents).values(SPECIAL_EVENTS).onConflictDoNothing();
+    // BK02/CA03 settings (3 Nov): admin-owned like the switch above. A reseed adds
+    // the default row (SpotOn box, wizard OFF, no CC list) only when none exists;
+    // a typed SpotOn link or CC list survives `db:reseed --force`.
+    await tx.insert(siteSettings).values(SITE_SETTINGS).onConflictDoNothing();
 
     /* ---- modifier groups ---- */
     const groupIdByKey = new Map<string, number>();

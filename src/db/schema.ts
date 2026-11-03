@@ -358,8 +358,9 @@ export const cateringInquiries = pgTable("catering_inquiries", {
   ...timestamps,
 });
 
-/** NW01 (base scope): events shown on /calendar. The event-type icons and
- *  their legend (B6) are CHECK-gated and deliberately have no column yet. */
+/** NW01 (base scope): events shown on /calendar. The event type (B6 icons)
+ *  lives in `event_kinds` below, not here: prod may run this code before its
+ *  `db:push`, and every events read selects all of these columns. */
 export const events = pgTable(
   "events",
   {
@@ -380,13 +381,41 @@ export const events = pgTable(
 );
 
 /** NW02 (base scope): the Special Events page switch and its editable copy.
- *  While `enabled` is false, /special-events returns 404 (dev spec). The D2
- *  top-bar specials link is CHECK-gated and not built. */
+ *  While `enabled` is false, /special-events returns 404 (dev spec); while it
+ *  is true, the header and footer show a Specials link (NW02, built 3 Nov). */
 export const specialEvents = pgTable("special_events", {
   id: integer("id").primaryKey(),
   enabled: boolean("enabled").notNull().default(false),
   title: text("title").notNull(),
   subtitle: text("subtitle"),
+  ...timestamps,
+});
+
+/** B6 / board L6 (in scope per Pol, 3 Nov): one optional type per event, shown
+ *  as an icon on /calendar with a legend. Side table so a prod database without
+ *  it still renders the calendar (reads fall back to "no type"). Admin-owned:
+ *  `db:reseed` neither seeds nor wipes it; rows go when their event goes. */
+export const eventKinds = pgTable("event_kinds", {
+  eventId: integer("event_id")
+    .primaryKey()
+    .references(() => events.id, { onDelete: "cascade" }),
+  kind: text("kind").notNull(),
+});
+
+/** Settings added 3 Nov (BK02 SpotOn box, CA03 dual paper trail). One row,
+ *  id 1, in its own table so the site chrome's all-columns reads never touch
+ *  it; every read falls back to the defaults while the table is missing
+ *  (prod before `db:push`). Admin-owned: `db:reseed` inserts the default row
+ *  only if none exists and never wipes it. */
+export const siteSettings = pgTable("site_settings", {
+  id: integer("id").primaryKey(),
+  /** BK02: SpotOn reservations link, framed on /book (null = phone card). */
+  reservationsUrl: text("reservations_url"),
+  /** The native booking wizard on /book. Off by default (BK02 crossed it out);
+   *  the e2e suite turns it on for its own runs. */
+  bookingWizard: boolean("booking_wizard").notNull().default(false),
+  /** CA03: extra addresses copied on every catering inquiry email. */
+  inquiryCc: jsonArray<string[]>("inquiry_cc"),
   ...timestamps,
 });
 
@@ -455,6 +484,7 @@ export type GalleryImage = typeof galleryImages.$inferSelect;
 export type SiteEvent = typeof events.$inferSelect;
 export type SpecialEventsSettings = typeof specialEvents.$inferSelect;
 export type SpecialEventImage = typeof specialEventImages.$inferSelect;
+export type SiteSettingsRow = typeof siteSettings.$inferSelect;
 export type Review = typeof reviews.$inferSelect;
 export type CateringInquiry = typeof cateringInquiries.$inferSelect;
 export type Upload = typeof uploads.$inferSelect;

@@ -5,6 +5,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SiteEvent } from "@/db/schema";
 import { cn } from "@/lib/cn";
+import { EVENT_KINDS, eventKindLabel, type EventKind } from "@/lib/event-kinds";
+import { EventKindIcon } from "./EventKindIcon";
 import { longDate, parseDate, time12 } from "@/lib/format";
 import { monthGridCells, type MonthRef } from "@/lib/month-grid";
 
@@ -23,7 +25,8 @@ function monthDay(ymd: string): string {
 
 /** NW01: month grid (hover highlights the day square; clicking a day with
  *  events pops details out OVER the calendar, X to exit) beside a "List by
- *  date" panel whose rows drop open. On phones the list stacks on top. */
+ *  date" panel whose rows drop open. On phones the list stacks on top.
+ *  B6: typed events show their icon instead of a dot, with a legend. */
 export function EventsCalendar({
   month,
   label,
@@ -31,6 +34,7 @@ export function EventsCalendar({
   nextMonth,
   today,
   events,
+  kinds = {},
 }: {
   month: MonthRef;
   label: string;
@@ -38,9 +42,12 @@ export function EventsCalendar({
   nextMonth: string;
   today: string;
   events: SiteEvent[];
+  kinds?: Record<number, EventKind>;
 }) {
   const [openDate, setOpenDate] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<number | null>(null);
+  /** NW01 sketch note: hovering a "List by date" row lights that day's square. */
+  const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   /** The day button that opened the pop-out, so closing can hand focus back. */
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -59,12 +66,17 @@ export function EventsCalendar({
   useEffect(() => {
     setOpenDate(null);
     setExpanded(null);
+    setHoveredDate(null);
   }, [month.year, month.month]);
 
   const closePopout = useCallback(() => {
     setOpenDate(null);
     const t = triggerRef.current;
-    if (t?.isConnected) t.focus();
+    // Next frame: the grid is still inert until this close commits, and an
+    // inert button refuses focus (NW01 "x to exit" must hand focus back)
+    requestAnimationFrame(() => {
+      if (t?.isConnected) t.focus();
+    });
   }, []);
 
   useEffect(() => {
@@ -120,7 +132,15 @@ export function EventsCalendar({
                 const open = expanded === e.id;
                 const range = timeRange(e);
                 return (
-                  <li key={e.id} className="py-4 first:pt-0">
+                  // Handlers on the <li> so the expanded panel and its link keep the highlight
+                  <li
+                    key={e.id}
+                    className="py-4 first:pt-0"
+                    onMouseEnter={() => setHoveredDate(e.date)}
+                    onMouseLeave={() => setHoveredDate(null)}
+                    onFocus={() => setHoveredDate(e.date)}
+                    onBlur={() => setHoveredDate(null)}
+                  >
                     <button
                       type="button"
                       aria-expanded={open}
@@ -132,7 +152,17 @@ export function EventsCalendar({
                         <span className="block font-display text-[1.15rem] font-semibold leading-tight text-charcoal-900 transition-colors group-hover:text-ember-600">
                           {e.title}
                         </span>
-                        {range && <span className="mt-0.5 block text-[13px] text-charcoal-500">{range}</span>}
+                        {(range || kinds[e.id]) && (
+                          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[13px] text-charcoal-500">
+                            {range}
+                            {kinds[e.id] && (
+                              <span className="inline-flex items-center gap-1 text-ember-600">
+                                <EventKindIcon kind={kinds[e.id]} className="h-3.5 w-3.5" />
+                                {eventKindLabel(kinds[e.id])}
+                              </span>
+                            )}
+                          </span>
+                        )}
                       </span>
                       <svg
                         viewBox="0 0 20 20"
@@ -196,9 +226,15 @@ export function EventsCalendar({
                 const dayEvents = cell.inMonth ? (byDate.get(cell.date) ?? []) : [];
                 const has = dayEvents.length > 0;
                 const isToday = cell.date === today;
+                // NW01: the hovered/focused list row lights its day square
+                const lit = cell.inMonth && hoveredDate === cell.date;
                 const base = cn(
                   "relative flex aspect-square flex-col items-start justify-between rounded-xl border p-2 text-[14px] sm:p-2.5",
-                  cell.inMonth ? "border-charcoal-900/8 bg-cream-50 text-charcoal-900" : "border-transparent text-charcoal-500/40",
+                  !cell.inMonth
+                    ? "border-transparent text-charcoal-500/40"
+                    : lit
+                      ? "border-ember-500/50 bg-ember-600/10 text-charcoal-900"
+                      : "border-charcoal-900/8 bg-cream-50 text-charcoal-900",
                   // Teal today-ring: info marker, not an action (2 Nov accent set)
                   isToday && "ring-1 ring-inset ring-teal-500/70",
                 );
@@ -220,15 +256,29 @@ export function EventsCalendar({
                     className={cn(base, "transition-colors hover:border-ember-500/50 hover:bg-ember-600/10")}
                   >
                     <span className="font-semibold">{cell.day}</span>
-                    <span className="flex flex-wrap gap-1">
-                      {dayEvents.slice(0, 3).map((e) => (
-                        <span key={e.id} aria-hidden className="h-1.5 w-1.5 rounded-full bg-ember-500" />
-                      ))}
+                    {/* B6: a typed event shows its icon, an untyped one keeps the dot */}
+                    <span aria-hidden className="flex flex-wrap items-center gap-1 text-ember-600">
+                      {dayEvents.slice(0, 3).map((e) =>
+                        kinds[e.id] ? (
+                          <EventKindIcon key={e.id} kind={kinds[e.id]} className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        ) : (
+                          <span key={e.id} className="h-1.5 w-1.5 rounded-full bg-ember-500" />
+                        ),
+                      )}
                     </span>
                   </button>
                 );
               })}
             </div>
+            {/* B6 legend (board L6: "Icon design legend") */}
+            <ul aria-label="Event types" className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-charcoal-700">
+              {EVENT_KINDS.map((k) => (
+                <li key={k.key} className="inline-flex items-center gap-1.5">
+                  <EventKindIcon kind={k.key} className="text-ember-600" />
+                  {k.label}
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* NW01: clicking a day pops details out to cover the calendar; X exits */}
@@ -263,6 +313,12 @@ export function EventsCalendar({
                     return (
                       <li key={e.id}>
                         <h3 className="font-display text-2xl font-semibold leading-tight">{e.title}</h3>
+                        {kinds[e.id] && (
+                          <p className="mt-1.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ember-300">
+                            <EventKindIcon kind={kinds[e.id]} />
+                            {eventKindLabel(kinds[e.id])}
+                          </p>
+                        )}
                         {range && <p className="mt-1 font-label text-[13px] tracking-[0.16em] text-teal-300">{range}</p>}
                         {e.description && <p className="mt-2 text-[14.5px] leading-relaxed text-cream-100/85">{e.description}</p>}
                         {e.linkUrl && (

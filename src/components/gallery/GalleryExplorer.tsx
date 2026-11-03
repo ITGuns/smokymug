@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GalleryImage } from "@/db/schema";
 import { cn } from "@/lib/cn";
+import { balanceColumns } from "@/lib/masonry";
 import { useFocusTrap } from "@/components/useFocusTrap";
 
 const TAGS: { key: string; label: string }[] = [
@@ -18,6 +19,38 @@ const TAGS: { key: string; label: string }[] = [
   { key: "people", label: "Pitmaster" },
   { key: "catering", label: "Catering" },
 ];
+
+/** Same breakpoints as the CSS fallback: 2 columns, 3 from md (768), 4 from xl (1280). */
+function useGalleryColumns(ref: React.RefObject<HTMLDivElement | null>) {
+  const [state, setState] = useState<{ count: number; gap: number } | null>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const xl = window.matchMedia("(min-width: 1280px)");
+    const md = window.matchMedia("(min-width: 768px)");
+    const update = () => {
+      const count = xl.matches ? 4 : md.matches ? 3 : 2;
+      const colWidth = (el.getBoundingClientRect().width - (count - 1) * 16) / count;
+      const gap = colWidth > 0 ? 16 / colWidth : 0;
+      setState((s) => (s && s.count === count && Math.abs(s.gap - gap) < 0.002 ? s : { count, gap }));
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [ref]);
+  return state;
+}
+
+function GalleryTile({ img, onOpen }: { img: GalleryImage; onOpen: (id: number) => void }) {
+  return (
+    <button type="button" onClick={() => onOpen(img.id)} className="group relative block w-full overflow-hidden rounded-2xl bg-charcoal-800 shadow-card" style={{ aspectRatio: `${img.width}/${img.height}` }}>
+      <Image src={img.file} alt={img.alt} fill sizes="(min-width:1280px) 22vw, (min-width:768px) 30vw, 48vw" className="object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-[1.06]" />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      <span className="absolute inset-x-4 bottom-4 translate-y-2 text-left text-[13px] font-medium leading-snug text-cream-50 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">{img.alt}</span>
+    </button>
+  );
+}
 
 export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage[]; initialPhoto?: number }) {
   const [tag, setTag] = useState("all");
@@ -59,6 +92,13 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
   }, [open]);
 
   const featuredRow = images.filter((i) => ["bbq", "tacos"].includes(i.tag)).slice(0, 8);
+
+  const gridRef = useRef<HTMLDivElement>(null);
+  const cols = useGalleryColumns(gridRef);
+  const layout = useMemo(
+    () => (cols ? { columns: balanceColumns(list.map((i) => i.height / i.width), cols.count, cols.gap) } : null),
+    [cols, list],
+  );
 
   return (
     <>
@@ -102,19 +142,34 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
               </button>
             ))}
           </div>
-          <motion.ul layout className="mt-10 columns-2 gap-4 md:columns-3 xl:columns-4 [&>li]:mb-4 [&>li]:break-inside-avoid" aria-live="polite">
-            <AnimatePresence initial={false}>
-              {list.map((img) => (
-                <motion.li key={img.id} layout initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}>
-                  <button type="button" onClick={() => setOpen(img.id)} className="group relative block w-full overflow-hidden rounded-2xl bg-charcoal-800 shadow-card" style={{ aspectRatio: `${img.width}/${img.height}` }}>
-                    <Image src={img.file} alt={img.alt} fill sizes="(min-width:1280px) 22vw, (min-width:768px) 30vw, 48vw" className="object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-[1.06]" />
-                    <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-charcoal-950/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                    <span className="absolute inset-x-4 bottom-4 translate-y-2 text-left text-[13px] font-medium leading-snug text-cream-50 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">{img.alt}</span>
-                  </button>
-                </motion.li>
-              ))}
-            </AnimatePresence>
-          </motion.ul>
+          {/* GA03: after mount the grid is split into balanced columns (shortest
+              column first, then evened out), so column bottoms end close together.
+              Before mount (server render) it falls back to CSS columns. */}
+          <div ref={gridRef} data-gallery-grid className="mt-10" aria-live="polite">
+            {layout ? (
+              <div className="flex items-start gap-4">
+                {layout.columns.map((col, ci) => (
+                  <ul key={ci} className="flex min-w-0 flex-1 flex-col gap-4">
+                    <AnimatePresence initial={false}>
+                      {col.map((i) => (
+                        <motion.li key={list[i].id} layout initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}>
+                          <GalleryTile img={list[i]} onOpen={setOpen} />
+                        </motion.li>
+                      ))}
+                    </AnimatePresence>
+                  </ul>
+                ))}
+              </div>
+            ) : (
+              <ul className="columns-2 gap-4 md:columns-3 xl:columns-4 [&>li]:mb-4 [&>li]:break-inside-avoid">
+                {list.map((img) => (
+                  <li key={img.id}>
+                    <GalleryTile img={img} onOpen={setOpen} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </section>
 

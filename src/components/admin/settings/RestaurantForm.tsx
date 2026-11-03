@@ -41,7 +41,7 @@ export function RestaurantForm({ info }: { info: RestaurantInfo }) {
           <Field label="Category" htmlFor="r-category" error={errors.category}><Input {...t("category")} /></Field>
           <Field label="Tagline" htmlFor="r-tagline" error={errors.tagline} className="sm:col-span-2" required><Input {...t("tagline")} required /></Field>
           <Field label="Footer tagline" htmlFor="r-footerTagline" error={errors.footerTagline} className="sm:col-span-2" hint="Each line shows as its own line in the footer. Leave blank to reuse the tagline."><Textarea {...t("footerTagline")} className="min-h-[72px]" /></Field>
-          <Field label="Description (SEO)" htmlFor="r-description" error={errors.description} className="sm:col-span-2"><Textarea {...t("description")} /></Field>
+          <Field label="Description (home intro + SEO)" htmlFor="r-description" error={errors.description} className="sm:col-span-2" hint="The home page intro paragraph shows this text. If it opens with 'All-Day Craft, Tex-Mex & Barbecue Kitchen in Northside Richmond, VA.', that sentence is kept for search engines and left off the page."><Textarea {...t("description")} /></Field>
           <Field label="Address" htmlFor="r-addressLine1" error={errors.addressLine1} required><Input {...t("addressLine1")} required /></Field>
           <Field label="Neighborhood" htmlFor="r-neighborhood" error={errors.neighborhood}><Input {...t("neighborhood")} /></Field>
           <Field label="City" htmlFor="r-city" error={errors.city} required><Input {...t("city")} required /></Field>

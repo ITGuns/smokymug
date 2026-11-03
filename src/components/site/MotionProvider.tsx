@@ -10,10 +10,12 @@ export const useMotionPause = () => useContext(MotionPauseContext);
 /**
  * Two jobs: honour the OS reduced-motion setting (motion/react ignores it unless
  * told; the CSS override in globals.css only covers CSS animations), and drive the
- * header's play/pause toggle. Pausing flips MotionConfig to "always" (stops
- * marquees, carousels and reveals, which all read useReducedMotion) and sets
- * data-motion="paused" on <html> so globals.css freezes pure-CSS animation
- * (smoke layers, ticker). The choice is remembered per browser.
+ * header's play/pause toggle. Pausing flips MotionConfig to "always" (motion
+ * reads that only when an element mounts), stops marquees, carousels and
+ * parallax through usePrefersReducedMotion, and sets data-motion="paused" on
+ * <html> so globals.css freezes pure-CSS animation (smoke layers, ticker) and
+ * pins [data-reveal] elements shown. Nothing swaps elements on toggle, so no
+ * subtree re-mounts (Reveal.tsx). The choice is remembered per browser.
  */
 export function MotionProvider({ children }: { children: React.ReactNode }) {
   const [paused, setPaused] = useState(false);

@@ -10,11 +10,13 @@ import { SocialLinks } from "./SocialLinks";
 import { ButtonLink } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 
+// P1 (Pol, 3 Nov) + board BK03: Calendar replaces Gallery in every nav; the
+// /gallery page stays, reached from the home gallery section and the sitemap
 const NAV = [
   { href: "/menu", label: "Menu" },
   { href: "/#story", label: "Our Story" },
   { href: "/catering", label: "Catering" },
-  { href: "/gallery", label: "Gallery" },
+  { href: "/calendar", label: "Calendar" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -31,10 +33,10 @@ export type HeaderProps = {
   instagramUrl?: string | null;
   facebookUrl?: string | null;
   email?: string | null;
-  /** C2 / Q8: SpotOn ordering link, editable in Admin → Settings. Button hidden until set. */
-  orderUrl?: string | null;
   /** B3: the display menus the drawer's Menu item expands to. */
   menuLinks?: MenuLink[];
+  /** NW02: a Specials nav link renders only while the admin switch is on. */
+  specialsEnabled?: boolean;
 };
 
 function StatusDot({ isOpen, className }: { isOpen: boolean; className?: string }) {
@@ -55,8 +57,8 @@ export function Header({
   instagramUrl,
   facebookUrl,
   email,
-  orderUrl,
   menuLinks = [],
+  specialsEnabled = false,
 }: HeaderProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -66,6 +68,9 @@ export function Header({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const overHero = pathname === "/" || pathname === "/catering" || pathname === "/gallery";
+  // NW02 "nav link": Specials follows Calendar while the Special Events
+  // switch is on (label pending Q11)
+  const nav = specialsEnabled ? [...NAV.slice(0, 4), { href: "/special-events", label: "Specials" }, ...NAV.slice(4)] : NAV;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -74,7 +79,13 @@ export function Header({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close the drawer on navigation only, never on mount: the mount run lands right
+  // after hydration and cancelled a tap on "Open menu" made in that moment
+  // (a11y.spec mobile-menu flake, 4 Nov: 5 of 30 immediate taps stayed shut).
+  const shownPath = useRef(pathname);
   useEffect(() => {
+    if (shownPath.current === pathname) return;
+    shownPath.current = pathname;
     setOpen(false);
   }, [pathname]);
 
@@ -209,15 +220,17 @@ export function Header({
             <Logo invert width={136} priority className="hidden md:block" />
           </Link>
 
-          <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
-            {NAV.map((item) => {
+          {/* Tighter gap + tracking below xl: with Specials on AND Order Now live the
+              bar measured 1084px at 1024 with the xl spacing; this setting measures 997px */}
+          <nav aria-label="Primary" className="hidden items-center gap-4 lg:flex xl:gap-8">
+            {nav.map((item) => {
               const active = pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className="group relative py-2 nav-label text-cream-100/85 transition-colors hover:text-cream-50"
+                  className="group relative whitespace-nowrap py-2 nav-label text-cream-100/85 transition-colors hover:text-cream-50 lg:tracking-[0.14em] xl:tracking-[0.2em]"
                 >
                   {item.label}
                   <span
@@ -232,15 +245,16 @@ export function Header({
             })}
           </nav>
 
+          {/* Board H01: the nav phone became Book a Table and the old button became
+              ORDER NOW, so ORDER NOW sits rightmost. NW03-2: Order Now from other
+              pages goes straight to the restaurant menu; the SpotOn link lives on
+              each menu item (NW04). */}
           <div className="hidden items-center gap-3 lg:flex">
-            {orderUrl && (
-              <ButtonLink href={orderUrl} size="sm" className="h-10 px-5">
-                Order Now
-              </ButtonLink>
-            )}
-            {/* Guns 2 Nov: brick orange so it reads as THE action over the dark header */}
             <ButtonLink href="/book" shape="soft" size="sm" className="h-10 px-5" arrow>
               Book a Table
+            </ButtonLink>
+            <ButtonLink href="/menu" size="sm" className="h-10 px-5">
+              Order Now
             </ButtonLink>
           </div>
 
@@ -337,7 +351,7 @@ export function Header({
                       )}
                     </AnimatePresence>
                   </motion.div>
-                  {NAV.filter((item) => item.href !== "/menu").map((item, i) => (
+                  {nav.filter((item) => item.href !== "/menu").map((item, i) => (
                     <motion.div
                       key={item.href}
                       initial={{ opacity: 0, x: -16 }}
@@ -358,13 +372,12 @@ export function Header({
                   ))}
                 </nav>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-7 space-y-4">
-                  {orderUrl && (
-                    <ButtonLink href={orderUrl} size="lg" className="w-full" onClick={close}>
-                      Order Now
-                    </ButtonLink>
-                  )}
+                  {/* Same order as the desktop bar: Book a Table, then Order Now */}
                   <ButtonLink href="/book" shape="soft" size="lg" className="w-full" arrow onClick={close}>
                     Book a Table
+                  </ButtonLink>
+                  <ButtonLink href="/menu" size="lg" className="w-full" onClick={close}>
+                    Order Now
                   </ButtonLink>
                   <div className="grid gap-4 rounded-2xl border border-cream-50/10 p-5 text-[14px] text-cream-100/75">
                     <p className="flex items-center gap-2">

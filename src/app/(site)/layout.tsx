@@ -5,13 +5,14 @@ import { MotionProvider } from "@/components/site/MotionProvider";
 import { RestaurantJsonLd } from "@/components/site/JsonLd";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { time12 } from "@/lib/format";
+import { getSpecialEvents } from "@/lib/data/events";
 import { getMenuTree } from "@/lib/data/menu";
 import { getSiteChrome } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const [{ restaurant, hours, status, phoneHref, clock }, tree] = await Promise.all([getSiteChrome(), getMenuTree()]);
+  const [{ restaurant, hours, status, phoneHref, clock }, tree, specials] = await Promise.all([getSiteChrome(), getMenuTree(), getSpecialEvents()]);
   const menuLinks = tree.categories.map((c) => ({ label: c.name, href: `/menu?category=${c.slug}` }));
   const today = status.today;
   const hoursToday =
@@ -36,11 +37,11 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         instagramUrl={restaurant.instagramUrl}
         facebookUrl={restaurant.facebookUrl}
         email={restaurant.email}
-        orderUrl={restaurant.orderUrl}
         menuLinks={menuLinks}
+        specialsEnabled={specials.settings.enabled}
       />
       <main id="main">{children}</main>
-      <Footer restaurant={restaurant} hours={hours} phoneHref={phoneHref} todayDow={clock.dayOfWeek} />
+      <Footer restaurant={restaurant} hours={hours} phoneHref={phoneHref} todayDow={clock.dayOfWeek} specialsEnabled={specials.settings.enabled} />
       <MobileCta phoneHref={phoneHref} />
       <RestaurantJsonLd restaurant={restaurant} hours={hours} />
     </MotionProvider>

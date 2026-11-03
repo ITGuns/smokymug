@@ -31,7 +31,9 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   projects: [
-    { name: "setup", testMatch: /auth\.setup\.ts/ },
+    // teardown runs after every project that depends on setup has finished
+    { name: "setup", testMatch: /auth\.setup\.ts/, teardown: "teardown" },
+    { name: "teardown", testMatch: /global\.teardown\.ts/ },
     { name: "public", testMatch: /public\/.*\.spec\.ts/, dependencies: ["setup"], use: { ...devices["Desktop Chrome"], viewport: { width: 1360, height: 900 } } },
     { name: "mobile", testMatch: /mobile\.spec\.ts/, dependencies: ["setup"], use: { ...devices["Pixel 7"] } },
     { name: "admin", testMatch: /admin\/.*\.spec\.ts/, dependencies: ["setup"], use: { ...devices["Desktop Chrome"], viewport: { width: 1360, height: 900 }, storageState: "tests/.auth/admin.json" } },

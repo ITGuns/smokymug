@@ -41,10 +41,11 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
               </div>
             </div>
             <div className="flex flex-wrap gap-3 pt-2">
-              <ButtonLink href={mapsUrl(r)} variant="secondary" arrow>
+              {/* S1-3: page CTAs use the western face (see Signature.tsx) */}
+              <ButtonLink href={mapsUrl(r)} variant="secondary" face="western" arrow>
                 Get Directions
               </ButtonLink>
-              <ButtonLink href={`mailto:${r.email}`} variant="outline" className="text-charcoal-900">
+              <ButtonLink href={`mailto:${r.email}`} variant="outline" face="western" className="text-charcoal-900">
                 Email
               </ButtonLink>
             </div>

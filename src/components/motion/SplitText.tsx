@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
-import { Fragment } from "react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/cn";
 
 /**
@@ -28,21 +27,12 @@ export function SplitText({
   /** false = whileInView, true = animate on mount */
   animate?: boolean;
 }) {
-  const reduce = useReducedMotion();
+  // One tree in every motion mode: no plain-markup branch for reduced or paused
+  // visitors, because swapping the element re-mounts it on every pause/resume and
+  // replays the intro (same bug as Reveal, see the note there). The [data-reveal]
+  // pin in globals.css holds each word in place for them instead.
   let wordIndex = 0;
   const M = motion[Tag] as typeof motion.h1;
-
-  if (reduce) {
-    return (
-      <Tag className={className}>
-        {lines.map((l, i) => (
-          <Fragment key={i}>
-            <span className={cn("block", lineClassName, l.className)}>{l.text}</span>
-          </Fragment>
-        ))}
-      </Tag>
-    );
-  }
 
   const trigger = animate ? { animate: "show" as const } : { whileInView: "show" as const, viewport: { once: true, amount: 0.5 } };
 
@@ -55,6 +45,7 @@ export function SplitText({
             return (
               <span key={wi} className="inline-block overflow-hidden pb-[0.08em] align-bottom">
                 <motion.span
+                  data-reveal=""
                   className="inline-block will-change-transform"
                   variants={{
                     hidden: { y: "110%", rotate: 3 },

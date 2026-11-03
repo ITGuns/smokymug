@@ -23,10 +23,19 @@ test("the Special Events switch drives /special-events (NW02)", async ({ page, r
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("QA Specials Board");
   await expect(page.getByText("QA subtitle: flyers land below.")).toBeVisible();
   await expect(page.getByText(/Flyers and menus land here soon/)).toBeVisible();
+  // NW02 "nav link": the Specials link exists in the top bar and footer while on...
+  await expect(page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Specials" })).toBeVisible();
+  await expect(page.locator("footer h2:has-text('Explore') + ul").getByRole("link", { name: "Specials" })).toBeVisible();
 
   await gotoReady(page, "/admin/special-events");
   await page.getByRole("switch", { name: "Show the Special Events page" }).click();
   await page.getByRole("button", { name: "Save settings" }).click();
   await expectToast(page, "Page settings saved");
   expect((await request.get("/special-events")).status()).toBe(404);
+  // ...and disappears everywhere once the switch is off again.
+  await page.goto("/");
+  // Guard: the header actually rendered, so the zero-count checks below mean something
+  await expect(page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Catering" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Specials" })).toHaveCount(0);
+  await expect(page.locator("footer").getByRole("link", { name: "Specials" })).toHaveCount(0);
 });

@@ -1,9 +1,10 @@
 "use client";
 
 import Image, { type ImageProps } from "next/image";
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useInView, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { cn } from "@/lib/cn";
+import { usePrefersReducedMotion } from "./usePrefersReducedMotion";
 
 /**
  * Scroll-linked parallax with a clip-path wipe reveal on first view.
@@ -20,7 +21,9 @@ export function ParallaxImage({
   ...img
 }: ImageProps & { className?: string; imgClassName?: string; speed?: number; reveal?: "up" | "left" | "none"; children?: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
+  // Hydration-safe: the clip and the parallax offset are in the SSR style. For
+  // reduced-motion visitors the clip then snaps open (duration 0) after hydration.
+  const reduce = usePrefersReducedMotion();
   const inView = useInView(ref, { once: true, amount: 0.2 });
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [`${-speed * 50}%`, `${speed * 50}%`]);
@@ -36,7 +39,7 @@ export function ParallaxImage({
         className="absolute inset-0"
         initial={animated ? { clipPath: hidden } : false}
         animate={{ clipPath: animated && !inView ? hidden : shown }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: reduce ? 0 : 1.2, ease: [0.16, 1, 0.3, 1] }}
       >
         <motion.div style={reduce ? undefined : { y }} className="absolute -inset-y-[10%] inset-x-0 will-change-transform">
           <Image {...img} fill className={cn("object-cover", imgClassName)} alt={img.alt} />

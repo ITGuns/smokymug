@@ -10,8 +10,19 @@ test.describe("Homepage", () => {
     await expect(page.getByText("Coffee, cocktail, and pastry programs included.").first()).toBeVisible();
 
     const nav = page.getByRole("navigation", { name: "Primary" });
-    for (const label of ["Menu", "Our Story", "Catering", "Gallery", "Contact"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
+    // P1 (3 Nov): Calendar replaced Gallery in the nav
+    await expect(nav.getByRole("link")).toHaveText(["Menu", "Our Story", "Catering", "Calendar", "Contact"], { ignoreCase: true });
     await expect(page.getByRole("banner").getByRole("link", { name: "Book a Table" })).toBeVisible();
+    // Board H01: [Book a Table] [ORDER NOW], Order Now rightmost; NW03-2: it opens the restaurant menu
+    const orderNow = page.getByRole("banner").getByRole("link", { name: "Order Now" });
+    await expect(orderNow).toHaveAttribute("href", "/menu");
+    const [bookBox, orderBox] = await Promise.all([page.getByRole("banner").getByRole("link", { name: "Book a Table" }).boundingBox(), orderNow.boundingBox()]);
+    expect(orderBox!.x).toBeGreaterThan(bookBox!.x);
+    // H01 + NW03-1: Explore Menu drops to the ordering menus
+    await page.getByRole("button", { name: "Explore Menu" }).click();
+    await expect(page.getByRole("link", { name: "Restaurant", exact: true })).toHaveAttribute("href", "/menu");
+    await expect(page.getByRole("link", { name: "Express Catering", exact: true })).toHaveAttribute("href", "/catering");
+    await page.keyboard.press("Escape");
     await expect(page.getByRole("banner")).toContainText("2930 North Avenue");
     await expect(page.getByRole("banner")).toContainText("(804) 562-3722");
     const banner = page.getByRole("banner");

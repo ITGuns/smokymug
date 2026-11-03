@@ -28,10 +28,10 @@ test.describe("Calendar page (NW01)", () => {
     await expect(page.getByRole("heading", { name: `${MONTHS[now.getMonth()]} ${now.getFullYear()}` })).toBeVisible();
   });
 
-  test("the footer links to the calendar between Catering and Gallery (R2-10)", async ({ page }) => {
+  test("the footer Explore column has Calendar where Gallery was (board footer, P1)", async ({ page }) => {
     await page.goto("/contact");
     const links = page.locator("footer h2:has-text('Explore') + ul").getByRole("link");
-    await expect(links).toHaveText(["Menu", "Book a Table", "Catering", "Calendar", "Gallery", "Contact"]);
+    await expect(links).toHaveText(["Menu", "Book a Table", "Catering", "Calendar", "Contact"]);
     await expect(links.nth(3)).toHaveAttribute("href", "/calendar");
   });
 

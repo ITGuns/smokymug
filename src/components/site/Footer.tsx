@@ -10,14 +10,29 @@ const LINKS = [
   { href: "/menu", label: "Menu" },
   { href: "/book", label: "Book a Table" },
   { href: "/catering", label: "Catering" },
-  // R2-10 / board BK03: CALENDAR sits between Catering and Gallery
+  // Board footer markup (CALENDAR written over Gallery) + P1: Calendar replaces Gallery
   { href: "/calendar", label: "Calendar" },
-  { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Contact" },
 ];
 
-export function Footer({ restaurant: r, hours, phoneHref, todayDow }: { restaurant: RestaurantInfo; hours: Hours[]; phoneHref: string; todayDow: number }) {
+export function Footer({
+  restaurant: r,
+  hours,
+  phoneHref,
+  todayDow,
+  specialsEnabled = false,
+}: {
+  restaurant: RestaurantInfo;
+  hours: Hours[];
+  phoneHref: string;
+  todayDow: number;
+  /** NW02: the Specials link renders only while the admin switch is on. */
+  specialsEnabled?: boolean;
+}) {
   const year = new Date().getFullYear();
+  // NW02 "nav link": Specials follows Calendar in Explore while the switch is on
+  // (P1: Gallery left the Explore column; Calendar took its place)
+  const links = specialsEnabled ? [...LINKS.slice(0, 4), { href: "/special-events", label: "Specials" }, ...LINKS.slice(4)] : LINKS;
   return (
     <footer className="grain relative overflow-hidden bg-charcoal-950 pb-28 pt-16 text-cream-100 lg:pb-12 lg:pt-20">
       <div aria-hidden className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-ember-400/10 blur-3xl" />
@@ -51,7 +66,7 @@ export function Footer({ restaurant: r, hours, phoneHref, todayDow }: { restaura
           {/* Footer eyebrows stay teal: part of the small teal-accent set (1 Nov) */}
           <h2 className="eyebrow text-teal-300">Explore</h2>
           <ul className="mt-5 space-y-3">
-            {LINKS.map((l) => (
+            {links.map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="text-[15px] text-cream-100/85 transition hover:text-cream-50">
                   {l.label}

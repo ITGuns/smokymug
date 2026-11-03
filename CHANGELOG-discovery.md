@@ -245,6 +245,102 @@ roadhouse na font?" on the buttons.
   "one brick primary per cluster" Order Now decision is written into
   DESIGN.md §1 pending Guns's confirm before the SpotOn URL goes in.
 
+## NW Excalidraw round (3 Nov 2026)
+
+Source: the "NEW PAGES AND FEATURES TO SKETCH" Excalidraw (service-agreement
+follow-up; the file the client referenced in his 3 Nov review), received from
+Guns 3 Nov. NW01 and NW02 were already built 1 Nov and match the sketch; this
+round adds the two details the sketch has that the build lacked, and records
+NW03/NW04.
+
+- NW01: hovering or focusing a "List by date" row now lights that day's
+  square in the month grid (the sketch's "hover highlights date square" note).
+- NW02: a "Specials" link renders in the top bar (between Catering and
+  Gallery), the phone drawer and the footer Explore column while the admin
+  Special Events switch is on, and disappears when it is off (the sketch's
+  "nav link"). This covers the old D2 CHECK via the service-agreement doc;
+  Genrou confirms only the label (Q11). E2E asserts the link appears and
+  disappears with the switch.
+- NW04 verified as already built: notations sit above the Order Now row,
+  Order Now anchors bottom-left (menu rows + featured dish), one consistent
+  order-action color. Per NW04 change 3, the 2 Nov "Order Now goes dark when
+  Q8 lands" note is WITHDRAWN: Order Now stays brick ember everywhere
+  (DESIGN.md §1 updated).
+- NW03 (Menus landing page: All Day tile + Express Catering + Holiday
+  Preorders, Explore Menu becoming a 2-3 option drop): recorded in DESIGN.md
+  §4 as PHASE 2 per the sketch's own note, not built. Needs scoping.
+- Nav fit: with Specials on AND Order Now live (Q8, settable in admin without
+  a deploy) the desktop bar measured 1084px at 1024 and wrapped "Our Story".
+  Below xl the nav now uses a 16px gap, 0.14em tracking and nowrap links
+  (measured 997px worst case with real Bebas/Rye); xl and up keep the original
+  spacing.
+- Opus finish-gate review of this round: FIX-FIRST; findings applied
+  (layout prop bug, nav fit, hover state reset on month change, handlers moved
+  to the row so the expanded panel keeps the highlight, class ternary instead
+  of cascade-order reliance, e2e guard, stale CHECK comments). Its prod-schema
+  concern was disproven by evidence: live /special-events returned 404, not
+  500, on 3 Nov, so both new tables already exist on prod.
+  Known, not fixed: the spec's afterAll resets the switch by SQL (no cache
+  revalidation), so a mid-test failure can leave a stale Specials link in a
+  reused local dev server until `.next` is cleared.
+
+## Client review round (3 Nov 2026)
+
+Source: Dan's written review relayed by Guns 3 Nov, plus Guns's 2 Nov chats and the NW board section. Full
+matrix, live-vs-repo evidence and the stale prod list: FEEDBACK-client-review-3nov.md. Draft client notes:
+BUILD-NOTES-for-Dan.md (Guns sends).
+
+- Finding: prod content is the untouched 23 Sep seed (menu 127/127 names and prices identical to 59313a6; old
+  tagline, intro, footer, hours). Board copy and the 2026 menu are in the repo but were never loaded on prod.
+- S1-3: page CTAs on quiet variants (home View Full Menu, Visit Get Directions + Email) now wear the western
+  face (`face="western"`); booking-flow utilities keep the sans.
+- NW01-4: closing the calendar pop-out hands focus back to the day square (it was lost while the grid was
+  still inert).
+- Admin: Settings "Description (SEO)" is now "Description (home intro + SEO)" with a hint, since it drives the
+  home intro; Hours help no longer asks the owner to settle old scrape conflicts (S3-5).
+- Superseded the same night by the board-markup round below: S3-3b is resolved by BK02 (SpotOn box), S3-4b is
+  decided (Pol: keep solid brick orange, no textures, no color changes), and Calendar is in every nav (P1).
+
+## Board markup round (3 Nov 2026, late): strict build of the client's own marks
+
+Sign-off: Pol's order with the board screenshots (S5-S15) was to be STRICT on every client mark, and that items
+DESIGN.md or the handoff called CHECK are in scope when the client's markup asks for them. That instruction is the
+written sign-off for B6, C13 and C14 below (replacing "until Genrou signs off"). Colors untouched (palette
+decided: solid brick orange stays).
+
+| ID | What was built |
+|---|---|
+| P1 / board footer | Calendar replaces Gallery in the top bar, the phone drawer and the footer Explore column. Specials (switch on) follows Calendar. /gallery stays (home gallery section, sitemap). |
+| H01 nav (S7-1) | Header right side is [Book a Table] [ORDER NOW], ORDER NOW rightmost; the drawer uses the same order. |
+| NW03-2 | Header, drawer and hero Order Now link to /menu and always show ("go directly to main Restaurant Menu"). Menu items keep the SpotOn link (NW04), hidden until set. Alternative reading flagged in the matrix. |
+| H01 hero (S7-5) / NW03-1 | Explore Menu drops to the ordering menus: Restaurant (/menu), Express Catering (/catering until its page exists). Holiday Preorder waits on its phase-2 page + toggle. |
+| B6 / L6 (S6-2) | Event types (Live music, Specials, Pop-up, Community; Dan to confirm/rename) set in Admin, Calendar; icon in the day square, label in the list and pop-out, legend under the grid. New table `event_kinds`. |
+| C13 / CA03 (S10) | Admin, Settings, "Catering inquiry copies" (up to 10). No inquiry email existed before; each inquiry is now emailed to the catering address with those copies via Resend, gated on RESEND_API_KEY + INQUIRY_FROM_EMAIL (unset = saved only, as before). NEEDS-INFRA: Guns picks/creates the provider account and a verified sender. |
+| C14 / BK02 (S13) | /book is the SpotOn box: iframe of the admin-set link, "Open reservations" link + phone under it, "Call us to book" card until the link is set. The native wizard is hidden behind `site_settings.booking_wizard` (default off, stays off after reseed) and its server actions refuse while off. /book alone allows https frames in its CSP. |
+| GA03 (S11) | Balanced gallery columns (shortest column, then evened out; top row keeps the admin order). Column-bottom spread at 1280/1024/768/390px: 325/97/73/54 → 74/16/7/10px. |
+| S15 "Brew." | Already on the menu H1 since 30 Oct (handoff Q6 only asked what "Brew" means as a menu section; it does not argue against the heading). No change. |
+| Found in verification | `(site)/template.tsx` branched on reduced motion while rendering, which broke hydration on every page for reduced-motion visitors; it now renders one element and leaves the slide to MotionConfig. Still open (pre-existing, not touched): the home, gallery and catering heroes (SplitText, ImageCarousel) show the same mismatch for reduced-motion visitors only. |
+| npm audit high (verification) | Cleared without leaving Next 15: package.json `overrides` pins next's own postcss to 8.5.32 (it shipped 8.4.31; GHSA-qx2v-qp2m-jg93, GHSA-6g55-p6wh-862q, GHSA-fxqj-rqcc-2cmp, GHSA-r28c-9q8g-f849). The tree now has one postcss, 8.5.32, and the build still emits the Tailwind CSS. A plain `npm install` kept the stale lock entry, so that one entry was dropped from package-lock.json and reinstalled. Drop the override once the repo moves to a Next whose own postcss is past 8.5.22. Still open, dev-only: 18 moderates (eslint/minimatch chain, drizzle-kit/esbuild). |
+| Reduced-motion hydration (closes the "still open" note above) | New `src/components/motion/usePrefersReducedMotion.ts`: false on the server and during hydration, the OS setting right after (useSyncExternalStore). SplitText and ImageCarousel use it, and so do Reveal/RevealGroup, ParallaxImage (its clip now snaps open, duration 0) and Marquee, which showed the same mismatch once the hero one was gone. Reduced-motion visitors end up on the same static markup as intended before; normal motion is unchanged. Dev and prod build: /, /gallery, /catering log zero hydration errors with and without reduced motion. Found, not fixed: the header pause toggle does not stop the home carousel or the marquee (prod build, paused: slide 0 to 1 in 8s, strip kept moving), although MotionProvider's comment says it does. |
+
+Data and deploy notes (for Guns):
+- New tables `site_settings` and `event_kinds`, read defensively: until `npm run db:push` runs on prod, the site
+  renders with the defaults (/book = phone card, events untyped) and admin shows a "needs db:push" note instead of
+  saving. Local push printed exactly two CREATE TABLE statements and one foreign key, nothing else.
+- `db:reseed --force` does not wipe either table; it inserts the default `site_settings` row (SpotOn box, wizard
+  off, no copies) only when none exists, so a typed SpotOn link and CC list survive a reseed.
+- E2E: auth.setup turns the wizard on for the suite (the booking specs drive it), global.teardown turns it off and
+  clears the link; `public/reservations-box.spec.ts` covers the box, `admin/site-settings.spec.ts` the two new
+  admin cards, `admin/calendar.spec.ts` the event type.
+
+- Header pause toggle now really stops the hero carousel auto-advance and the marquee: `usePrefersReducedMotion`
+  also returns true while paused (reads `useMotionPause`; false on server, during hydration, and outside the provider).
+- 4 Nov a11y flake on / (135 contrast nodes, 4 of 6 runs): MotionConfig "user" drops only transforms, so `(site)/template.tsx`
+  still faded the whole page body in from the SSR opacity 0 after hydration and axe scanned it translucent; the wrapper
+  now has `motion-reduce:opacity-100! motion-reduce:transform-none!` (static from first paint, same markup). Found, not
+  fixed: pause/resume swaps Reveal between motion.div and div, which re-mounts its subtree (gallery marquee snaps back).
+- 4 Nov pause/resume re-mount fix (closes the note above): Reveal, RevealGroup and SplitText render the same motion element in every mode (no plain-element branch), so the toggle re-mounts nothing; reduced/paused visitors get reveals from a `[data-reveal]` CSS pin in globals.css (opacity 1, no transform/filter/transition, `!important`, for the media query and `:root[data-motion="paused"]`), which `(site)/template.tsx` now shares (paused visitors also lose the page fade). Not MotionConfig: motion reads `reducedMotion` only when an element mounts. Also the ImageCarousel Ken Burns layer eased back over 8s after Pause; its transition is now 0 while paused/reduced. Guard: `tests/e2e/public/motion-pause.spec.ts`. Found by the a11y x5 gate: Header's `[pathname]` effect ran `setOpen(false)` on mount too, cancelling an "Open menu" tap made right after hydration (5 of 30 immediate taps stayed shut on the old code); it now skips the mount run (0 of 40). Still open, pre-existing: `mobile.spec.ts` hamburger test measures the social links mid-slide (43.99999px, also seen 1 Nov), masked by the config's 1 retry.
+
 ## Open inputs still needed (handoff §4)
 
 Q1 final teal/red values · Q2 Roadstore file + license · Q4 confirm dropdown

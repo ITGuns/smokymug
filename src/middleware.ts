@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { jwtVerify } from "jose/jwt/verify";
+import { buildCsp } from "@/lib/csp";
 
 const COOKIE = "sm_admin";
 
@@ -7,6 +8,13 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-pathname", pathname);
+
+  // BK02: /book frames the admin-set SpotOn reservations link
+  if (pathname === "/book") {
+    const res = NextResponse.next({ request: { headers: requestHeaders } });
+    res.headers.set("Content-Security-Policy", buildCsp({ dev: process.env.NODE_ENV === "development", frameAnyHttps: true }));
+    return res;
+  }
 
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
     const token = req.cookies.get(COOKIE)?.value;
@@ -31,5 +39,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/book"],
 };

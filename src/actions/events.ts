@@ -3,11 +3,13 @@
 import { eq, notInArray } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { requireAdmin } from "@/lib/auth";
+import { isMissingSchema } from "@/lib/db-errors";
+import type { EventKind } from "@/lib/event-kinds";
 import { revalidateContent } from "@/lib/revalidate";
 import { eventInput, fieldErrors, specialEventImagesInput, specialEventsInput } from "@/lib/validation";
 import { fail, type ActionResult } from "./types";
 
-const { events, specialEvents, specialEventImages } = schema;
+const { events, eventKinds, specialEvents, specialEventImages } = schema;
 
 async function guard(): Promise<ActionResult<never> | null> {
   try {
@@ -20,24 +22,41 @@ async function guard(): Promise<ActionResult<never> | null> {
 
 /* ---------------- Calendar events (NW01) ---------------- */
 
-export async function saveEvent(input: unknown): Promise<ActionResult<{ id: number }>> {
+/** B6: writes the event's type. false = the event_kinds table is missing on
+ *  this database (needs db:push), so the type was not stored. */
+async function saveKind(eventId: number, kind: EventKind | null): Promise<boolean> {
+  try {
+    if (kind) {
+      await db.insert(eventKinds).values({ eventId, kind }).onConflictDoUpdate({ target: eventKinds.eventId, set: { kind } });
+    } else {
+      await db.delete(eventKinds).where(eq(eventKinds.eventId, eventId));
+    }
+    return true;
+  } catch (err) {
+    if (isMissingSchema(err)) return false;
+    throw err;
+  }
+}
+
+export async function saveEvent(input: unknown): Promise<ActionResult<{ id: number; kindSkipped: boolean }>> {
   const g = await guard();
   if (g) return g;
   const parsed = eventInput.safeParse(input);
   if (!parsed.success) return fail("Check the highlighted fields.", { fieldErrors: fieldErrors(parsed.error) });
-  const { id, ...data } = parsed.data;
+  const { id, kind, ...data } = parsed.data;
   if (data.startTime && data.endTime && data.endTime <= data.startTime)
     return fail("Check the highlighted fields.", { fieldErrors: { endTime: "End must be after start" } });
 
+  let row: { id: number } | undefined;
   if (id) {
-    const [row] = await db.update(events).set({ ...data, updatedAt: new Date().toISOString() }).where(eq(events.id, id)).returning({ id: events.id });
+    [row] = await db.update(events).set({ ...data, updatedAt: new Date().toISOString() }).where(eq(events.id, id)).returning({ id: events.id });
     if (!row) return fail("That event no longer exists. Reload the page.", { code: "stale" });
-    revalidateContent();
-    return { ok: true, data: row };
+  } else {
+    [row] = await db.insert(events).values(data).returning({ id: events.id });
   }
-  const [row] = await db.insert(events).values(data).returning({ id: events.id });
+  const kindSaved = await saveKind(row.id, kind);
   revalidateContent();
-  return { ok: true, data: row };
+  return { ok: true, data: { id: row.id, kindSkipped: !kindSaved && kind != null } };
 }
 
 export async function deleteEvent(id: number): Promise<ActionResult> {

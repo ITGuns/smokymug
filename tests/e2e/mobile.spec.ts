@@ -12,6 +12,10 @@ test.describe("Mobile layout", () => {
     await expect(mobileNav.getByRole("link", { name: "Catering" })).toBeVisible();
     await expect(page.locator("#mobile-nav")).toContainText("2930 North Avenue");
     const menu = page.locator("#mobile-nav");
+    // Measure only after the slide-in finishes; mid-animation boxes read sub-pixel short.
+    await expect
+      .poll(() => menu.evaluate((el) => getComputedStyle(el).transform))
+      .toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
     await expect(menu.getByRole("link", { name: "Instagram" })).toHaveAttribute("href", "https://www.instagram.com/thesmokymug");
     await expect(menu.getByRole("link", { name: "Facebook" })).toHaveAttribute("href", "https://www.facebook.com/thesmokymug");
     await expect(menu.getByRole("link", { name: /^Email / })).toHaveAttribute("href", "mailto:thesmokymug@gmail.com");
