@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { honeypotHit } from "@/lib/ordering";
 import { bookingSettingsInput, cateringInput, fieldErrors, galleryOrderInput, hoursRowInput, menuItemInput, reservationInput, restaurantInfoInput } from "@/lib/validation";
 
 const validReservation = {
@@ -59,8 +60,11 @@ describe("cateringInput", () => {
     expect(cateringInput.safeParse({ ...base, eventDate: "2026-11-31" }).success).toBe(false);
     expect(cateringInput.parse({ ...base, eventDate: "2026-11-30" }).eventDate).toBe("2026-11-30");
   });
-  it("rejects a filled honeypot", () => {
-    expect(cateringInput.safeParse({ name: "Bot", email: "b@example.com", phone: "", occasion: "x", eventDate: "", guestCount: "", serviceType: "Delivery", message: "", website: "http://spam" }).success).toBe(false);
+  it("lets a filled honeypot through the schema: the action checks it first and fakes success (P7)", () => {
+    const bot = { name: "Bot", email: "b@example.com", phone: "", occasion: "x", eventDate: "", guestCount: "", serviceType: "Delivery", message: "", website: "http://spam" };
+    expect(cateringInput.safeParse(bot).success).toBe(true);
+    expect(honeypotHit(bot)).toBe(true);
+    expect(honeypotHit({ ...bot, website: "" })).toBe(false);
   });
 });
 

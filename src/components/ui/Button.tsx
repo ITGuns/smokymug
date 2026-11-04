@@ -12,7 +12,7 @@ type Shape = "pill" | "soft";
 type Face = "western" | "ui";
 
 const base =
-  "group/btn inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all duration-300 ease-out-expo select-none disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
+  "group/btn inline-flex items-center justify-center gap-2 transition-all duration-300 ease-out-expo select-none disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
 const faces: Record<Face, string> = {
   western: "font-western tracking-[0.02em]",
   ui: "font-semibold tracking-tight",
@@ -41,19 +41,29 @@ const sizes: Record<Size, string> = {
   md: "h-11 px-6 text-[15px]",
   lg: "h-13 px-8 text-base",
 };
+/* `wrap`: a long label breaks onto a second line instead of clipping (CA01 at
+   320/360). Its own class sets, not overrides passed in className: cn() only
+   joins strings, so of two utilities for one property the stylesheet order wins
+   (whitespace-normal sorts before whitespace-nowrap and would lose). */
+const wrapSizes: Record<Size, string> = {
+  sm: "min-h-9 px-4 py-1.5 text-[13px]",
+  md: "min-h-11 px-6 py-2 text-[15px]",
+  lg: "min-h-13 px-8 py-3 text-base",
+};
+const layout = (size: Size, wrap?: boolean) => (wrap ? cn("max-w-full whitespace-normal text-center", wrapSizes[size]) : cn("whitespace-nowrap", sizes[size]));
 const shapes: Record<Shape, string> = {
   pill: "rounded-full",
   soft: "rounded-[10px]",
 };
 
-type Common = { variant?: Variant; size?: Size; shape?: Shape; face?: Face; className?: string; children: ReactNode; arrow?: boolean };
+type Common = { variant?: Variant; size?: Size; shape?: Shape; face?: Face; className?: string; children: ReactNode; arrow?: boolean; wrap?: boolean };
 
 export function Arrow({ className }: { className?: string }) {
   return (
     <svg
       aria-hidden
       viewBox="0 0 20 20"
-      className={cn("h-4 w-4 transition-transform duration-300 ease-out-expo group-hover/btn:translate-x-1", className)}
+      className={cn("h-4 w-4 shrink-0 transition-transform duration-300 ease-out-expo group-hover/btn:translate-x-1", className)}
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
@@ -65,9 +75,9 @@ export function Arrow({ className }: { className?: string }) {
   );
 }
 
-export function Button({ variant = "primary", size = "md", shape = "pill", face, className, children, arrow, ...rest }: Common & ComponentProps<"button">) {
+export function Button({ variant = "primary", size = "md", shape = "pill", face, className, children, arrow, wrap, ...rest }: Common & ComponentProps<"button">) {
   return (
-    <button className={cn(base, faces[face ?? defaultFace[variant]], variants[variant], sizes[size], shapes[shape], className)} {...rest}>
+    <button className={cn(base, faces[face ?? defaultFace[variant]], variants[variant], layout(size, wrap), shapes[shape], className)} {...rest}>
       {children}
       {arrow && <Arrow />}
     </button>
@@ -82,6 +92,7 @@ export function ButtonLink({
   className,
   children,
   arrow,
+  wrap,
   href,
   ...rest
 }: Common & Omit<ComponentProps<typeof Link>, "className" | "children">) {
@@ -89,7 +100,7 @@ export function ButtonLink({
   return (
     <Link
       href={href}
-      className={cn(base, faces[face ?? defaultFace[variant]], variants[variant], sizes[size], shapes[shape], className)}
+      className={cn(base, faces[face ?? defaultFace[variant]], variants[variant], layout(size, wrap), shapes[shape], className)}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       {...rest}
     >

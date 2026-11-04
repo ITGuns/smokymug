@@ -1,6 +1,7 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import { cleanupAll, closePool, QA, query } from "../helpers/db";
-import { expectToast, gotoReady } from "../helpers/ui";
+import { expectToast, gotoReady, openNewItemDrawer } from "../helpers/ui";
 
 test.describe("Admin menu CMS", () => {
   test.beforeAll(cleanupAll);
@@ -11,8 +12,8 @@ test.describe("Admin menu CMS", () => {
 
   test("item create → publish → edit price → hide → duplicate → delete", async ({ page, browser }) => {
     const name = `${QA.prefix}Test Plate`;
-    await gotoReady(page, "/admin/menu?new=1");
-    const drawer = page.getByRole("dialog", { name: "New menu item" });
+    // Opened by a click after hydration: a ?new=1 drawer could drop a value typed before React attached
+    const drawer = await openNewItemDrawer(page);
     await drawer.getByLabel("Item name").fill(name);
     await drawer.getByLabel("Description").fill("temporary QA item");
     await drawer.getByLabel("Base price ($)").fill("12.5");
@@ -61,6 +62,25 @@ test.describe("Admin menu CMS", () => {
       await expectToast(page, "Item deleted");
     }
     expect(await query(`select 1 from menu_items where name like $1`, [`${name}%`])).toHaveLength(0);
+  });
+
+  test("category view: red Delete, no axe findings, no sideways scroll at 390", async ({ page }) => {
+    await gotoReady(page, "/admin/menu");
+    const main = page.locator("main");
+    // Delete wears its own variant: a className override used to lose to ghost's grey (4 Nov)
+    const colour = (name: string) => main.getByRole("button", { name, exact: true }).first().evaluate((b) => getComputedStyle(b).color);
+    expect(await colour("Delete")).not.toBe(await colour("Hide"));
+    const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).include("main").analyze();
+    expect(axe.violations.map((v) => `${v.id}: ${v.nodes[0]?.target.join(" ")}`)).toEqual([]);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    const drawer = await openNewItemDrawer(page);
+    const box = await drawer.boundingBox();
+    for (const name of ["Cancel", "Save & add another", "Save changes"]) {
+      const b = await drawer.getByRole("button", { name, exact: true }).boundingBox();
+      expect(b!.x + b!.width, name).toBeLessThanOrEqual(box!.x + box!.width);
+    }
   });
 
   test("categories and sections can be created and removed", async ({ page }) => {

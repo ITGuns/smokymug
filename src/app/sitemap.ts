@@ -6,6 +6,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${SITE_URL}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/menu`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    // Phase 2: the Menus landing page. The two ordering pages are absent for the
+    // same reason as /special-events below (static sitemap, they 404 while off).
+    { url: `${SITE_URL}/menus`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/book`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/catering`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/calendar`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },

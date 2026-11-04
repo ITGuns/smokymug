@@ -34,7 +34,8 @@ export function CateringForm({ email, phone }: { email: string; phone: string })
 
   if (status === "done") {
     return (
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl bg-charcoal-900 p-8 text-cream-50" role="status">
+      // data-reveal: shown at once for reduced motion / paused (DESIGN.md 5)
+      <motion.div data-reveal="" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl bg-charcoal-900 p-8 text-cream-50" role="status">
         <p className="eyebrow text-teal-300">Inquiry sent</p>
         <h3 className="mt-3 font-display text-3xl font-semibold">We&apos;ll be in touch.</h3>
         <p className="mt-3 text-cream-100/75">Thanks, {form.name.split(" ")[0]}. We&apos;ll reply to {form.email} with menu options and pricing. Need it faster? Call {phone}.</p>

@@ -4,13 +4,15 @@ import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { db, schema } from "@/db";
 import type { MenuCategory, MenuItem, MenuSection, Modifier, ModifierGroup } from "@/db/schema";
+import { isMissingSchema } from "@/lib/db-errors";
+import { NO_SCHEDULE, scheduledMenu, type ItemSchedule } from "@/lib/menu-schedule";
 
-const { menuCategories, menuSections, menuItems, modifierGroups, modifiers, menuItemModifierGroups } = schema;
+const { menuCategories, menuSections, menuItems, menuItemSchedules, modifierGroups, modifiers, menuItemModifierGroups } = schema;
 
 export const MENU_TAG = "menu";
 
 export type GroupNode = ModifierGroup & { modifiers: Modifier[] };
-export type ItemNode = MenuItem & { modifierGroups: GroupNode[]; categoryId: number; categorySlug: string; sectionName: string; categoryName: string };
+export type ItemNode = MenuItem & ItemSchedule & { modifierGroups: GroupNode[]; categoryId: number; categorySlug: string; sectionName: string; categoryName: string };
 export type SectionNode = MenuSection & { items: ItemNode[]; linkedGroup: GroupNode | null };
 export type CategoryNode = MenuCategory & { sections: SectionNode[] };
 export type MenuTree = { categories: CategoryNode[]; groups: GroupNode[] };
@@ -25,13 +27,26 @@ export async function readModifierGroups(includeInactive = false): Promise<Group
     .map((g) => ({ ...g, modifiers: mods.filter((m) => m.groupId === g.id && (includeInactive || m.active)) }));
 }
 
+/** D1: item id to its show-from/until dates. Defensive: a database without the
+ *  menu_item_schedules table (prod before db:push) reads as "no schedules". */
+export async function readItemSchedules(): Promise<Map<number, ItemSchedule>> {
+  try {
+    const rows = await db.select().from(menuItemSchedules);
+    return new Map(rows.map((r) => [r.itemId, { showFrom: r.showFrom, showUntil: r.showUntil }]));
+  } catch (err) {
+    if (isMissingSchema(err)) return new Map();
+    throw err;
+  }
+}
+
 export async function readMenuTree(includeInactive = false): Promise<MenuTree> {
-  const [cats, secs, items, links, groups] = await Promise.all([
+  const [cats, secs, items, links, groups, schedules] = await Promise.all([
     db.select().from(menuCategories).orderBy(asc(menuCategories.displayOrder), asc(menuCategories.id)),
     db.select().from(menuSections).orderBy(asc(menuSections.displayOrder), asc(menuSections.id)),
     db.select().from(menuItems).orderBy(asc(menuItems.displayOrder), asc(menuItems.id)),
     db.select().from(menuItemModifierGroups).orderBy(asc(menuItemModifierGroups.displayOrder)),
     readModifierGroups(includeInactive),
+    readItemSchedules(),
   ]);
   const groupById = new Map(groups.map((g) => [g.id, g]));
 
@@ -48,6 +63,7 @@ export async function readMenuTree(includeInactive = false): Promise<MenuTree> {
             .filter((i) => i.sectionId === s.id && (includeInactive || i.active))
             .map((i) => ({
               ...i,
+              ...(schedules.get(i.id) ?? NO_SCHEDULE),
               categoryId: c.id,
               categorySlug: c.slug,
               categoryName: c.name,
@@ -85,6 +101,11 @@ export async function readSections(categoryId?: number): Promise<MenuSection[]> 
 }
 
 /* Cached public reads */
-export const getMenuTree = cache(unstable_cache(() => readMenuTree(false), ["menu-tree"], { tags: [MENU_TAG] }));
+const getActiveMenuTree = cache(unstable_cache(() => readMenuTree(false), ["menu-tree"], { tags: [MENU_TAG] }));
 
-export const getFeaturedItems = cache(async (): Promise<ItemNode[]> => flattenItems(await getMenuTree()).filter((i) => i.featured));
+/** The public menu on `today` (YYYY-MM-DD from getSiteChrome().clock, restaurant time).
+ *  D1: the date filter runs per request AFTER the cache; the cached tree only
+ *  changes on a menu save, so filtering inside it would miss a start or end date. */
+export const getMenuTree = cache(async (today: string): Promise<MenuTree> => scheduledMenu(await getActiveMenuTree(), today));
+
+export const getFeaturedItems = cache(async (today: string): Promise<ItemNode[]> => flattenItems(await getMenuTree(today)).filter((i) => i.featured));

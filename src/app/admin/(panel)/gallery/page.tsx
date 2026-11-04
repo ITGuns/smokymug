@@ -9,7 +9,7 @@ export default async function GalleryAdminPage() {
   const images = await readGallery(true);
   return (
     <>
-      <PageHeader title="Gallery" description={`${images.length} photos. Drag to set the order they appear on the website gallery and home page; changes go live immediately.`} />
+      <PageHeader title="Gallery" description={`${images.length} photos. Add, edit or remove photos, and drag to set the order they appear on the website gallery and home page. Changes go live immediately.`} />
       <GalleryManager images={images} />
     </>
   );

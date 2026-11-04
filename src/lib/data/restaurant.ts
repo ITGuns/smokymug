@@ -4,6 +4,8 @@ import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { db, schema, type DbLike } from "@/db";
 import type { BookingSettings, GalleryImage, Hours, RestaurantInfo, Review } from "@/db/schema";
+import { isMissingSchema } from "@/lib/db-errors";
+import { selectHomeReviews } from "@/lib/reviews";
 
 const { restaurantInfo, hours, reviews, galleryImages, bookingSettings } = schema;
 
@@ -23,8 +25,34 @@ export async function readBookingSettings(ex: DbLike = db): Promise<BookingSetti
   if (!row) throw new Error("booking_settings not seeded: run `npm run db:seed`");
   return row;
 }
+/** Every review row (admin). available = false: this database has not run
+ *  `db:push` for the C9 columns yet, so rows come back in the old shape. */
+export async function readAllReviews(): Promise<{ rows: Review[]; available: boolean }> {
+  try {
+    return { rows: await db.select().from(reviews).orderBy(asc(reviews.displayOrder), asc(reviews.id)), available: true };
+  } catch (err) {
+    if (!isMissingSchema(err)) throw err;
+    const legacy = await db
+      .select({
+        id: reviews.id,
+        reviewerInitials: reviews.reviewerInitials,
+        platform: reviews.platform,
+        themes: reviews.themes,
+        sentiment: reviews.sentiment,
+        displayOrder: reviews.displayOrder,
+        active: reviews.active,
+        createdAt: reviews.createdAt,
+        updatedAt: reviews.updatedAt,
+      })
+      .from(reviews)
+      .orderBy(asc(reviews.displayOrder), asc(reviews.id));
+    const rows = legacy.map((r) => ({ ...r, reviewerName: null, rating: null, reviewDate: null, body: null, adminAdded: false }));
+    return { rows, available: false };
+  }
+}
+/** Home page set (C9): newest good reviews, capped. Falls back to the old columns before db:push. */
 export async function readReviews(): Promise<Review[]> {
-  return db.select().from(reviews).where(eq(reviews.active, true)).orderBy(asc(reviews.displayOrder));
+  return selectHomeReviews((await readAllReviews()).rows);
 }
 export async function readGallery(includeInactive = false): Promise<GalleryImage[]> {
   return db

@@ -7,7 +7,8 @@ import { HoursTable } from "./HoursTable";
 import { mapsUrl } from "@/lib/site";
 
 const LINKS = [
-  { href: "/menu", label: "Menu" },
+  // NW03-3 (phase 2, 4 Nov): the footer "Menus" link lands on the Menus page
+  { href: "/menus", label: "Menus" },
   { href: "/book", label: "Book a Table" },
   { href: "/catering", label: "Catering" },
   // Board footer markup (CALENDAR written over Gallery) + P1: Calendar replaces Gallery

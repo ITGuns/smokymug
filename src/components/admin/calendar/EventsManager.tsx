@@ -46,7 +46,7 @@ export function EventsManager({ events, kinds, today }: { events: SiteEvent[]; k
       )}
       {!e.active && <Tag tone="gray">Hidden</Tag>}
       <Btn size="sm" onClick={() => setEditing(e)}>Edit</Btn>
-      <Btn size="sm" variant="ghost" className="text-red-600" onClick={() => setDeleting(e)}>Remove</Btn>
+      <Btn size="sm" variant="dangerGhost" onClick={() => setDeleting(e)}>Remove</Btn>
     </li>
   );
 

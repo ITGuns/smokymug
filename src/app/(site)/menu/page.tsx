@@ -17,7 +17,9 @@ export const metadata: Metadata = {
 };
 
 export default async function MenuPage({ searchParams }: { searchParams: Promise<{ category?: string; item?: string }> }) {
-  const [{ hours, clock, status, restaurant }, tree, params] = await Promise.all([getSiteChrome(), getMenuTree(), searchParams]);
+  const [{ hours, clock, status, restaurant }, params] = await Promise.all([getSiteChrome(), searchParams]);
+  // D1: items outside their show-from/until dates are already left out (search and featured picks included)
+  const tree = await getMenuTree(clock.date);
   const availability: Record<number, AvailabilityInfo> = {};
   for (const cat of tree.categories) {
     for (const sec of cat.sections) {

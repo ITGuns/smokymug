@@ -1,18 +1,24 @@
-# Prod reseed steps for Guns (3 Nov 2026)
+# Prod database steps for Guns (updated 4 Nov 2026)
 
-Why: prod still runs the 23 Sep seed, so none of Dan's board copy, the 2026
-menu, or the hours updates are live. The code is already deployed from main;
-only the database is behind. Pol pushes code; you run these on your machine.
+Why: prod still runs the 23 Sep seed, so Dan's board copy, the 2026 menu and
+the hours updates are not live, and the new features from the 3-4 Nov rounds
+need their tables. The code deploys from main on every push; only the database
+is behind. Pol pushes code; you run these on your machine.
 
-Run these AFTER Pol confirms the 3 Nov round is pushed and deployed.
+Run these AFTER Pol confirms the 4 Nov round is pushed and deployed. The site is
+safe in the meantime: every new table and column is read defensively, so pages
+render and new admin screens show a "needs db:push" note until you run step 1.
+
+Do the reseed ONCE, now, before Dan starts entering content in admin. After
+that, never reseed prod again without exporting what he typed (see "What the
+reseed replaces").
 
 ## Before you start
 1. Back up the prod database (Supabase dashboard backup, or `pg_dump`).
-   The reseed replaces content tables; reservations, admin users, calendar
-   events, Special Events flyers and its on/off switch are kept.
-2. Write down anything you typed into prod admin that you want to keep:
-   Settings (catering email, ordering link), booking settings and windows,
-   gallery order, reviews. The reseed resets these to the repo values.
+2. Write down anything typed into prod admin since 23 Sep that you want to
+   keep from the list under "What the reseed replaces" (Settings like the
+   catering email or ordering link, booking settings and windows, gallery
+   photos and their order, menu edits). Re-enter it after the reseed.
 
 ## Two traps in your .env.local
 - `drizzle-kit` uses `DIRECT_URL` first and only falls back to
@@ -28,31 +34,57 @@ git pull
 npm run db:push
 npm run db:reseed
 ```
-`db:push` only adds the two new tables from this round (`site_settings`,
-`event_kinds`) plus one foreign key. If it lists any DROP or data-loss
-statement, stop and send Pol the output. The site already runs safely before
-this step: until the tables exist, settings read as "not set".
+
+### What `db:push` should show (all additive)
+- New tables: `site_settings`, `event_kinds` (3 Nov round, if not pushed yet),
+  `menu_item_schedules`, `ordering_settings`, `order_items`, `order_requests`,
+  `order_request_lines` (4 Nov round), with their foreign keys and checks.
+- New columns on `reviews`: `reviewer_name`, `rating`, `review_date`, `body`,
+  `admin_added` (default false).
+- If it lists ANY `DROP`, `ALTER ... TYPE`, renamed column or data-loss
+  warning, stop and send Pol the output.
+
+### What the reseed replaces (wiped, then reloaded from the repo)
+Menu (categories, sections, items, modifiers) and with it any menu item
+Show from / Show until schedules, hours, booking settings and windows,
+restaurant Settings (copy, catering email, ordering link), gallery photos and
+their order (including photos uploaded in admin), and the seeded review
+summaries.
+
+### What the reseed keeps
+Reservations, admin users, calendar events and their event types, Special
+Events flyers and switch, reviews typed in admin, the SpotOn reservations link
+and catering CC list (site settings), all ordering data (Express Catering and
+Holiday Preorder items, requests, switches), catering inquiries, uploads, date
+overrides.
 
 ## After the reseed: refresh the live site's cache
 The site caches content and the menu separately. In prod admin:
 1. Settings: change nothing, press Save (refreshes copy, hours, events).
 2. Menu: open any item, press Save (refreshes the menu).
-Or use Vercel: Project Settings, Data Cache, Purge.
+Or in Vercel: Project Settings, Data Cache, Purge.
 
 ## Check
-Home hero subhead reads "Craft Tex Mex & Barbecue Restaurant." on one line and
-"Coffee, cocktail, and pastry programs included." on the next; the intro starts
-"A morning to night Tex-Mex experience"; service windows list Taco Tuesdays;
-the menu has a Tex Mex tab.
+- Home hero subhead: "Craft Tex Mex & Barbecue Restaurant." on one line,
+  "Coffee, cocktail, and pastry programs included." on the next.
+- Home intro starts "A morning to night Tex-Mex experience".
+- Service windows list Taco Tuesdays; the menu has a Tex Mex tab.
+- Nav shows Menus and Calendar (no Gallery); /menus shows the three tiles.
+- Admin shows Reviews, Orders, Gallery with "+ Add photo", and Menu items have
+  a Schedule section; none of them shows a "needs db:push" note.
 
-## Expected until Dan sends links (not bugs)
+## Expected until Dan sends links or content (not bugs)
 - /book shows a "Call us to book" card. Paste Dan's SpotOn Reserve link in
   Admin, Settings, Reservations (SpotOn) and it becomes the SpotOn box.
 - Menu items show no Order Now until the SpotOn ordering link is entered in
   Admin, Settings, Online ordering URL (SpotOn). Header and hero Order Now
   already go to the menu page.
-- Catering inquiry copies (Admin, Settings) save addresses but send nothing
-  until you add `RESEND_API_KEY` and `INQUIRY_FROM_EMAIL` (a verified Resend
-  sender) to the Vercel environment and redeploy.
+- Express Catering and Holiday Preorders stay switched off (Admin, Menu,
+  "Express + Holiday") until Dan's packs and holiday items are entered; until then the
+  Express tile links to the catering inquiry and the holiday tile is not a link.
+- Catering inquiry copies and order request emails send nothing until you add
+  `RESEND_API_KEY` and `INQUIRY_FROM_EMAIL` (a verified Resend sender) to the
+  Vercel environment and redeploy. Requests are still saved and visible in
+  Admin, Orders.
 - The calendar and Specials pages stay empty or hidden until events and flyers
   are entered in Admin.

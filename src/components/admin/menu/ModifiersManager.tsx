@@ -103,7 +103,7 @@ function GroupPanel({ group, usedBy, onEditGroup, onDeleteGroup, onAdd, onEdit, 
       title={group.name}
       description={`${group.required ? "Required" : "Optional"} · choose ${group.minSelections === group.maxSelections ? group.minSelections : `${group.minSelections}–${group.maxSelections}`}${group.description ? ` · ${group.description}` : ""}`}
       padded={false}
-      actions={<div className="flex gap-1"><Btn size="sm" onClick={onAdd}>+ Option</Btn><Btn size="sm" variant="ghost" onClick={onEditGroup}>Edit group</Btn><Btn size="sm" variant="ghost" className="text-red-600" onClick={onDeleteGroup}>Delete</Btn></div>}
+      actions={<div className="flex gap-1"><Btn size="sm" onClick={onAdd}>+ Option</Btn><Btn size="sm" variant="ghost" onClick={onEditGroup}>Edit group</Btn><Btn size="sm" variant="dangerGhost" onClick={onDeleteGroup}>Delete</Btn></div>}
     >
       {mods.length === 0 ? (
         <div className="p-5"><EmptyState title="No options yet" action={<Btn onClick={onAdd}>+ Add option</Btn>} /></div>
@@ -135,7 +135,7 @@ function ModRow({ mod: m, onEdit, onDelete, onDragEnd }: { mod: Modifier; onEdit
       </div>
       <span className="w-20 text-right text-[14px] font-medium tabular-nums">{m.priceAdjustment ? `+${money(m.priceAdjustment)}` : <span className="text-zinc-400">incl.</span>}</span>
       <Btn size="sm" onClick={onEdit}>Edit</Btn>
-      <Btn size="sm" variant="ghost" className="text-red-600" onClick={onDelete}>Delete</Btn>
+      <Btn size="sm" variant="dangerGhost" onClick={onDelete}>Delete</Btn>
     </Reorder.Item>
   );
 }

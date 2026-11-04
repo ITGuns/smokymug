@@ -8,7 +8,10 @@ import { SplitText } from "@/components/motion/SplitText";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { CATERING } from "@/db/seed-data/restaurant";
+import { readOrderingSettings } from "@/lib/data/ordering";
 import { getRestaurant } from "@/lib/data/restaurant";
+import { EXPRESS_PATH } from "@/lib/ordering-menus";
+import { getSiteChrome } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Catering",
@@ -24,8 +27,10 @@ const ICONS: Record<string, React.ReactNode> = {
 };
 
 export default async function CateringPage() {
-  const r = await getRestaurant();
+  const [r, { clock }] = await Promise.all([getRestaurant(), getSiteChrome()]);
   const cateringEmail = r.cateringEmail ?? r.email;
+  // CA01 (phase 2): the express ordering button shows only while its switch is on
+  const { expressOn } = await readOrderingSettings(clock.date);
   return (
     <>
       <section className="relative isolate flex min-h-[80svh] items-end overflow-hidden bg-charcoal-950 text-cream-50">
@@ -47,6 +52,14 @@ export default async function CateringPage() {
           <p className="mt-6 max-w-xl text-lg text-cream-100/85">{CATERING.quote}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href="#inquiry" size="lg" arrow>Plan Your Event</ButtonLink>
+            {/* CA01: "Order Express Catering Now" next to Plan Your Event (board arrow sits
+                between the two); ember like every order action (NW04 change 3) */}
+            {/* The full label is 334px: it wraps to two lines at 320/360 instead of clipping */}
+            {expressOn && (
+              <ButtonLink href={EXPRESS_PATH} size="lg" arrow wrap>
+                Order Express Catering Now
+              </ButtonLink>
+            )}
             <ButtonLink href="#services" size="lg" variant="dark">See services</ButtonLink>
           </div>
         </div>

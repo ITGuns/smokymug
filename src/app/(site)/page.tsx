@@ -8,11 +8,14 @@ import { Intro } from "@/components/home/Intro";
 import { Programs } from "@/components/home/Programs";
 import { Reviews } from "@/components/home/Reviews";
 import { Signature, type FeaturedItem } from "@/components/home/Signature";
+import { SIGNATURE_MAX } from "@/lib/signature-grid";
 import { Ticker } from "@/components/home/Ticker";
 import { Visit } from "@/components/home/Visit";
 import { itemAvailability } from "@/lib/availability";
 import { getFeaturedItems, getMenuTree } from "@/lib/data/menu";
+import { readOrderingSettings } from "@/lib/data/ordering";
 import { getGallery, getReviews } from "@/lib/data/restaurant";
+import { orderingMenus } from "@/lib/ordering-menus";
 import { getSiteChrome } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -24,16 +27,13 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [{ restaurant, hours, status, phoneHref, clock }, featured, tree, gallery, reviews] = await Promise.all([
-    getSiteChrome(),
-    getFeaturedItems(),
-    getMenuTree(),
-    getGallery(),
-    getReviews(),
-  ]);
+  const [{ restaurant, hours, status, phoneHref, clock }, gallery, reviews] = await Promise.all([getSiteChrome(), getGallery(), getReviews()]);
+  // D1: featured picks skip items outside their show-from/until dates (restaurant-local today).
+  // NW03-1: Explore Menu shows 2 or 3 options, per the phase 2 admin switches
+  const [featured, tree, ordering] = await Promise.all([getFeaturedItems(clock.date), getMenuTree(clock.date), readOrderingSettings(clock.date)]);
 
   const catById = new Map(tree.categories.map((c) => [c.id, c]));
-  const featuredItems: FeaturedItem[] = featured.slice(0, 8).map((item) => {
+  const featuredItems: FeaturedItem[] = featured.slice(0, SIGNATURE_MAX).map((item) => {
     const a = itemAvailability(item, catById.get(item.categoryId)!, hours, clock);
     return { ...item, availabilityLabel: a.label, availableNow: a.availableNow };
   });
@@ -46,6 +46,7 @@ export default async function HomePage() {
         tagline={restaurant.tagline}
         status={status}
         addressShort={`${restaurant.addressLine1} · Brookland Park, RVA`}
+        menus={orderingMenus(ordering)}
       />
       <Ticker items={["Texas craft brisket", "Homemade tortillas", "Specialty lattes", "Taco Tuesday", "Happy hour Tue–Sat", "Sunday brunch", "Dog-friendly porch"]} />
       <Intro blurb={blurb} cafeSummary={restaurant.cafeSummary} bbqSummary={restaurant.bbqSummary} features={restaurant.features} />

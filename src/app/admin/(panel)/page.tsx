@@ -1,19 +1,34 @@
 import Link from "next/link";
+import { OrderStatusTag } from "@/components/admin/ordering/OrderStatusTag";
 import { Btn, Card, EmptyState, Stat, StatusBadge } from "@/components/admin/ui";
+import { countNewOrderRequests, readUpcomingPickups } from "@/lib/data/ordering";
+import { ORDER_MENU_INFO, orderReference } from "@/lib/ordering";
 import { getClock, storeStatus, hoursFor } from "@/lib/availability";
 import { HOURS_CATEGORY_LABELS } from "@/lib/constants";
 import { flattenItems, readMenuTree } from "@/lib/data/menu";
+import { onSchedule } from "@/lib/menu-schedule";
 import { dashboardStats } from "@/lib/data/reservations";
-import { readBookingSettings, readHours } from "@/lib/data/restaurant";
+import { readAllReviews, readBookingSettings, readHours } from "@/lib/data/restaurant";
+import { reviewFreshness, selectHomeReviews } from "@/lib/reviews";
+import { SIGNATURE_MAX } from "@/lib/signature-grid";
 import { longDate, money, shortDate, time12 } from "@/lib/format";
 import type { HoursCategory } from "@/db/schema";
 
 export default async function DashboardPage() {
   const settings = await readBookingSettings();
   const clock = getClock(settings.timezone);
-  const [hours, stats, tree] = await Promise.all([readHours(), dashboardStats(clock.date), readMenuTree(true)]);
+  const [hours, stats, tree, reviewRows, newOrders, upcomingPickups] = await Promise.all([
+    readHours(),
+    dashboardStats(clock.date),
+    readMenuTree(true),
+    readAllReviews(),
+    countNewOrderRequests(),
+    readUpcomingPickups(clock.date),
+  ]);
+  const reviewsFresh = !reviewRows.available || reviewFreshness(selectHomeReviews(reviewRows.rows), clock.date).state === "fresh";
   const status = storeStatus(hours, clock);
-  const featured = flattenItems(tree).filter((i) => i.featured && i.active).slice(0, 8);
+  // Mirrors the home grid: D1 scheduled items outside their dates are not on it
+  const featured = flattenItems(tree).filter((i) => i.featured && i.active && onSchedule(i, clock.date)).slice(0, SIGNATURE_MAX);
   const cats: HoursCategory[] = ["store", "breakfast", "bbq", "brunch", "happy_hour", "cafe_drinks"];
 
   return (
@@ -29,6 +44,13 @@ export default async function DashboardPage() {
           <Link href="/admin/hours"><Btn>Edit Hours</Btn></Link>
         </div>
       </div>
+
+      {/* C9: same nudge as /admin/reviews, so it's seen without opening that page */}
+      {!reviewsFresh && (
+        <p className="mb-4 rounded-lg bg-amber-50 px-4 py-3 text-[13px] text-amber-800">
+          The home page reviews need a recent one. <Link href="/admin/reviews" className="font-semibold underline">Add a review →</Link>
+        </p>
+      )}
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <Stat label="Reservations today" value={stats.today.total} hint={`${stats.today.covers} covers`} />
@@ -98,6 +120,33 @@ export default async function DashboardPage() {
           </Card>
         </div>
       </div>
+
+      {/* Phase 2: hidden while the order tables are missing (prod before db:push) */}
+      {newOrders !== null && upcomingPickups !== null && (
+        <Card
+          title="Order requests"
+          description={newOrders === 1 ? "1 new request waiting" : `${newOrders} new requests waiting`}
+          className="mt-6"
+          padded={false}
+          actions={<Link href="/admin/orders" className="text-[13px] font-medium text-zinc-600 hover:text-zinc-900">Open Orders →</Link>}
+        >
+          {upcomingPickups.length === 0 ? (
+            <div className="p-5"><EmptyState title="No upcoming pickups" body="Express Catering and Holiday Preorder requests show up here." /></div>
+          ) : (
+            <ul className="divide-y divide-zinc-100">
+              {upcomingPickups.map((r) => (
+                <li key={r.id} className="flex items-center justify-between gap-3 px-5 py-2.5 text-[13px]">
+                  <div className="min-w-0">
+                    <Link href={`/admin/orders/${r.id}`} className="truncate font-medium text-zinc-900 hover:underline">{orderReference(r.menu, r.id)} · {r.name}</Link>
+                    <p className="text-zinc-500">{shortDate(r.pickupDate)} · {time12(r.pickupTime)} · {ORDER_MENU_INFO[r.menu].title}</p>
+                  </div>
+                  <OrderStatusTag status={r.status} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      )}
 
       <Card title="Featured menu items" description="Shown in the homepage signature section" className="mt-6" padded={false} actions={<Link href="/admin/menu?featured=1" className="text-[13px] font-medium text-zinc-600 hover:text-zinc-900">Manage →</Link>}>
         {featured.length === 0 ? (

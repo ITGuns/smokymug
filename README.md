@@ -48,7 +48,7 @@ The E2E suite starts (or reuses) its own dev server on :3107 (override with `E2E
 
 ## Availability engine
 
-`src/lib/availability.ts` resolves each menu category against the hours table (`store`, `breakfast`, `bbq`, `brunch`, `happy_hour`, …) and each item's own rule (`always | days | schedule | seasonal`) to produce *Available now* / *Fri & Sat only* / *Seasonal* badges. Categories and items are never hidden from admins; the public menu shows badges instead.
+`src/lib/availability.ts` resolves each menu category against the hours table (`store`, `breakfast`, `bbq`, `brunch`, `happy_hour`, …) and each item's own rule (`always | days | schedule | seasonal`) to produce *Available now* / *Fri & Sat only* / *Seasonal* badges. Categories and items are never hidden from admins; the public menu shows badges instead. The one exception is an item's Show from / Show until dates (D1, `src/lib/menu-schedule.ts`, table `menu_item_schedules`): outside them the item is left off the public menu, its search and the home page, using the restaurant-timezone date from `getClock`.
 
 `src/lib/booking.ts` computes reservation slots from the weekly windows + date overrides + booking settings (slot interval, turn time, max bookings / covers per overlapping window, lead time, party limits) and re-checks availability inside the write transaction so two guests can't take the last seat.
 

@@ -44,7 +44,9 @@ test.describe("Other public pages & routes", () => {
     await expect(page.getByRole("heading", { name: "That page has sold out." })).toBeVisible();
 
     const sitemap = await (await request.get("/sitemap.xml")).text();
-    for (const p of ["/menu", "/book", "/catering", "/contact", "/gallery"]) expect(sitemap).toContain(p);
+    for (const p of ["/menu", "/menus", "/book", "/catering", "/contact", "/gallery"]) expect(sitemap).toContain(p);
+    // Phase 2: the ordering pages stay out of the static sitemap (they 404 while off)
+    expect(sitemap).not.toContain("/menus/");
     const robots = await (await request.get("/robots.txt")).text();
     expect(robots).toMatch(/Disallow: \/admin/);
     expect((await request.get("/favicon.ico")).status()).toBe(200);

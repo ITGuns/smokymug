@@ -1,15 +1,18 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
 import { and, eq, ne, sql } from "drizzle-orm";
-import { db, schema } from "@/db";
+import { db, schema, type DbLike } from "@/db";
 import { requireAdmin } from "@/lib/auth";
+import { readItemSchedules } from "@/lib/data/menu";
+import { isMissingSchema, NEEDS_DB_PUSH } from "@/lib/db-errors";
+import type { ItemSchedule } from "@/lib/menu-schedule";
 import { revalidateMenu } from "@/lib/revalidate";
 import { slugify } from "@/lib/slug";
+import { readImageUpload, uploadPath } from "@/lib/uploads";
 import { categoryInput, fieldErrors, menuItemInput, modifierGroupInput, modifierInput, sectionInput } from "@/lib/validation";
 import { fail, type ActionResult } from "./types";
 
-const { menuCategories, menuSections, menuItems, modifierGroups, modifiers, menuItemModifierGroups, uploads } = schema;
+const { menuCategories, menuSections, menuItems, menuItemSchedules, modifierGroups, modifiers, menuItemModifierGroups, uploads } = schema;
 const now = () => new Date().toISOString();
 
 async function guard(): Promise<ActionResult<never> | null> {
@@ -173,24 +176,48 @@ export async function saveMenuItem(raw: unknown): Promise<ActionResult<{ id: num
     updatedAt: now(),
   };
 
-  const id = await db.transaction(async (tx) => {
-    let itemId = d.id;
-    if (itemId) {
-      await tx.update(menuItems).set(values).where(eq(menuItems.id, itemId));
-    } else {
-      const slug = await uniqueSlug(d.slug || d.name, async (s) => (await tx.select({ id: menuItems.id }).from(menuItems).where(eq(menuItems.slug, s)).limit(1)).length > 0);
-      const { rows } = await tx.execute<{ m: number }>(sql`select coalesce(max(display_order), -1)::int as m from menu_items where section_id = ${d.sectionId}`);
-      const [row] = await tx.insert(menuItems).values({ ...values, slug, displayOrder: (rows[0]?.m ?? -1) + 1 }).returning({ id: menuItems.id });
-      itemId = row.id;
-    }
-    await tx.delete(menuItemModifierGroups).where(eq(menuItemModifierGroups.itemId, itemId));
-    if (d.modifierGroupIds.length) {
-      await tx.insert(menuItemModifierGroups).values(d.modifierGroupIds.map((groupId, i) => ({ itemId: itemId!, groupId, displayOrder: i })));
-    }
-    return itemId;
-  });
+  const schedule = { showFrom: d.showFrom, showUntil: d.showUntil };
+
+  let id: number;
+  try {
+    id = await db.transaction(async (tx) => {
+      let itemId = d.id;
+      if (itemId) {
+        await tx.update(menuItems).set(values).where(eq(menuItems.id, itemId));
+      } else {
+        const slug = await uniqueSlug(d.slug || d.name, async (s) => (await tx.select({ id: menuItems.id }).from(menuItems).where(eq(menuItems.slug, s)).limit(1)).length > 0);
+        const { rows } = await tx.execute<{ m: number }>(sql`select coalesce(max(display_order), -1)::int as m from menu_items where section_id = ${d.sectionId}`);
+        const [row] = await tx.insert(menuItems).values({ ...values, slug, displayOrder: (rows[0]?.m ?? -1) + 1 }).returning({ id: menuItems.id });
+        itemId = row.id;
+      }
+      await tx.delete(menuItemModifierGroups).where(eq(menuItemModifierGroups.itemId, itemId));
+      if (d.modifierGroupIds.length) {
+        await tx.insert(menuItemModifierGroups).values(d.modifierGroupIds.map((groupId, i) => ({ itemId: itemId!, groupId, displayOrder: i })));
+      }
+      await writeSchedule(tx, itemId, schedule);
+      return itemId;
+    });
+  } catch (err) {
+    // Dates typed on a database without menu_item_schedules (prod before db:push): the whole save rolled back.
+    if (isMissingSchema(err)) return fail(NEEDS_DB_PUSH, { code: "needs_db_push", fieldErrors: { showFrom: "Needs the database update first" } });
+    throw err;
+  }
   revalidateMenu();
   return { ok: true, data: { id } };
+}
+
+/** D1: one row while a date is set, none otherwise. Clearing runs in a savepoint so a
+ *  database without the table (nothing to clear) still saves the rest of the item. */
+async function writeSchedule(tx: DbLike, itemId: number, s: ItemSchedule) {
+  if (s.showFrom || s.showUntil) {
+    await tx.insert(menuItemSchedules).values({ itemId, ...s }).onConflictDoUpdate({ target: menuItemSchedules.itemId, set: s });
+    return;
+  }
+  try {
+    await tx.transaction((sp) => sp.delete(menuItemSchedules).where(eq(menuItemSchedules.itemId, itemId)));
+  } catch (err) {
+    if (!isMissingSchema(err)) throw err;
+  }
 }
 
 export async function deleteMenuItem(id: number): Promise<ActionResult> {
@@ -230,6 +257,9 @@ export async function duplicateMenuItem(id: number): Promise<ActionResult<{ id: 
     .returning({ id: menuItems.id });
   const links = await db.select().from(menuItemModifierGroups).where(eq(menuItemModifierGroups.itemId, id));
   if (links.length) await db.insert(menuItemModifierGroups).values(links.map((l) => ({ ...l, itemId: row.id })));
+  // D1: the copy keeps the dates (read defensively: no table means no dates to copy)
+  const dates = (await readItemSchedules()).get(id);
+  if (dates) await db.insert(menuItemSchedules).values({ itemId: row.id, ...dates });
   revalidateMenu();
   return { ok: true, data: { id: row.id } };
 }
@@ -308,25 +338,14 @@ export async function reorderModifiers(ids: number[]): Promise<ActionResult> {
 
 /* ---------------- Image upload (stored in Postgres) ---------------- */
 
-const ALLOWED = new Map([
-  ["image/jpeg", ".jpg"],
-  ["image/png", ".png"],
-  ["image/webp", ".webp"],
-]);
-const MAX_BYTES = 3 * 1024 * 1024;
-
+/** Menu photos and Special Events flyers. Gallery photos use the same checks via addGalleryImage. */
 export async function uploadImage(formData: FormData): Promise<ActionResult<{ path: string }>> {
   const g = await guard();
   if (g) return g;
-  const file = formData.get("file");
-  if (!(file instanceof File)) return fail("Choose an image to upload.");
-  const ext = ALLOWED.get(file.type);
-  if (!ext) return fail("Use a JPG, PNG or WebP image.");
-  if (file.size > MAX_BYTES) return fail("Image must be under 3 MB.");
-  const name = `${randomUUID()}${ext}`;
-  const data = Buffer.from(await file.arrayBuffer());
-  await db.insert(uploads).values({ name, mime: file.type, size: data.length, data });
-  return { ok: true, data: { path: `/uploads/${name}` } };
+  const file = await readImageUpload(formData.get("file"));
+  if (!file.ok) return fail(file.error);
+  await db.insert(uploads).values(file.upload);
+  return { ok: true, data: { path: uploadPath(file.upload.name) } };
 }
 
 export async function itemSlugExists(slug: string, exceptId?: number): Promise<boolean> {

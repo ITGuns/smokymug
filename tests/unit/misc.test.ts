@@ -43,7 +43,7 @@ describe("calendar links", () => {
 });
 
 describe("menu filters", () => {
-  const node = (over: Partial<ItemNode>): ItemNode => ({ ...item(), modifierGroups: [], categoryId: 1, categorySlug: "craft-barbecue", categoryName: "Craft Barbecue", sectionName: "Sides", ...over });
+  const node = (over: Partial<ItemNode>): ItemNode => ({ ...item(), showFrom: null, showUntil: null, modifierGroups: [], categoryId: 1, categorySlug: "craft-barbecue", categoryName: "Craft Barbecue", sectionName: "Sides", ...over });
   const slaw = node({ id: 1, name: "Tejano Slaw", dietaryTags: ["gluten-free-option", "vegetarian"] });
   const beans = node({ id: 2, name: "Refried Beans", dietaryTags: ["vegan"] });
   const brisket = node({ id: 3, name: "Brisket Sandwich", description: "smoked brisket", dietaryTags: ["gluten-free-option"] });

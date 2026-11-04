@@ -7,6 +7,12 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { money } from "@/lib/format";
 import { cn } from "@/lib/cn";
+import { SIGNATURE_MAX, signatureSpans, type CardSpan, type LeadLayout } from "@/lib/signature-grid";
+
+// H04: literal class names so Tailwind generates them. Spans come from lib/signature-grid.ts.
+const LEAD_CLS: Record<LeadLayout, string> = { full: "lg:col-span-12", wide: "lg:col-span-7", tall: "lg:col-span-7 lg:row-span-2" };
+const MD_CLS: Record<CardSpan["md"], string> = { 3: "md:col-span-3", 6: "md:col-span-6" };
+const LG_CLS: Record<CardSpan["lg"], string> = { 3: "lg:col-span-3", 4: "lg:col-span-4", 5: "lg:col-span-5", 6: "lg:col-span-6", 12: "lg:col-span-12" };
 
 export type FeaturedItem = ItemNode & { availabilityLabel: string | null; availableNow: boolean };
 
@@ -24,7 +30,8 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
   const withImage = items.filter((i) => i.image);
   const textOnly = items.filter((i) => !i.image);
   const lead = withImage[0];
-  const rest = [...withImage.slice(1), ...textOnly].slice(0, 6);
+  const rest = [...withImage.slice(1), ...textOnly].slice(0, SIGNATURE_MAX - (lead ? 1 : 0));
+  const spans = signatureSpans(rest.length, !!lead);
 
   return (
     <section className="relative overflow-hidden bg-cream-100 py-24 lg:py-36">
@@ -49,7 +56,7 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
         <div className="container-site">
           <RevealGroup className="scrollbar-none -mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 sm:-mx-8 sm:px-8 md:mx-0 md:grid md:grid-cols-6 md:gap-5 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-12">
             {lead && (
-              <RevealItem className="w-[84vw] shrink-0 snap-start sm:w-[70vw] md:col-span-6 md:w-auto lg:col-span-7 lg:row-span-2">
+              <RevealItem className={cn("w-[84vw] shrink-0 snap-start sm:w-[70vw] md:col-span-6 md:w-auto", LEAD_CLS[spans.lead ?? "tall"])}>
                 <TiltCard max={3} className="group h-full">
                   <Link
                     href={`/menu?item=${lead.slug}`}
@@ -82,11 +89,11 @@ export function Signature({ items }: { items: FeaturedItem[] }) {
               </RevealItem>
             )}
 
-            {/* C7: rows 3–4 pack as four 3-col cards so no empty cells remain at lg */}
+            {/* C7 + H04: every row is full at md and lg for any count up to SIGNATURE_MAX */}
             {rest.map((item, i) => (
               <RevealItem
                 key={item.id}
-                className={cn("w-[78vw] shrink-0 snap-start sm:w-[60vw] md:col-span-3 md:w-auto", i < 2 ? "lg:col-span-5" : "lg:col-span-3")}
+                className={cn("w-[78vw] shrink-0 snap-start sm:w-[60vw] md:w-auto", MD_CLS[spans.cards[i].md], LG_CLS[spans.cards[i].lg])}
               >
                 <TiltCard max={5} className="group h-full">
                   <Link

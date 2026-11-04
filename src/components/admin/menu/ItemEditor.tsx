@@ -4,23 +4,25 @@ import { useState } from "react";
 import { deleteMenuItem, saveMenuItem } from "@/actions/menu";
 import type { AvailabilityType, DietaryTag } from "@/db/schema";
 import { AVAILABILITY_TYPES, DIETARY_TAGS } from "@/db/schema";
-import { Btn, Checkbox, DaysPicker, Field, Input, Select, Textarea, Toggle, centsToInput } from "@/components/admin/ui";
+import { Btn, Checkbox, DaysPicker, Field, Input, Select, Tag, Textarea, Toggle, centsToInput } from "@/components/admin/ui";
 import { ConfirmDialog } from "@/components/admin/overlays";
 import { useToast } from "@/components/admin/toast";
 import { runAction } from "@/components/admin/useAction";
 import { DIETARY_LABELS } from "@/lib/constants";
 import type { CategoryNode, GroupNode, ItemNode } from "@/lib/data/menu";
+import { scheduleTag } from "@/lib/menu-schedule";
 import { ImageUpload } from "./ImageUpload";
 
 type Form = {
   sectionId: string; name: string; description: string; price: string; largePrice: string; bottlePrice: string; priceNote: string; image: string; imageAlt: string;
   dietaryTags: DietaryTag[]; availabilityType: AvailabilityType; availableDays: number[]; availableStartTime: string; availableEndTime: string; availabilityNote: string;
   happyHourEligible: boolean; happyHourNote: string; notes: string; featured: boolean; active: boolean; modifierGroupIds: number[];
+  showFrom: string; showUntil: string;
 };
 
 const AVAIL_LABELS: Record<AvailabilityType, string> = { always: "Always (follows category hours)", days: "Specific days", schedule: "Specific days + times", seasonal: "Seasonal / rotating" };
 
-export function ItemEditor({ item, defaultSectionId, categories, groups, onSaved, onClose }: { item: ItemNode | null; defaultSectionId?: number; categories: CategoryNode[]; groups: GroupNode[]; onSaved: (mode: "close" | "another") => void; onClose: () => void }) {
+export function ItemEditor({ item, defaultSectionId, categories, groups, today, onSaved, onClose }: { item: ItemNode | null; defaultSectionId?: number; categories: CategoryNode[]; groups: GroupNode[]; today: string; onSaved: (mode: "close" | "another") => void; onClose: () => void }) {
   const toast = useToast();
   const [f, setF] = useState<Form>({
     sectionId: String(item?.sectionId ?? defaultSectionId ?? categories[0]?.sections[0]?.id ?? ""),
@@ -44,11 +46,14 @@ export function ItemEditor({ item, defaultSectionId, categories, groups, onSaved
     featured: item?.featured ?? false,
     active: item?.active ?? true,
     modifierGroupIds: item?.modifierGroups.map((g) => g.id) ?? [],
+    showFrom: item?.showFrom ?? "",
+    showUntil: item?.showUntil ?? "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<false | "close" | "another" | "archive" | "delete">(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((s) => ({ ...s, [k]: v }));
+  const sched = scheduleTag({ showFrom: f.showFrom || null, showUntil: f.showUntil || null }, today);
 
   const save = async (mode: "close" | "another", overrides: Partial<Form> = {}) => {
     setBusy(mode);
@@ -123,7 +128,7 @@ export function ItemEditor({ item, defaultSectionId, categories, groups, onSaved
       <section className="space-y-3 border-t border-zinc-100 pt-5">
         <h3 className="text-[13px] font-semibold uppercase tracking-wide text-zinc-500">Dietary tags</h3>
         <div className="grid gap-2 sm:grid-cols-2">
-          {DIETARY_TAGS.map((t) => <Checkbox key={t} checked={f.dietaryTags.includes(t)} onChange={() => toggleTag(t)} label={<span>{DIETARY_LABELS[t].label} <span className="text-zinc-400">({DIETARY_LABELS[t].short})</span></span>} />)}
+          {DIETARY_TAGS.map((t) => <Checkbox key={t} checked={f.dietaryTags.includes(t)} onChange={() => toggleTag(t)} label={<span>{DIETARY_LABELS[t].label} <span className="text-zinc-500">({DIETARY_LABELS[t].short})</span></span>} />)}
         </div>
       </section>
 
@@ -148,6 +153,21 @@ export function ItemEditor({ item, defaultSectionId, categories, groups, onSaved
         {f.happyHourEligible && <Field label="Happy hour note" htmlFor="i-hh"><Input id="i-hh" value={f.happyHourNote} onChange={(e) => set("happyHourNote", e.target.value)} placeholder="$2 off Wed–Sun 3–6pm" /></Field>}
       </section>
 
+      {/* D1 / board MB03: date range for limited or seasonal items */}
+      <section className="space-y-4 border-t border-zinc-100 pt-5" aria-labelledby="i-sched-h">
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 id="i-sched-h" className="text-[13px] font-semibold uppercase tracking-wide text-zinc-500">Schedule</h3>
+          {sched && <Tag tone={sched.tone}>{sched.label}</Tag>}
+          {sched?.hidden && <span className="text-[12px] text-zinc-600">Not on the website today</span>}
+        </div>
+        <p className="text-[13px] text-zinc-600">For limited or seasonal items. Outside these dates the item is hidden from the website menu, its search and the home page. Leave both blank to keep it on the menu.</p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Show from" htmlFor="i-from" error={errors.showFrom} hint="First day on the menu"><Input id="i-from" type="date" value={f.showFrom} onChange={(e) => set("showFrom", e.target.value)} error={!!errors.showFrom} /></Field>
+          <Field label="Show until" htmlFor="i-until" error={errors.showUntil} hint="Last day on the menu"><Input id="i-until" type="date" value={f.showUntil} onChange={(e) => set("showUntil", e.target.value)} error={!!errors.showUntil} /></Field>
+        </div>
+        {(f.showFrom || f.showUntil) && <Btn type="button" size="sm" variant="ghost" onClick={() => setF((s) => ({ ...s, showFrom: "", showUntil: "" }))}>Clear dates</Btn>}
+      </section>
+
       <section className="space-y-3 border-t border-zinc-100 pt-5">
         <h3 className="text-[13px] font-semibold uppercase tracking-wide text-zinc-500">Modifiers & add-ons</h3>
         {groups.length === 0 ? (
@@ -155,7 +175,7 @@ export function ItemEditor({ item, defaultSectionId, categories, groups, onSaved
         ) : (
           <div className="grid gap-2 sm:grid-cols-2">
             {groups.map((g) => (
-              <Checkbox key={g.id} checked={f.modifierGroupIds.includes(g.id)} onChange={() => toggleGroup(g.id)} label={<span>{g.name} <span className="text-zinc-400">· {g.modifiers.length} options{g.required ? " · required" : ""}</span></span>} />
+              <Checkbox key={g.id} checked={f.modifierGroupIds.includes(g.id)} onChange={() => toggleGroup(g.id)} label={<span>{g.name} <span className="text-zinc-500">· {g.modifiers.length} options{g.required ? " · required" : ""}</span></span>} />
             ))}
           </div>
         )}
@@ -172,9 +192,10 @@ export function ItemEditor({ item, defaultSectionId, categories, groups, onSaved
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-zinc-100 pt-5">
         <div className="flex gap-2">
           {item && f.active && <Btn type="button" variant="outline" onClick={archive} loading={busy === "archive"}>Archive item</Btn>}
-          {item && <Btn type="button" variant="ghost" className="text-red-600" onClick={() => setConfirmDelete(true)}>Delete</Btn>}
+          {item && <Btn type="button" variant="dangerGhost" onClick={() => setConfirmDelete(true)}>Delete</Btn>}
         </div>
-        <div className="flex gap-2">
+        {/* flex-wrap: the three new-item buttons ran 9px past the drawer at 390 */}
+        <div className="flex flex-wrap justify-end gap-2">
           <Btn type="button" variant="ghost" onClick={onClose}>Cancel</Btn>
           {!item && <Btn type="button" onClick={() => save("another")} loading={busy === "another"}>Save & add another</Btn>}
           <Btn type="submit" variant="primary" loading={busy === "close"}>Save changes</Btn>

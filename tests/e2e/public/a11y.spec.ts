@@ -8,7 +8,9 @@ async function expectNoBlockingViolations(page: Page) {
   expect(summary, summary.join("\n")).toEqual([]);
 }
 
-const PAGES = ["/", "/menu", "/book", "/catering", "/contact", "/gallery", "/calendar", "/admin/login"];
+// /menus renders with no content set up (tiles fall back to the board copy and default photos).
+// The two ordering pages need their switches on and an item, so ordering.spec.ts scans those.
+const PAGES = ["/", "/menu", "/menus", "/book", "/catering", "/contact", "/gallery", "/calendar", "/admin/login"];
 
 // Colors are identical with reduced motion; scanning without it lets axe sample
 // the ticker/marquee mid-transform and report phantom contrast failures.

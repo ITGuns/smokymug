@@ -6,10 +6,12 @@ import { setBookingWizard } from "./helpers/site-settings";
 
 config({ path: ".env.local" });
 
-const PUBLIC_ROUTES = ["/", "/menu", "/book", "/catering", "/gallery", "/contact", "/admin/login", "/this-page-does-not-exist"];
+const PUBLIC_ROUTES = ["/", "/menu", "/menus", "/book", "/catering", "/gallery", "/contact", "/admin/login", "/this-page-does-not-exist"];
 const ADMIN_ROUTES = ["/admin", "/admin/reservations", "/admin/menu", "/admin/menu/categories", "/admin/menu/modifiers", "/admin/gallery", "/admin/hours", "/admin/settings"];
 
 setup("admin login + route warm-up", async ({ page }) => {
+  // Cold dev compiles of these routes outgrow the 90s default on this machine (phase 2 added /menus).
+  setup.setTimeout(600_000);
   // Every project depends on this setup, so the database guard here stops the whole run.
   e2eDatabaseUrl();
   const password = process.env.ADMIN_E2E_PASSWORD || process.env.ADMIN_PASSWORD;

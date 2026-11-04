@@ -24,9 +24,13 @@ async function main() {
 
   await db.transaction(async (tx) => {
     if (force) {
-      for (const t of ["menu_item_modifier_groups", "menu_items", "menu_sections", "menu_categories", "modifiers", "modifier_groups", "hours", "booking_windows", "gallery_images", "reviews", "restaurant_info", "booking_settings"]) {
+      for (const t of ["menu_item_modifier_groups", "menu_items", "menu_sections", "menu_categories", "modifiers", "modifier_groups", "hours", "booking_windows", "gallery_images", "restaurant_info", "booking_settings"]) {
         await tx.execute(sql.raw(`DELETE FROM ${t}`));
       }
+      // C9 (4 Nov 2026): reviews typed in admin are real guest reviews Dan copied
+      // in; a reseed keeps them and only replaces the seeded theme summaries.
+      // Edits made to a seeded summary are reset like any other seeded content.
+      await tx.execute(sql.raw(`DELETE FROM reviews WHERE admin_added = false`));
     }
 
     /* ---- restaurant + hours + booking ---- */

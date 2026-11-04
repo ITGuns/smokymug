@@ -5,20 +5,11 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GalleryImage } from "@/db/schema";
 import { cn } from "@/lib/cn";
+import { GALLERY_TAGS } from "@/lib/gallery-tags";
 import { balanceColumns } from "@/lib/masonry";
 import { useFocusTrap } from "@/components/useFocusTrap";
 
-const TAGS: { key: string; label: string }[] = [
-  { key: "all", label: "Everything" },
-  { key: "bbq", label: "From the pit" },
-  { key: "tacos", label: "Tacos" },
-  { key: "breakfast", label: "Breakfast" },
-  { key: "coffee", label: "Coffee" },
-  { key: "drinks", label: "Drinks" },
-  { key: "prep", label: "Behind the scenes" },
-  { key: "people", label: "Pitmaster" },
-  { key: "catering", label: "Catering" },
-];
+const TAGS: { key: string; label: string }[] = [{ key: "all", label: "Everything" }, ...GALLERY_TAGS];
 
 /** Same breakpoints as the CSS fallback: 2 columns, 3 from md (768), 4 from xl (1280). */
 function useGalleryColumns(ref: React.RefObject<HTMLDivElement | null>) {

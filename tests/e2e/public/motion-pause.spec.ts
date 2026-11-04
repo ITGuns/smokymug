@@ -1,4 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { closePool } from "../helpers/db";
+import { cleanupOrdering, insertOrderItem, setOrdering } from "../helpers/ordering";
 
 /**
  * The header pause/resume toggle must never re-mount page content. Reveal and
@@ -78,6 +80,35 @@ test.describe("Motion pause toggle", () => {
     await toggleMotion(page, "Resume animations");
     expect(await sameNode(name, "name")).toBe(true);
     await expect(name).toHaveValue("QA keeps this");
+  });
+
+  test("pause and resume keep a typed order request (phase 2 form, no re-mount)", async ({ page }) => {
+    await insertOrderItem("express", "Pause Pack", { price: 5000 });
+    await setOrdering({ express_enabled: true });
+    try {
+      await page.goto("/menus/express-catering");
+      const name = page.locator("#or-name");
+      const qty = page.getByLabel("Quantity for QA Pause Pack");
+      await name.fill("QA keeps this");
+      await qty.fill("3");
+      await stash(name, "name");
+      await stash(qty, "qty");
+
+      await toggleMotion(page, "Pause animations");
+      expect(await sameNode(name, "name")).toBe(true);
+      expect(await sameNode(qty, "qty")).toBe(true);
+      await expect(name).toHaveValue("QA keeps this");
+      await expect(qty).toHaveValue("3");
+
+      await toggleMotion(page, "Resume animations");
+      expect(await sameNode(name, "name")).toBe(true);
+      await expect(name).toHaveValue("QA keeps this");
+      await expect(qty).toHaveValue("3");
+    } finally {
+      await setOrdering({ express_enabled: false });
+      await cleanupOrdering();
+      await closePool();
+    }
   });
 
   test("pause and resume keep the home motion pieces mounted and the marquee in place", async ({ page }) => {

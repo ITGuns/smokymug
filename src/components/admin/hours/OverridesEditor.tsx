@@ -39,7 +39,7 @@ export function OverridesEditor({ overrides }: { overrides: DateOverride[] }) {
               {o.closed ? <Tag tone="red">Closed</Tag> : <Tag tone="green">Special hours · {time12(o.startTime!)} – {time12(o.endTime!)}</Tag>}
               <span className="flex-1 truncate text-zinc-500">{o.reason}</span>
               <Btn size="sm" onClick={() => setEditing(o)}>Edit</Btn>
-              <Btn size="sm" variant="ghost" className="text-red-600" onClick={() => setDeleting(o)}>Remove</Btn>
+              <Btn size="sm" variant="dangerGhost" onClick={() => setDeleting(o)}>Remove</Btn>
             </li>
           ))}
         </ul>

@@ -93,15 +93,23 @@ Rules (2 Nov):
   photo per row, no card shadows; badges/OPTIONS as small text in the row,
   Order Now bottom left when the SpotOn URL exists. Featured = first item in
   each tab (Q10 default) until Genrou clears an admin pin.
-- **Navigation**: desktop L3-A: logo left; inline links Menu, Our Story,
+- **Navigation**: desktop L3-A: logo left; inline links Menus, Our Story,
   Catering, Calendar, Contact (P1, Pol 3 Nov: Calendar replaces Gallery in the
   top bar, the drawer and the footer; /gallery stays, reached from the home
-  gallery section and the sitemap); right side [Book a Table] [ORDER NOW], ORDER
+  gallery section and the sitemap. NW03-3, 4 Nov: the first link is "Menus" to
+  /menus in the top bar and the footer, active on /menus, /menus/* and /menu;
+  the phone sticky bar keeps "Menu" to /menu, P5); right side [Book a Table] [ORDER NOW], ORDER
   NOW rightmost (board H01: the nav phone became Book a Table, the old button
   became ORDER NOW). Compressed mode (collapse by FIT, not device; test 1024px):
   hamburger left, logo centered, left slide-out drawer (85% width, max 360px,
   scrim, closes on scrim/Esc/link tap, traps focus, locks body scroll); drawer
   CTAs in the same order. Top bar keeps ONLY the phone number in both modes.
+  Drawer phone rule (L3-3, board "Retain only the top bar phone number", 4 Nov):
+  the drawer info card carries status, address and social links but no phone;
+  the top utility strip is the only phone in the header. Drawer menus (B3 kept,
+  4 Nov): the "Menus" accordion lists "All menus" (/menus) first, then Express
+  Catering and Holiday Preorder only while each switch is on, then "Full menu"
+  and the display-menu tabs (/menu?category=...), as before.
   Header sticky. Fit measured 3 Nov at 1024px with Specials on and Order Now
   showing: 912 of 928px, one line.
 - **Order Now routing (NW03-2, 3 Nov)**: "Order Now buttons from other pages go
@@ -110,19 +118,50 @@ Rules (2 Nov):
   the featured dish (NW04), hidden until the URL is set. Alternative reading
   (header/hero Order Now straight to SpotOn, handoff C2) is recorded in
   FEEDBACK-client-review-3nov.md for Pol.
-- **Explore Menu (board H01 + NW03-1, 3 Nov)**: the hero drop lists the ordering
-  menus from `src/lib/ordering-menus.ts`: Restaurant (/menu) and Express
-  Catering (/catering until its ordering page exists). Holiday Preorder joins
-  when its page and on/off toggle are built (phase 2).
+- **Explore Menu (board H01 + NW03-1, 3 Nov; switches 4 Nov)**: the hero drop
+  lists `orderingMenus()` from `src/lib/ordering-menus.ts`: Restaurant (/menu),
+  Express Catering (/menus/express-catering while its switch is on, else
+  /catering), and Holiday Preorder (/menus/holiday-preorders) only while the
+  holiday switch is on and its pickup window is not over: 2 or 3 options.
 - **L4-A buttons** (pill; Book a Table soft square). Both header CTAs are solid
   ember (no texture, no color change in this round).
 - **L5-A gallery**: masonry, no fixed heights, no gap taller than one row at
-  1280px. Admin drag-to-reorder (reorder only). GA03 (3 Nov, "Format Auto
-  Adjust/Arrange", "Minimize Negative Space"): after mount the grid is split
-  into balanced columns (`src/lib/masonry.ts`: shortest column first, then
-  moves/swaps among the second half of the list), so the admin's first photos
-  stay on the top row. Column bottom spread measured 1280/1024/768/390: 325/97/
-  73/54px before, 74/16/7/10px after. No cropping: tiles keep their ratios.
+  1280px. Admin (4 Nov, full CRUD per Pol): add photo (JPG/PNG/WebP up to 3 MB,
+  type checked against the file bytes), edit description, category and "show on
+  the website", remove (seeded `/images` files are never deleted; uploaded files
+  only when nothing else references them), and drag-to-reorder. GA03 (3 Nov,
+  "Format Auto Adjust/Arrange", "Minimize Negative Space"): after mount the grid
+  is split into balanced columns (`src/lib/masonry.ts`: shortest column first,
+  then moves/swaps between any two columns below the top row), so the admin's
+  first photos stay on the top row in order while lower rows follow the admin
+  order more loosely. Seeded set at 1280px: 20px column spread; 920 random
+  add/remove sets all under 80px. No cropping: tiles keep their ratios.
+- **Signature grid (H04, board "Utilize Empty Space", 4 Nov)**: the home
+  Signature section keeps its cap of 8 featured items (the count the client
+  approved; H04 asked for no holes, not more cards), and the spans come from
+  the count (`src/lib/signature-grid.ts`, unit tested for 1 to 8 with and
+  without a photo lead). lg (12 cols): the photo lead is 7 wide and
+  two rows tall with two 5-wide cards beside it; with one other card it is one
+  row tall; alone it is full width. Every other card packs into balanced rows
+  of up to 4 (5 cards = 3 + 2, never 4 + 1). md (6 cols): lead full width, then
+  rows of 2, an odd last card full width. Below md it stays a swipe carousel.
+  No empty cell at 1280 or 768 for any count.
+- **Reviews (C9, board H06 "keep reviews fresh to the most recent good
+  review", 4 Nov)**: admin CRUD at /admin/reviews (reviewer name, posted on
+  Google/Yelp/Facebook/Tripadvisor/Other, 1 to 5 stars, review date, text up
+  to 1,000 characters, show on the website; hide/show; delete). No manual
+  order: the home section shows the 6 newest visible reviews rated 4 stars or
+  more, so a new good review pushes the oldest off. The seeded theme summaries
+  have no date or rating, count as good, and sort after every dated review.
+  Admin (reviews page and dashboard) nudges when the newest review shown is
+  older than 90 days, or when none shown has a date. Review content is only
+  ever copied from the platform by Dan; nothing is invented in seed, tests or
+  copy (test rows are named "QA reviewer ..."). The new columns live on
+  `reviews` and are read defensively: before `db:push` the home page falls
+  back to the old columns and admin shows the db:push note. `db:reseed
+  --force` keeps admin-added reviews (`admin_added = true`) and replaces only
+  the seeded summaries; edits made to a seeded summary are reset by a reseed,
+  so add the real review as a new one to keep it.
 - **L6-A calendar** (built 1 Nov, NW01, base scope): /calendar month grid with
   hover highlight + pop-out covering the grid (X exits), "List by date" panel
   whose rows drop open; hovering or focusing a list row lights that day's
@@ -159,16 +198,79 @@ Rules (2 Nov):
   db:push`) every page renders with the defaults and admin shows a db:push
   note instead of failing. `db:reseed --force` neither wipes nor resets them
   (default row inserted only if none exists).
-- **NW03 Menus landing page (PHASE 2, do not build yet)**: a "Menus." page of
-  three photo tiles: All Day Craft Tex Mex & BBQ (links to /menu), Express
-  Catering (links to a catering express ordering page, phase 2 build), and
-  Holiday Preorders (admin-editable subtitle + on/off toggle, links to a
-  holiday ordering page, phase 2 build). The Explore Menu drop and the Order
-  Now routing are already live (above); phase 2 adds the page itself, the two
-  ordering pages, the Holiday Preorder option + toggle, the CA01 "Order Express
-  Catering Now" button, and top-bar/footer "Menus" links that land on it. The
-  sketch's own note: "This page isn't active until phase 2 (ordering catering
-  express, ordering holiday preorder) are built."
+- **Phase 2 built (Pol, 4 Nov 2026)**: Pol ordered phase 2 built now, as ORDER
+  REQUESTS only: no card payments, no payment fields, no SpotOn or Toast API;
+  the guest pays at pickup or through SpotOn and staff confirm every request by
+  hand. The handoff lists this as the separate $500 ordering build, so Genrou
+  must be told before it is pushed. Contract: `docs/phase2-ordering-spec.md`.
+- **NW03 Menus page (/menus, built 4 Nov)**: standard header, then a dark band
+  with the board heading "MENUS." and three photo tiles (16px radius, scrim to
+  4.5:1, the whole tile is one link): ALL DAY CRAFT TEX MEX & BBQ with
+  "Breakfast Lunch Dinner Brunch Cafe Bar" stacked (links to /menu); EXPRESS
+  CATERING with its admin subtitle, default "Breakfast burrito packs. Sandwich
+  Packs. Taco Bars" (links to /menus/express-catering while on, else
+  /catering); HOLIDAY PREORDERS with its admin subtitle (links to
+  /menus/holiday-preorders while on; while off it stays visible as a plain
+  tile, not a link, showing the subtitle or "Not taking holiday preorders right
+  now."). Desktop: ALL DAY on the left spanning two rows, the other two stacked
+  on the right (the sketch). Phones: one column in that order. Tile photos
+  default to Dan's own catering/BBQ photos in /public/images and are
+  replaceable in admin.
+- **Ordering pages (/menus/express-catering, /menus/holiday-preorders)**: one
+  page component; each 404s while its switch is off (the /special-events
+  convention). Dark band: h1 "Express Catering" or "Holiday Preorders", the
+  admin subtitle, and "Order requests only. Nothing is charged online: you pay
+  at pickup or through SpotOn." Then the item list in the L2-D row language
+  (name, description, price note, price or "Price on request" at the right, no
+  card shadows, optional small photo) with a labelled quantity per row, and the
+  request panel (sticky beside the list on desktop, below it on phones): name,
+  phone, email, pickup date, pickup time (30-minute slots inside store hours,
+  never the last 30 minutes, lead time 48h express / 72h holiday, holiday only
+  inside its pickup window), notes, estimate, one factual privacy line, Send
+  request. Pickup only. Confirmation replaces the form in place ("Request
+  received.", reference EC-/HP-number, no promise of acceptance or timing).
+  Nothing is emailed to the guest; staff get a plain-text email (copies BCC)
+  once the mail provider is set up.
+- **CA01 (built 4 Nov)**: the catering hero shows "Order Express Catering Now"
+  (ember, same as every order action) between Plan Your Event and See services,
+  only while the Express Catering switch is on.
+- **Admin, phase 2**: Menu, "Express + Holiday" (/admin/menu/ordering): one
+  card per ordering menu with its on/off switch (both default OFF; switching
+  on is refused with no active items, and for holiday without a pickup window
+  that is not over), subtitle, lead time, holiday pickup window, tile photo,
+  then the item list (add, edit, show/hide, reorder, delete); plus the ALL DAY
+  tile photo. Orders (/admin/orders, sidebar badge = new requests): requests
+  inbox (filters, "Not emailed" tag, mail banner, 180-day retention after
+  pickup), detail at /admin/orders/[id] (contact, lines, status, internal note,
+  delete), and a Catering inquiries tab (list, detail, delete). Dashboard card
+  with the new count and the next pickups. All four tables are new and read
+  defensively: before `db:push` the site renders with both menus off and admin
+  shows the db:push note.
+- **Menu item scheduling (D1, board MB03 "Add scheduling menu Items in the
+  admin panel", built 4 Nov)**: two kinds of schedule, kept apart on purpose.
+  (1) Day and time rules (Availability: Always, Specific days, Specific days +
+  times, Seasonal) already existed and were already editable in the item
+  editor; they never hide an item, they drive the "Fri & Sat only" style
+  badges and "available now". A time window must end after it starts (store
+  hours end before midnight, so no overnight windows). (2) New: a "Schedule"
+  section in the item editor with Show from / Show until dates (both
+  optional, both days inclusive, restaurant timezone from the same clock as
+  the store status) and a Clear dates button. Outside the dates the item is
+  left off the public menu, its search, the featured picks, the home
+  Signature grid and the admin dashboard's featured preview. The admin list
+  tags the item "Scheduled · from <date>" (not on yet, purple), "Ends <date>"
+  (on, with an end, purple) or "Ended <date>" (gray); the editor adds "Not on
+  the website today". Dates were chosen over more day/time rules because the
+  day/time half of "scheduling" was already built, and a limited or seasonal
+  item that appears and disappears by itself is the part an owner could not
+  do. Storage is a side table (`menu_item_schedules`, one row while a date is
+  set) so every existing menu_items read, including the site layout's on
+  every page, works on prod before `db:push`; until then the site shows every
+  item and saving dates returns the db:push note (saves without dates work).
+  The filter runs per request after the menu cache, so a start or end date
+  takes effect at local midnight without a menu save. `db:reseed --force`
+  rebuilds the menu tables, so it wipes every schedule typed in admin, like
+  every other menu edit.
 
 ## 4b. Confirmed from the client's board markup (captured 2026-10-30)
 
@@ -209,12 +311,15 @@ MotionConfig, which an element already on the page never re-reads. Guarded by
 
 ## Out of scope: do not build
 
-SpotOn/Toast API work, on-site ordering, whole-site redesign. Pol's rule (3 Nov):
-a CHECK item is in scope when the client's own board markup asks for it, and his
-instruction is the sign-off. Built on that basis: B6 icons, C13 dual paper
-trail, C14/BK02 SpotOn box. Still unbuilt although the board asks for them (not
-in the screenshots Pol sent; his call): C9 reviews freshness (H06), D1 scheduled
-menu items (MB03). Phase 2: the NW03 Menus page, the Express Catering and
-Holiday Preorder ordering pages, the CA01 button. Palette decided (Pol, 3 Nov,
-S3-4b): solid brick orange stays, no textures, no color changes. No longer gated:
-D2 (NW02 Specials link), C12 "Brew." (menu H1, 30 Oct).
+SpotOn/Toast API work, online card payments of any kind (no card fields,
+deposits, stored payment data or checkout), POS/menu/inventory sync, customer
+accounts and customer emails, delivery orders, whole-site redesign. Pol 4 Nov:
+on-site order REQUESTS are built (phase 2, above); card payments, SpotOn/Toast
+API and POS sync stay out. Pol's rule (3 Nov): a CHECK item is in scope when
+the client's own board markup asks for it, and his instruction is the
+sign-off. Built on that basis: B6 icons, C13 dual paper trail, C14/BK02 SpotOn
+box. C9 reviews freshness (H06) and D1 scheduled menu items (MB03) built 4 Nov
+(Pol ordered every board instruction built). Phase 2 (NW03 Menus page, Express Catering and Holiday Preorder
+ordering pages, CA01 button) built 4 Nov as order requests. Palette decided
+(Pol, 3 Nov, S3-4b): solid brick orange stays, no textures, no color changes.
+No longer gated: D2 (NW02 Specials link), C12 "Brew." (menu H1, 30 Oct).

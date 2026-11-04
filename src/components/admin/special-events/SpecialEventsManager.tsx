@@ -133,7 +133,7 @@ export function SpecialEventsManager({ settings, images }: { settings: SpecialEv
                     <Btn size="sm" variant="ghost" disabled={i === 0} onClick={() => move(i, -1)} aria-label="Move earlier">↑</Btn>
                     <Btn size="sm" variant="ghost" disabled={i === list.length - 1} onClick={() => move(i, 1)} aria-label="Move later">↓</Btn>
                   </div>
-                  <Btn size="sm" variant="ghost" className="text-red-600" onClick={() => setList((l) => l.filter((_, j) => j !== i))}>
+                  <Btn size="sm" variant="dangerGhost" onClick={() => setList((l) => l.filter((_, j) => j !== i))}>
                     Remove
                   </Btn>
                 </div>

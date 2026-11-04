@@ -88,7 +88,7 @@ describe("CA03 inquiry email", () => {
     expect(inquiryMailConfig({ RESEND_API_KEY: "k", INQUIRY_FROM_EMAIL: "Site <a@b.com>" })).toEqual({ apiKey: "k", from: "Site <a@b.com>" });
   });
 
-  it("builds a plain-text email to the catering address with the CC list", () => {
+  it("builds a plain-text email to the catering address with the copy list as BCC (P6)", () => {
     const mail = buildInquiryEmail(
       { id: 7, name: "QA Guest\r\nBcc: evil@x.com", email: "guest@x.com", occasion: "Birthday", serviceType: "pickup", guestCount: 20, message: "<b>hi</b>" },
       "bookings@x.com",
@@ -96,7 +96,9 @@ describe("CA03 inquiry email", () => {
       "Site <noreply@x.com>",
     );
     expect(mail.to).toEqual(["bookings@x.com"]);
-    expect(mail.cc).toEqual(["copy@x.com"]);
+    // BCC, not CC: Reply All from a staff inbox must not hand the guest the internal list
+    expect(mail.bcc).toEqual(["copy@x.com"]);
+    expect(mail).not.toHaveProperty("cc");
     expect(mail.reply_to).toBe("guest@x.com");
     expect(mail.subject).not.toMatch(/[\r\n]/);
     expect(mail.text).toContain("Guests: 20");

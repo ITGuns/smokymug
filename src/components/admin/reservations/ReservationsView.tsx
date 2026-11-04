@@ -76,10 +76,10 @@ export function ReservationsView({
         {r.status === "pending" && <Btn size="sm" variant="primary" onClick={() => setStatus(r, "confirmed")} loading={busy}>Confirm</Btn>}
         {(r.status === "pending" || r.status === "confirmed") && <Btn size="sm" onClick={() => setStatus(r, "completed")} disabled={busy}>Complete</Btn>}
         {(r.status === "pending" || r.status === "confirmed") && <Btn size="sm" onClick={() => setStatus(r, "no_show")} disabled={busy}>No-show</Btn>}
-        {(r.status === "pending" || r.status === "confirmed") && <Btn size="sm" variant="ghost" className="text-red-600" onClick={() => setStatus(r, "cancelled")} disabled={busy}>Cancel</Btn>}
+        {(r.status === "pending" || r.status === "confirmed") && <Btn size="sm" variant="dangerGhost" onClick={() => setStatus(r, "cancelled")} disabled={busy}>Cancel</Btn>}
         {r.status === "cancelled" && <Btn size="sm" onClick={() => setStatus(r, "confirmed")} disabled={busy}>Reinstate</Btn>}
         <Btn size="sm" variant="ghost" onClick={() => setEditing(r)}>Edit</Btn>
-        <Btn size="sm" variant="ghost" className="text-red-600" onClick={() => setDeleting(r)}>Delete</Btn>
+        <Btn size="sm" variant="dangerGhost" onClick={() => setDeleting(r)}>Delete</Btn>
       </div>
     );
   };

@@ -75,7 +75,7 @@ working tree, not yet deployed. Items with two halves are split into a/b rows.
 | S3-5 | Launching with an incorrect/incomplete menu he must fix himself | PARTIAL | 2026 menu in `src/db/seed-data/menu.ts`; 17 printed doubts marked `TODO 2026-menu`; `HoursEditor.tsx:19-21` (unc.) | Pre-2026 menu: 5 tabs, 140 items, no Tex Mex | Reseed loads it; Dan answers yes/no on the doubts only |
 | S3-6 | Build notes must say there is more to come | PARTIAL | Draft `BUILD-NOTES-for-Dan.md` | n/a | Guns sends after the reseed |
 | S3-6a | Blank event page, loadable with images/flyers | DONE (switched off) | `src/app/(site)/special-events/page.tsx:22`; `SpecialEventsManager.tsx` | 404 (switch off) | Switch on when flyers arrive, or now as a blank page: Guns/Dan |
-| S3-6b | Menu breakdown: a) SpotOn ordering, b) catering + holiday pages | PARTIAL | a) SpotOn Order Now on every menu item, hidden until the link is set; b) NW03 phase 2 | No Order Now | a) NEEDS-CLIENT-INPUT (Q8 link); b) PHASE-2 |
+| S3-6b | Menu breakdown: a) SpotOn ordering, b) catering + holiday pages | PARTIAL | a) SpotOn Order Now on every menu item, hidden until the link is set; b) NW03 phase 2 built 4 Nov (order requests, switches off until Dan's items are in) | No Order Now | a) NEEDS-CLIENT-INPUT (Q8 link); b) DONE (unc.), content NEEDS-CLIENT-INPUT (G1, G2) |
 
 ### 2b. New pages sketch (S4, NW01-NW04)
 
@@ -92,11 +92,11 @@ working tree, not yet deployed. Items with two halves are split into a/b rows.
 | NW02-2 | Image boxes added/removed/uploaded | DONE | `SpecialEventsManager.tsx`; uploads in the DB | Admin | |
 | NW02 switch | On/off switch | DONE | `special-events/page.tsx:22` | 404 while off | |
 | NW02 nav link | Nav link | DONE (unc.) | `Header.tsx:73`, `Footer.tsx:35` | Not live | Specials right after Calendar in top bar, drawer, footer while on (verified) |
-| NW03 tiles | "MENUS." page with three photo tiles | PHASE-2 | DESIGN.md §4 | n/a | |
-| NW03-1 | Explore Menu drops into 2-3 options | DONE (unc.) | `src/lib/ordering-menus.ts`; `Hero.tsx:96` | Drop lists the menu tabs | Restaurant (/menu), Express Catering (/catering); Holiday Preorder waits on its phase-2 page + toggle |
+| NW03 tiles | "MENUS." page with three photo tiles | DONE (unc., 4 Nov phase 2) | `src/app/(site)/menus/page.tsx`, `src/components/ordering/MenusTiles.tsx` | n/a | Board copy verbatim; holiday tile unlinked while off (verified) |
+| NW03-1 | Explore Menu drops into 2-3 options | DONE (unc.) | `src/lib/ordering-menus.ts` (`orderingMenus`); `Hero.tsx:96` | Drop lists the menu tabs | Restaurant (/menu), Express Catering (its page while on, else /catering), Holiday Preorder while on: 2 or 3 options (verified) |
 | NW03-2 | Order Now from other pages goes directly to main Restaurant Menu | DONE (unc.), reading flagged | `Header.tsx:256` (desktop), `Header.tsx:379` (drawer), `Hero.tsx:98` | Order Now hidden (URL unset) | Built as /menu; alternative in section 5 |
-| NW03-3 | Page lands from header/footer "Menus" only | PHASE-2 | | | |
-| NW03-4 | Not active until phase 2 is built | PHASE-2 | | | |
+| NW03-3 | Page lands from header/footer "Menus" only | DONE (unc., 4 Nov phase 2) | `Header.tsx` NAV, `Footer.tsx` LINKS | Top bar "Menu" | Header and footer "Menus" to /menus; Order Now stays /menu (verified) |
+| NW03-4 | Not active until phase 2 is built | DONE (unc., 4 Nov phase 2) | `src/app/(site)/menus/[menu]/page.tsx`, `docs/phase2-ordering-spec.md` | n/a | Both ordering pages built as order requests (no payments); each 404s while its admin switch is off |
 | NW04 | SpotOn link on every Order button (show where each one sits) | NEEDS-CLIENT-INPUT | Featured dish `FeaturedDish.tsx:90`; every menu row `MenuItemRow.tsx:61` | None visible | Waits on the SpotOn ordering link (Q8). Header/drawer/hero Order Now now go to /menu (NW03-2) |
 | NW04-1 | "Bottom of box" options and notations go one spot up | DONE | `MenuItemRow.tsx:42-59` | n/a until link | Verified with a QA URL |
 | NW04-2 | Order Now anchored bottom left | DONE | `MenuItemRow.tsx:61-67`; `FeaturedDish.tsx:89-96` | n/a | Verified |
@@ -126,17 +126,17 @@ working tree, not yet deployed. Items with two halves are split into a/b rows.
 |---|---|---|---|---|---|
 | P1 | Gallery → Calendar in header, drawer and footer | DONE (unc.) | `Header.tsx:15-21`; `Footer.tsx:9-16`; e2e `tests/e2e/public/home.spec.ts`, `calendar.spec.ts` | Gallery in nav, Calendar footer-only | Specials after Calendar; /gallery still linked from the home gallery section and the sitemap. Fit at 1024 with Specials + Order Now: 912 of 928px |
 | S12 | Footer: "CALENDAR" written over "Gallery" | DONE (unc.) | `Footer.tsx:14` | Calendar + Gallery both listed | Same change as P1 |
-| S9 | CA01 "Order Express Catering Now" after phase 2 | PHASE-2 | Not built | n/a | Listed in the build notes |
+| S9 | CA01 "Order Express Catering Now" after phase 2 | DONE (unc., 4 Nov phase 2) | `src/app/(site)/catering/page.tsx` hero | n/a | Between Plan Your Event and See services, ember, only while Express Catering is on (verified) |
 | S10 | CA03 "Dual paper trail": admin list of emails copied on inquiries (was CHECK C13) | DONE (unc.); sending NEEDS-INFRA | Admin card `src/components/admin/settings/SiteExtrasForm.tsx`; action `src/actions/site-settings.ts`; send path `src/lib/inquiry-mail.ts`, `src/actions/catering.ts:25-35` | No inquiry email at all (inquiries only saved) | No mail was sent before (confirmed in code). Sends via Resend only once RESEND_API_KEY + INQUIRY_FROM_EMAIL are set; Guns creates the account + verified sender. Nothing invented |
 | S11 | GA03 "Format Auto Adjust/Arrange", "Minimize Negative Space" | DONE (unc.) | `src/lib/masonry.ts`; `src/components/gallery/GalleryExplorer.tsx:99,148` | 1280px column bottoms 325px apart | Spread at 1280/1024/768/390: 325/97/73/54px before, 74/16/7/10px after (same 24 seeded photos); no cropping |
 | S13 | BK02 "Integrate SpotOn Reservations basically a box with the spotOn reservation interface" (was CHECK C14) | DONE (unc.); link NEEDS-CLIENT-INPUT | `src/components/booking/ReservationsBox.tsx`; `src/app/(site)/book/page.tsx:38-53`; wizard gate `src/actions/booking.ts:49,54,59`; CSP `src/middleware.ts:13`, `src/lib/csp.ts` | Native wizard | Phone card until the link is set; iframe + "Open reservations" link + phone after. Book a Table CTAs still go to /book |
 | S15 | Menu heading: add "Brew." | DONE | `src/app/(site)/menu/page.tsx:47` | Live "...Bar. Brew." | Handoff Q6 only asks what "Brew" means as a menu section; it does not argue against the heading |
 | HARD | New settings read defensively before prod db:push | DONE | `src/lib/data/site-settings.ts`; `src/lib/data/events.ts` (readEventKinds); `src/lib/db-errors.ts` | n/a | Verified with both tables missing (section 7) |
-| Board CHECK asks outside the screenshots | C9 reviews freshness (H06), D1 scheduled menu items (MB03) | NEEDS-POL-DECISION | Not built | n/a | The board asks for both; by Pol's rule they would be in scope, but they were not in the screenshots he sent |
+| Board CHECK asks outside the screenshots | C9 reviews freshness (H06), D1 scheduled menu items (MB03) | DONE (unc., 4 Nov) | C9: `src/actions/reviews.ts`, `src/lib/reviews.ts`; D1: `src/lib/menu-schedule.ts`, `src/components/admin/menu/ItemEditor.tsx` (Schedule section), table `menu_item_schedules` | n/a | Pol ordered every board instruction built (4 Nov). Both need `npm run db:push` on prod before admin can save them; see CHANGELOG-discovery.md, 4 Nov round |
 
-Counts (56 rows): DONE 42 (of which 15 uncommitted, 1 font stand-in, 1 switched off, 1 placeholder photo,
+Counts (56 rows): DONE 43 (of which 16 uncommitted, 1 font stand-in, 1 switched off, 1 placeholder photo,
 1 decision), PARTIAL 8, MISSING 0, PHASE-2 4, NEEDS-CLIENT-INPUT 1 (NW04 link; other rows also wait on Dan, see
-notes), NEEDS-POL-DECISION 1.
+notes), NEEDS-POL-DECISION 0.
 
 ## 3. S3-2 copy check: every copy instruction found
 
@@ -162,8 +162,8 @@ accounted for below; the three red notes at the top are the board's own "how to 
 | 13 | "Cafe Fare, Wed-Sat 'til 3 PM" crossed out | H05 | `src/components/site/HoursTable.tsx:42` leaves cafe_fare out | n/a | Home/contact YES; /menu Breakfast note still prints "Cafe Fare" (reseed) |
 | 14 | "Integrate hours copy in worksheet" | H05 (green) | Copy sheet (E1) not made yet | n/a | NEEDS-CLIENT-INPUT via the copy sheet |
 | 15 | "What's happening?" / "Events and special programming: Do things. Meet people." | NW01 | `calendar/page.tsx:32,35` | Yes | YES |
-| 16 | NW03 tile copy: "MENUS.", "ALL DAY CRAFT TEX MEX & BBQ", "Breakfast Lunch Dinner Brunch Cafe Bar", "EXPRESS CATERING", "Breakfast burrito packs. Sandwich Packs. Taco Bars", "HOLIDAY PREORDERS" | NW03 | Not built | n/a | PHASE-2 |
-| 17 | "Order Express Catering Now" | CA01 | Not built | n/a | PHASE-2 |
+| 16 | NW03 tile copy: "MENUS.", "ALL DAY CRAFT TEX MEX & BBQ", "Breakfast Lunch Dinner Brunch Cafe Bar", "EXPRESS CATERING", "Breakfast burrito packs. Sandwich Packs. Taco Bars", "HOLIDAY PREORDERS" | NW03 | `src/app/(site)/menus/page.tsx` | n/a | DONE (4 Nov phase 2), verbatim |
+| 17 | "Order Express Catering Now" | CA01 | `src/app/(site)/catering/page.tsx` | n/a | DONE (4 Nov phase 2), verbatim |
 | 18 | "Should be dropdown routing to the 3 separate ordering menus" | H01 hero | `src/lib/ordering-menus.ts` (Restaurant, Express Catering) (unc.) | n/a | 2 of 3 menus exist |
 
 Verdict: nothing from the board was ignored in the repo. Five database-held items (1, 3, 4, 5, 9) and the menu

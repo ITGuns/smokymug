@@ -31,7 +31,9 @@ test.describe("Calendar page (NW01)", () => {
   test("the footer Explore column has Calendar where Gallery was (board footer, P1)", async ({ page }) => {
     await page.goto("/contact");
     const links = page.locator("footer h2:has-text('Explore') + ul").getByRole("link");
-    await expect(links).toHaveText(["Menu", "Book a Table", "Catering", "Calendar", "Contact"]);
+    // NW03-3 (4 Nov): the footer's first link is "Menus" to /menus
+    await expect(links).toHaveText(["Menus", "Book a Table", "Catering", "Calendar", "Contact"]);
+    await expect(links.nth(0)).toHaveAttribute("href", "/menus");
     await expect(links.nth(3)).toHaveAttribute("href", "/calendar");
   });
 

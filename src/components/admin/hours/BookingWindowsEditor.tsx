@@ -87,7 +87,7 @@ function WindowForm({ w, onDone, onDelete }: { w: BookingWindow | null; onDone: 
       <Field label="Label" htmlFor="w-label" hint='e.g. "Lunch & Dinner", "Sunday Brunch"'><Input id="w-label" value={f.label} onChange={(e) => setF({ ...f, label: e.target.value })} /></Field>
       <Toggle checked={f.active} onChange={(v) => setF({ ...f, active: v })} label="Active" />
       <div className="flex items-center justify-between pt-2">
-        <div>{w && <Btn type="button" variant="ghost" className="text-red-600" onClick={onDelete}>Remove</Btn>}</div>
+        <div>{w && <Btn type="button" variant="dangerGhost" onClick={onDelete}>Remove</Btn>}</div>
         <div className="flex gap-2"><Btn type="button" variant="ghost" onClick={onDone}>Cancel</Btn><Btn type="submit" variant="primary" loading={busy}>Save</Btn></div>
       </div>
     </form>

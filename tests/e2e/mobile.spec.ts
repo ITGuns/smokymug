@@ -1,4 +1,6 @@
 import { expect, test } from "@playwright/test";
+import { closePool } from "./helpers/db";
+import { cleanupOrdering, holidayWindow, insertOrderItem, resetOrdering, setOrdering } from "./helpers/ordering";
 
 test.describe("Mobile layout", () => {
   test("home: hamburger menu, sticky booking bar, no horizontal overflow", async ({ page }) => {
@@ -19,6 +21,9 @@ test.describe("Mobile layout", () => {
     await expect(menu.getByRole("link", { name: "Instagram" })).toHaveAttribute("href", "https://www.instagram.com/thesmokymug");
     await expect(menu.getByRole("link", { name: "Facebook" })).toHaveAttribute("href", "https://www.facebook.com/thesmokymug");
     await expect(menu.getByRole("link", { name: /^Email / })).toHaveAttribute("href", "mailto:thesmokymug@gmail.com");
+    // L3-3: the top utility strip is the only phone in the header, so the drawer has none.
+    await expect(menu.locator('a[href^="tel:"]')).toHaveCount(0);
+    await expect(page.locator("header").locator('a[href^="tel:"]:visible')).toHaveCount(1);
     for (const name of ["Instagram", "Facebook", /^Email /]) {
       const box = await menu.getByRole("link", { name }).boundingBox();
       expect(box!.width).toBeGreaterThanOrEqual(44);
@@ -72,6 +77,43 @@ test.describe("Mobile layout", () => {
     const width = (await card.boundingBox())!.width;
     expect(width).toBeGreaterThan(300);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+  });
+
+  test("drawer Menus: All menus + live ordering pages above the display menus, one Menus entry (phase 2)", async ({ page }) => {
+    const openMenus = async () => {
+      await page.getByRole("button", { name: "Open menu" }).click();
+      const drawer = page.locator("#mobile-nav");
+      await expect(drawer).toBeVisible();
+      await drawer.getByRole("button", { name: "Menus" }).click();
+      return drawer;
+    };
+    try {
+      await page.goto("/");
+      let drawer = await openMenus();
+      // Both switches off: no ordering pages listed, the display menus are still there (B3)
+      await expect(drawer.getByRole("link", { name: "All menus" })).toHaveAttribute("href", "/menus");
+      await expect(drawer.getByRole("link", { name: "Full menu" })).toHaveAttribute("href", "/menu");
+      await expect(drawer.locator('a[href^="/menu?category="]').first()).toBeVisible();
+      await expect(drawer.getByRole("link", { name: "Express Catering" })).toHaveCount(0);
+      await expect(drawer.getByRole("link", { name: "Holiday Preorder" })).toHaveCount(0);
+      await expect(drawer.locator('a[href="/menus"]')).toHaveCount(1);
+      await expect(drawer.getByRole("link", { name: "Order Now" })).toHaveAttribute("href", "/menu");
+
+      const win = holidayWindow();
+      await insertOrderItem("express", "Drawer Pack");
+      await insertOrderItem("holiday", "Drawer Turkey");
+      await setOrdering({ express_enabled: true, holiday_enabled: true, holiday_pickup_from: win.from, holiday_pickup_to: win.to });
+      await page.goto("/");
+      drawer = await openMenus();
+      await expect(drawer.getByRole("link", { name: "Express Catering" })).toHaveAttribute("href", "/menus/express-catering");
+      await expect(drawer.getByRole("link", { name: "Holiday Preorder" })).toHaveAttribute("href", "/menus/holiday-preorders");
+      const order = await drawer.locator("ul a").evaluateAll((els) => els.slice(0, 4).map((e) => e.textContent?.trim()));
+      expect(order).toEqual(["All menus", "Express Catering", "Holiday Preorder", "Full menu"]);
+    } finally {
+      await resetOrdering();
+      await cleanupOrdering();
+      await closePool();
+    }
   });
 
   test("booking wizard hides the desktop rail and keeps touch targets large", async ({ page }) => {

@@ -301,6 +301,31 @@ export const menuItems = pgTable(
   (t) => [index("menu_items_section_idx").on(t.sectionId), uniqueIndex("menu_items_slug_idx").on(t.slug), index("menu_items_featured_idx").on(t.featured)],
 );
 
+/** D1 / board MB03 (4 Nov 2026): optional show-from / show-until dates for
+ *  limited or seasonal items. Outside them the item is left off the public
+ *  menu, its search, the featured picks and the home grid. A side table, not
+ *  columns on menu_items: the site layout reads every menu_items column on
+ *  every page, and prod may run this code before its `db:push`; reads fall
+ *  back to "no schedule" while the table is missing. A row exists only while
+ *  a date is set. Rows go with their item, so `db:reseed --force` (which
+ *  rebuilds menu_items) wipes every schedule typed in admin. */
+export const menuItemSchedules = pgTable(
+  "menu_item_schedules",
+  {
+    itemId: integer("item_id")
+      .primaryKey()
+      .references(() => menuItems.id, { onDelete: "cascade" }),
+    /** YYYY-MM-DD in the restaurant's timezone: first day shown. null = no start date. */
+    showFrom: text("show_from"),
+    /** YYYY-MM-DD: last day shown (inclusive). null = no end date. */
+    showUntil: text("show_until"),
+  },
+  (t) => [
+    check("menu_item_schedules_set_check", sql`${t.showFrom} is not null or ${t.showUntil} is not null`),
+    check("menu_item_schedules_order_check", sql`${t.showFrom} is null or ${t.showUntil} is null or ${t.showUntil} >= ${t.showFrom}`),
+  ],
+);
+
 export const menuItemModifierGroups = pgTable(
   "menu_item_modifier_groups",
   {
@@ -340,7 +365,18 @@ export const reviews = pgTable("reviews", {
   themes: jsonArray<string[]>("themes"),
   sentiment: text("sentiment"),
   displayOrder: integer("display_order").notNull().default(0),
+  /** Show on site. */
   active: boolean("active").notNull().default(true),
+  /* C9/H06 (4 Nov 2026): real reviews entered in admin. All nullable so the
+     seeded theme summaries (no date, rating or text) stay valid. Read with the
+     db-errors fallback in lib/data/reviews.ts until prod runs db:push. */
+  reviewerName: text("reviewer_name"),
+  rating: integer("rating"),
+  /** YYYY-MM-DD, the date on the platform. */
+  reviewDate: text("review_date"),
+  body: text("body"),
+  /** true = typed in admin. A reseed only replaces the seeded rows (false). */
+  adminAdded: boolean("admin_added").notNull().default(false),
   ...timestamps,
 });
 
@@ -419,6 +455,121 @@ export const siteSettings = pgTable("site_settings", {
   ...timestamps,
 });
 
+/* ------------------------------------------------------------------ */
+/* Phase 2 ordering (Pol 4 Nov 2026): order REQUESTS, never payments.   */
+/* Spec: docs/phase2-ordering-spec.md. All four tables are new, so no   */
+/* existing all-columns read can break; reads fall back while missing. */
+/* Admin-owned: never seeded, never in the db:reseed delete list.       */
+/* ------------------------------------------------------------------ */
+
+export const ORDER_MENUS = ["express", "holiday"] as const;
+export type OrderMenu = (typeof ORDER_MENUS)[number];
+export const ORDER_REQUEST_STATUSES = ["new", "confirmed", "completed", "declined", "cancelled"] as const;
+export type OrderRequestStatus = (typeof ORDER_REQUEST_STATUSES)[number];
+export const NOTIFY_STATUSES = ["pending", "sent", "failed", "off", "skipped"] as const;
+export type NotifyStatus = (typeof NOTIFY_STATUSES)[number];
+
+/** One row, id 1. Every read falls back to the defaults (both menus OFF) while it is missing. */
+export const orderingSettings = pgTable(
+  "ordering_settings",
+  {
+    id: integer("id").primaryKey(),
+    expressEnabled: boolean("express_enabled").notNull().default(false),
+    /** null = the board copy */
+    expressSubtitle: text("express_subtitle"),
+    expressLeadHours: integer("express_lead_hours").notNull().default(48),
+    holidayEnabled: boolean("holiday_enabled").notNull().default(false),
+    holidaySubtitle: text("holiday_subtitle"),
+    /** YYYY-MM-DD */
+    holidayPickupFrom: text("holiday_pickup_from"),
+    holidayPickupTo: text("holiday_pickup_to"),
+    holidayLeadHours: integer("holiday_lead_hours").notNull().default(72),
+    /** null = the code default photo */
+    tileImageAllDay: text("tile_image_all_day"),
+    tileImageExpress: text("tile_image_express"),
+    tileImageHoliday: text("tile_image_holiday"),
+    ...timestamps,
+  },
+  (t) => [check("ordering_lead_check", sql`${t.expressLeadHours} between 0 and 336 and ${t.holidayLeadHours} between 0 and 336`)],
+);
+
+/** Express Catering packs and Holiday Preorder items. Nothing seeded; price null = "Price on request". */
+export const orderItems = pgTable(
+  "order_items",
+  {
+    id: autoId(),
+    menu: text("menu").$type<OrderMenu>().notNull(),
+    name: text("name").notNull(),
+    description: text("description"),
+    /** cents */
+    price: integer("price"),
+    priceNote: text("price_note"),
+    image: text("image"),
+    imageAlt: text("image_alt"),
+    minQty: integer("min_qty").notNull().default(1),
+    maxQty: integer("max_qty").notNull().default(20),
+    active: boolean("active").notNull().default(true),
+    displayOrder: integer("display_order").notNull().default(0),
+    ...timestamps,
+  },
+  (t) => [
+    index("order_items_menu_idx").on(t.menu, t.displayOrder),
+    check("order_items_menu_check", sql`${t.menu} in ('express', 'holiday')`),
+    check("order_items_qty_check", sql`${t.minQty} >= 1 and ${t.maxQty} >= ${t.minQty} and ${t.maxQty} <= 100`),
+    check("order_items_price_check", sql`${t.price} is null or ${t.price} >= 0`),
+  ],
+);
+
+/** A guest's pickup request. PII: name, email, phone, notes. Never a payment record. */
+export const orderRequests = pgTable(
+  "order_requests",
+  {
+    id: autoId(),
+    menu: text("menu").$type<OrderMenu>().notNull(),
+    status: text("status").$type<OrderRequestStatus>().notNull().default("new"),
+    name: text("name").notNull(),
+    /** stored lowercased */
+    email: text("email").notNull(),
+    phone: text("phone").notNull(),
+    pickupDate: text("pickup_date").notNull(),
+    pickupTime: text("pickup_time").notNull(),
+    notes: text("notes"),
+    /** cents; null when any line is price-on-request */
+    estimatedTotal: integer("estimated_total"),
+    idempotencyKey: text("idempotency_key").notNull(),
+    notifyStatus: text("notify_status").$type<NotifyStatus>().notNull().default("pending"),
+    /** staff only */
+    internalNotes: text("internal_notes"),
+    ...timestamps,
+  },
+  (t) => [
+    uniqueIndex("order_requests_idem_idx").on(t.idempotencyKey),
+    index("order_requests_status_pickup_idx").on(t.status, t.pickupDate),
+    index("order_requests_created_idx").on(t.createdAt),
+    index("order_requests_email_idx").on(t.email),
+    check("order_requests_menu_check", sql`${t.menu} in ('express', 'holiday')`),
+    check("order_requests_status_check", sql`${t.status} in ('new', 'confirmed', 'completed', 'declined', 'cancelled')`),
+    check("order_requests_notify_check", sql`${t.notifyStatus} in ('pending', 'sent', 'failed', 'off', 'skipped')`),
+  ],
+);
+
+/** Line items, snapshotted: later price edits or item deletes never rewrite a request. */
+export const orderRequestLines = pgTable(
+  "order_request_lines",
+  {
+    id: autoId(),
+    requestId: integer("request_id")
+      .notNull()
+      .references(() => orderRequests.id, { onDelete: "cascade" }),
+    itemId: integer("item_id").references(() => orderItems.id, { onDelete: "set null" }),
+    name: text("name").notNull(),
+    unitPrice: integer("unit_price"),
+    priceNote: text("price_note"),
+    quantity: integer("quantity").notNull(),
+  },
+  (t) => [index("order_request_lines_request_idx").on(t.requestId), check("order_request_lines_qty_check", sql`${t.quantity} between 1 and 100`)],
+);
+
 /** NW02: uploaded flyers/menus shown as the Special Events image grid. */
 export const specialEventImages = pgTable("special_event_images", {
   id: autoId(),
@@ -478,6 +629,7 @@ export type MenuCategory = typeof menuCategories.$inferSelect;
 export type MenuSection = typeof menuSections.$inferSelect;
 export type MenuItem = typeof menuItems.$inferSelect;
 export type NewMenuItem = typeof menuItems.$inferInsert;
+export type MenuItemSchedule = typeof menuItemSchedules.$inferSelect;
 export type ModifierGroup = typeof modifierGroups.$inferSelect;
 export type Modifier = typeof modifiers.$inferSelect;
 export type GalleryImage = typeof galleryImages.$inferSelect;
@@ -487,5 +639,9 @@ export type SpecialEventImage = typeof specialEventImages.$inferSelect;
 export type SiteSettingsRow = typeof siteSettings.$inferSelect;
 export type Review = typeof reviews.$inferSelect;
 export type CateringInquiry = typeof cateringInquiries.$inferSelect;
+export type OrderingSettingsRow = typeof orderingSettings.$inferSelect;
+export type OrderItem = typeof orderItems.$inferSelect;
+export type OrderRequest = typeof orderRequests.$inferSelect;
+export type OrderRequestLine = typeof orderRequestLines.$inferSelect;
 export type Upload = typeof uploads.$inferSelect;
 export type AdminUser = typeof adminUsers.$inferSelect;

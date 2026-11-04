@@ -10,7 +10,7 @@ import { MenuDropdown } from "@/components/site/MenuDropdown";
 import { SmokeBackdrop } from "@/components/site/SmokeBackdrop";
 import { ButtonLink } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
-import { ORDERING_MENUS } from "@/lib/ordering-menus";
+import type { MenuLink } from "@/components/site/Header";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -26,10 +26,13 @@ export function Hero({
   tagline,
   status,
   addressShort,
+  menus,
 }: {
   tagline: string;
   status: { isOpen: boolean; label: string; detail: string };
   addressShort: string;
+  /** NW03-1: orderingMenus() from the server (2 or 3 options, per the admin switches). */
+  menus: MenuLink[];
 }) {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
@@ -93,7 +96,7 @@ export function Hero({
             {/* L4 note: "Highlight the Menu and Ordering on the hero page". H01 +
                 NW03-1: Explore Menu drops to the ordering menus; NW03-2: Order Now
                 goes straight to the restaurant menu. */}
-            <MenuDropdown links={ORDERING_MENUS} />
+            <MenuDropdown links={menus} />
             <Magnetic>
               <ButtonLink href="/menu" size="lg" arrow>
                 Order Now

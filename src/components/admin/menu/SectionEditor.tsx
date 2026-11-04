@@ -63,7 +63,7 @@ export function SectionEditor({ section, categoryId, groups, onDone }: { section
       )}
       <Toggle checked={f.active} onChange={(v) => setF({ ...f, active: v })} label="Active" description="Hidden sections (and their items) don't show publicly" />
       <div className="flex items-center justify-between gap-2 pt-2">
-        <div>{section && <Btn type="button" variant="ghost" className="text-red-600" onClick={() => setConfirm(true)}>Delete section</Btn>}</div>
+        <div>{section && <Btn type="button" variant="dangerGhost" onClick={() => setConfirm(true)}>Delete section</Btn>}</div>
         <div className="flex gap-2">
           <Btn type="button" variant="ghost" onClick={onDone}>Cancel</Btn>
           <Btn type="submit" variant="primary" loading={busy}>{section ? "Save" : "Create section"}</Btn>

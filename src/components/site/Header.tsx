@@ -11,9 +11,10 @@ import { ButtonLink } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 
 // P1 (Pol, 3 Nov) + board BK03: Calendar replaces Gallery in every nav; the
-// /gallery page stays, reached from the home gallery section and the sitemap
+// /gallery page stays, reached from the home gallery section and the sitemap.
+// NW03-3 (phase 2, 4 Nov): the Menus page lands from this "Menus" link.
 const NAV = [
-  { href: "/menu", label: "Menu" },
+  { href: "/menus", label: "Menus" },
   { href: "/#story", label: "Our Story" },
   { href: "/catering", label: "Catering" },
   { href: "/calendar", label: "Calendar" },
@@ -33,8 +34,10 @@ export type HeaderProps = {
   instagramUrl?: string | null;
   facebookUrl?: string | null;
   email?: string | null;
-  /** B3: the display menus the drawer's Menu item expands to. */
+  /** B3: the display menus the drawer's Menus item expands to. */
   menuLinks?: MenuLink[];
+  /** Phase 2: the ordering pages whose switch is on (drawer only, above the display menus). */
+  orderingLinks?: MenuLink[];
   /** NW02: a Specials nav link renders only while the admin switch is on. */
   specialsEnabled?: boolean;
 };
@@ -58,6 +61,7 @@ export function Header({
   facebookUrl,
   email,
   menuLinks = [],
+  orderingLinks = [],
   specialsEnabled = false,
 }: HeaderProps) {
   const pathname = usePathname();
@@ -224,7 +228,8 @@ export function Header({
               bar measured 1084px at 1024 with the xl spacing; this setting measures 997px */}
           <nav aria-label="Primary" className="hidden items-center gap-4 lg:flex xl:gap-8">
             {nav.map((item) => {
-              const active = pathname === item.href;
+              // Menus covers the landing page, both ordering pages and the restaurant menu
+              const active = item.href === "/menus" ? pathname === "/menus" || pathname.startsWith("/menus/") || pathname === "/menu" : pathname === item.href;
               return (
                 <Link
                   key={item.href}
@@ -316,7 +321,7 @@ export function Header({
                       onClick={() => setMenuOpen((v) => !v)}
                       className="flex w-full items-center justify-between py-4 font-display text-[1.8rem] font-medium text-cream-50 display-sharp"
                     >
-                      Menu
+                      Menus
                       <motion.span
                         aria-hidden
                         animate={{ rotate: menuOpen ? 90 : 0 }}
@@ -334,6 +339,21 @@ export function Header({
                           transition={{ duration: 0.3, ease }}
                           className="overflow-hidden"
                         >
+                          {/* Phase 2 (P4, Pol 4 Nov): the Menus landing page and the ordering
+                              pages that are switched on come first; B3's display menus stay below */}
+                          <li>
+                            <Link href="/menus" onClick={close} className="block py-2.5 pl-4 text-[15px] font-semibold text-cream-50">
+                              All menus
+                            </Link>
+                          </li>
+                          {orderingLinks.map((m) => (
+                            <li key={m.href}>
+                              <Link href={m.href} onClick={close} className="block py-2.5 pl-4 text-[15px] font-semibold text-cream-50">
+                                {m.label}
+                              </Link>
+                            </li>
+                          ))}
+                          <li aria-hidden className="mx-4 my-1.5 border-t border-cream-50/10" />
                           <li>
                             <Link href="/menu" onClick={close} className="block py-2.5 pl-4 text-[15px] font-semibold text-cream-50">
                               Full menu
@@ -351,7 +371,7 @@ export function Header({
                       )}
                     </AnimatePresence>
                   </motion.div>
-                  {nav.filter((item) => item.href !== "/menu").map((item, i) => (
+                  {nav.filter((item) => item.href !== "/menus").map((item, i) => (
                     <motion.div
                       key={item.href}
                       initial={{ opacity: 0, x: -16 }}
@@ -386,10 +406,8 @@ export function Header({
                       <span>· Today {hoursToday}</span>
                     </p>
                     <p>{address}</p>
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <a href={phoneHref} className="font-label text-[15px] tracking-[0.16em] text-cream-50">
-                        {phone}
-                      </a>
+                    {/* L3-3 (4 Nov 2026): no phone here. The top utility strip is the only phone in the header. */}
+                    <div className="flex flex-wrap items-center gap-3">
                       <SocialLinks
                         instagramUrl={instagramUrl}
                         facebookUrl={facebookUrl}

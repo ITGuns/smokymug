@@ -8,6 +8,7 @@ import { clientKey } from "@/lib/auth";
 import { computeAvailability, generateConfirmationCode, getAvailability, getBookableDates, loadAvailabilityContext, type AvailabilityResult } from "@/lib/booking";
 import { getClock } from "@/lib/availability";
 import { bookingWizardOn } from "@/lib/data/site-settings";
+import { pgCode } from "@/lib/db-errors";
 import { getReservationByCode } from "@/lib/data/reservations";
 import { toMinutes } from "@/lib/format";
 import { rateLimit } from "@/lib/rate-limit";
@@ -128,7 +129,8 @@ export async function createReservation(raw: ReservationInput): Promise<ActionRe
     return { ok: true, data: toPublic(created) };
   } catch (err) {
     if (err instanceof BookingError) return fail(err.message, { code: err.code });
-    console.error("createReservation failed", err);
+    // Code only: the error object's message carries the guest's insert params (spec 5.7).
+    console.error(`createReservation failed (pg ${pgCode(err)})`);
     return fail("We couldn't complete the reservation. Please try again.", { code: "server" });
   }
 }

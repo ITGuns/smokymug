@@ -74,7 +74,7 @@ function CategoryRow({ category: c, onEdit, onDelete, onDragEnd }: { category: C
         <p className="truncate text-[12px] text-zinc-500">{c.sections.length} sections · {items} items{c.hoursCategory ? ` · follows ${HOURS_CATEGORY_LABELS[c.hoursCategory].toLowerCase()} hours` : ""}{c.hoursNote ? ` · ${c.hoursNote}` : ""}</p>
       </div>
       <Btn size="sm" onClick={onEdit}>Edit</Btn>
-      <Btn size="sm" variant="ghost" className="text-red-600" onClick={onDelete}>Delete</Btn>
+      <Btn size="sm" variant="dangerGhost" onClick={onDelete}>Delete</Btn>
     </Reorder.Item>
   );
 }

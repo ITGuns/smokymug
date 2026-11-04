@@ -7,7 +7,7 @@ export function PageHeader({ title, description, actions }: { title: string; des
     <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{title}</h1>
-        {description && <p className="mt-1 text-sm text-zinc-500">{description}</p>}
+        {description && <p className="mt-1 text-sm text-zinc-600">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </div>
@@ -85,12 +85,16 @@ export function Toggle({ checked, onChange, label, description, disabled }: { ch
   );
 }
 
-type BtnVariant = "primary" | "secondary" | "danger" | "ghost" | "outline";
+type BtnVariant = "primary" | "secondary" | "danger" | "dangerGhost" | "ghost" | "outline";
 export function Btn({ variant = "secondary", size = "md", loading, className, children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: BtnVariant; size?: "sm" | "md"; loading?: boolean }) {
+  /* Colour lives in the variant, never in className: cn() only joins strings, so a
+     ghost button given a red text class lost to ghost's text-zinc-700 (the
+     stylesheet sorts text-red-600 first) and every Delete rendered grey (4 Nov). */
   const v: Record<BtnVariant, string> = {
     primary: "bg-zinc-900 text-white hover:bg-zinc-700",
     secondary: "bg-white text-zinc-800 border border-zinc-300 hover:bg-zinc-50",
     danger: "bg-red-600 text-white hover:bg-red-500",
+    dangerGhost: "text-red-600 hover:bg-red-50",
     ghost: "text-zinc-700 hover:bg-zinc-100",
     outline: "border border-zinc-300 text-zinc-800 hover:bg-zinc-50",
   };

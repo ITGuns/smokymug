@@ -49,6 +49,9 @@ export const QA = {
 export async function cleanupAll() {
   await query(`delete from reservations where email like $1`, [`%@${QA.emailDomain}`]);
   await query(`delete from catering_inquiries where email like $1`, [`%@${QA.emailDomain}`]);
+  // Phase 2: QA order requests (lines cascade) and QA ordering items
+  await query(`delete from order_requests where email like $1`, [`%@${QA.emailDomain}`]);
+  await query(`delete from order_items where name like $1`, [`${QA.prefix}%`]);
   await query(`delete from menu_items where name like $1`, [`${QA.prefix}%`]);
   await query(`delete from menu_sections where name like $1`, [`${QA.prefix}%`]);
   await query(`delete from menu_categories where name like $1`, [`${QA.prefix}%`]);

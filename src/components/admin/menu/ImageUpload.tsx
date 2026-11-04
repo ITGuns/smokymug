@@ -53,7 +53,7 @@ export function ImageUpload({ value, onChange }: { value: string; onChange: (v: 
             <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
             <Btn size="sm" onClick={() => fileRef.current?.click()} loading={busy}>Upload image</Btn>
             <Btn size="sm" variant="ghost" onClick={() => setShowLibrary((v) => !v)}>{showLibrary ? "Hide library" : "Choose from library"}</Btn>
-            {value && <Btn size="sm" variant="ghost" className="text-red-600" onClick={() => onChange("")}>Remove</Btn>}
+            {value && <Btn size="sm" variant="dangerGhost" onClick={() => onChange("")}>Remove</Btn>}
           </div>
           <p className="text-[12px] text-zinc-500">JPG, PNG or WebP up to 3 MB.</p>
         </div>
