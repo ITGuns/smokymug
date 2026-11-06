@@ -102,11 +102,12 @@ menu/content, keeps reservations; admin menu edits made since the last seed are
 lost, and the Next data cache holds the old menu until the next deploy or a
 cache clear).
 
-Confirm with Dan (printed in the PDF exactly as entered, flagged with
-`// TODO 2026-menu:` in the seed): hot Black Eye 5.95|4.75 (S dearer than L),
-hot Mocha 4.75|5.50, hot Matcha Latte 6.25|7.95, iced Matcha Latte 4.35|8.05,
-Dirty Soda single 4.75; happy hour Tue-Sat (bar page) vs "daily" (BBQ/Tex Mex
-pages); Meat Market units no longer printed; sampler choice count assumed 4.
+7 Nov 2026: the doubts once flagged `// TODO 2026-menu:` for Dan (Black Eye
+5.95|4.75, hot Mocha 4.75|5.50, hot Matcha 6.25|7.95, iced Matcha 4.35|8.05,
+Dirty Soda single 4.75, Meat Market units, sampler count) were closed from the
+print by Pol's ruling: the seed follows the PDF as printed. One deviation:
+standard spelling on four printed lines (tequila, chile powder, Espresso 'Tini,
+d'Abruzzo) and the legend's "vegetarian". See the 7 Nov entry below.
 
 ## Client board feedback applied (30 Oct 2026, from FEEDBACK-discovery-board.md)
 
@@ -512,6 +513,17 @@ itself (1210 elements, 439 text, last client edit 19 Oct, nothing newer than the
   footer inside the drawer). `tests/e2e/public/ordering.spec.ts` gains the CA01
   320 check, the long-menu reveal check, the success heading under the header
   and the new alert text.
+
+## 2026 menu closed from the print (7 Nov 2026, Pol's ruling)
+
+The 2026 New Menu (FINAL) is the authority; the site follows it exactly as
+printed and no questions go to Dan. All 17 `// TODO 2026-menu:` comments are
+gone. Changed values: Mexican Coffee spelling, Espresso 'Tini, Montepulciano
+d'Abruzzo, Nacho Platter dietary tags removed (none visible on the print),
+sandwich meats limited to the six everyday meats (Brisket +3), and the Smoky
+Mug Sampler split into `sampler_taco` 1, `sampler_nachos` 1, `sampler_meats` 2
+(was one `sampler_choice` group 1 to 4). Local reseed done; production needs
+`db:push` + `db:reseed` from Guns. Record: docs/menu-doubts-2026-11-07.md.
 
 ## Open inputs still needed (handoff §4)
 

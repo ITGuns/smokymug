@@ -48,7 +48,6 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
       { name: "Chorizo", price: $(4) },
       { name: "Suadero", price: $(4) },
       { name: "Tofu", price: $(3) },
-      // TODO 2026-menu: "Avocado +3" is printed twice in this box (both columns); listed once.
       { name: "Avocado", price: $(3) },
       { name: "Smoked Chicken", price: $(3) },
       { name: "Pulled Pork", price: $(3) },
@@ -79,7 +78,6 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     max: 5,
     modifiers: [
       { name: "Cream Cheese", price: $(2) },
-      // TODO 2026-menu: printed "Special Pepper Crm Chz (+$1)" under "SPREADS 2"; read as $2 + $1 = $3.
       { name: "Special Pepper Crm Chz", price: $(3) },
       { name: "Peanut Butter", price: $(2) },
       { name: "House Jam", price: $(2), dietary: ["vegan"] },
@@ -120,9 +118,8 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     required: true,
     min: 1,
     max: 1,
-    // TODO 2026-menu: the sandwich box prints only "(+3 Brisket)". Whether the Fri & Sat meats
-    // (and the +2 spare-rib upcharge from the plates box) apply to sandwiches is not printed.
-    modifiers: BBQ_MEATS(0),
+    // The sandwich box prints only "(+3 Brisket)": everyday meats, no Fri & Sat meats.
+    modifiers: BBQ_MEATS(0).filter((m) => !m.days),
   },
   {
     key: "top_it_sandwich",
@@ -142,14 +139,45 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     max: 1,
     modifiers: [{ name: "Add Bacon Jam", price: $(2) }],
   },
+  // Printed: "2 wings + 1 taco* + 1 mini nachos* + 2 smoked meat sample bites*", "*choice for tacos, nachos, and meat samples".
   {
-    key: "sampler_choice",
-    name: "Choice for Tacos, Nachos & Meat Samples",
-    description: "choice for tacos, nachos, and meat samples",
+    key: "sampler_taco",
+    name: "Choice for the Taco",
     required: true,
     min: 1,
-    // TODO 2026-menu: how many choices the sampler allows is not printed (1 taco + 1 mini nachos + 2 meat samples → up to 4 assumed).
-    max: 4,
+    max: 1,
+    modifiers: [
+      { name: "Chicken" },
+      { name: "Carnitas" },
+      { name: "Chorizo" },
+      { name: "Turkey" },
+      { name: "Bean" },
+      { name: "Papas" },
+      { name: "Tofu" },
+    ],
+  },
+  {
+    key: "sampler_nachos",
+    name: "Choice for the Mini Nachos",
+    required: true,
+    min: 1,
+    max: 1,
+    modifiers: [
+      { name: "Chicken" },
+      { name: "Carnitas" },
+      { name: "Chorizo" },
+      { name: "Turkey" },
+      { name: "Bean" },
+      { name: "Papas" },
+      { name: "Tofu" },
+    ],
+  },
+  {
+    key: "sampler_meats",
+    name: "Choose 2 Meat Sample Bites",
+    required: true,
+    min: 2,
+    max: 2,
     modifiers: [
       { name: "Chicken" },
       { name: "Carnitas" },
@@ -201,7 +229,6 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
       { name: "Espresso BBQ", price: 75, description: "brown, sweet" },
       { name: "Mustard BBQ", price: 75, description: "yellow, tangy" },
       { name: "NC Vinegar", price: 75, description: "vin, pepper, citrus" },
-      // TODO 2026-menu: printed "(+$0.25)" next to Salsa Verde; read as $0.75 + $0.25 = $1.00 (the breakfast page prices it +1).
       { name: "Salsa Verde", price: $(1), description: "spicy, green" },
       { name: "Salsa Roja", price: 75, description: "tomato, mild" },
       { name: "Housemade Ranch", price: 75, description: "dill-forward" },

@@ -2,12 +2,14 @@
  * Full menu transcription from the 2026 menu PDF (six pages: Cafe & Drinks,
  * Bar, Sunday Brunch, Craft Barbecue, South Western Breakfast, Tex Mex).
  * Prices are cents. Do not "improve" names, prices, or descriptions here:
- * this file mirrors the printed menu, typos included. Anything the print
- * leaves ambiguous is marked `// TODO 2026-menu:` for the owner to confirm.
+ * this file follows the 2026 New Menu (FINAL) PDF as printed (Pol's ruling,
+ * re-checked line by line 7 Nov 2026, docs/menu-doubts-2026-11-07.md). The
+ * one deviation: standard spelling on four printed slips (tequila, chile
+ * powder, Espresso 'Tini, d'Abruzzo) plus the legend's "vegetarian".
  *
  * Dietary marks: gfo → gluten-free-option, vg → vegan-option,
  * v → vegetarian-option (the 2026 legend calls all three "option").
- * Items with no printed mark keep the tags they had in the previous seed.
+ * Items with no visible printed mark carry no dietary tags.
  */
 import { $, FRI, MON, SAT, SUN, THU, TUE, WED, type SeedCategory } from "./types";
 
@@ -210,7 +212,7 @@ export const MENU: SeedCategory[] = [
             price: $(24),
             description: "2 wings + 1 taco* + 1 mini nachos* + 2 smoked meat sample bites* + tortilla + pickles",
             notes: "*choice for tacos, nachos, and meat samples: chicken, carnitas, chorizo, turkey, bean, papas, tofu",
-            modifierGroups: ["sampler_choice"],
+            modifierGroups: ["sampler_taco", "sampler_nachos", "sampler_meats"],
           },
           {
             name: "Chicken Wings",
@@ -250,8 +252,7 @@ export const MENU: SeedCategory[] = [
         ],
       },
       {
-        // TODO 2026-menu: the 2026 Meat Market prints no units (the old menu said 1/2 lb, link, 1/2 pint).
-        // Names carry no unit until the owner confirms; old slugs kept for deep links.
+        // The 2026 Meat Market prints names and prices only, no units; old slugs kept for deep links.
         name: "Meat Market",
         items: [
           {
@@ -358,9 +359,6 @@ export const MENU: SeedCategory[] = [
             price: $(21),
             priceNote: "w. choice meat/veg",
             description: "Queso, tejano slaw, salsa verde, crema, grated jack, guac, & onion-cilantro",
-            // TODO 2026-menu: no dietary mark is visible on the printed Nacho Platter (the PDF text layer has a
-            // stray "gf" near the heading). Old seed tags kept until the owner confirms.
-            dietary: ["gluten-free-option", "vegetarian-option"],
             notes: "+6 Brisket · +3 Pork Belly B.E. · +3 Chorizo · Add cowboy caviar $3",
             modifierGroups: ["nacho_protein", "nacho_addons"],
           },
@@ -489,12 +487,10 @@ export const MENU: SeedCategory[] = [
       {
         name: "Brunch Bar",
         items: [
-          // TODO 2026-menu: printed "cava + juice [flavors | OJ, strawberry, peach" (bracket never closed); flavors modelled as a choice.
           { name: "Mimosa", price: $(8), description: "cava + juice", modifierGroups: ["mimosa_flavor"] },
           { name: "Bloody", price: $(8), description: "vodka / tequila + bloody mix", modifierGroups: ["bloody_spirit"] },
           { name: "Paloma", price: $(12), description: "tequila + lime + grapefruit + sparkling" },
-          // TODO 2026-menu: "tequilla" and "chilie" are printed typos (old seed: tequila, chile). Transcribed as printed.
-          { name: "Mexican Coffee", price: $(12), description: "tequilla + coffee + chilie powder + chocolate + cream" },
+          { name: "Mexican Coffee", price: $(12), description: "tequila + coffee + chile powder + chocolate + cream" },
           { name: "Pitchers", slug: "pitchers", price: $(28), description: "mimosa | bloody", modifierGroups: ["pitcher_style"] },
         ],
       },
@@ -557,7 +553,6 @@ export const MENU: SeedCategory[] = [
           { name: "Strongbow Cider", price: $(7) },
           { name: "Tecate", price: $(5) },
           { name: "Coors Banquet", price: $(5) },
-          // TODO 2026-menu: printed 'QUICK DRAW"' with a lone closing quote mark; name written without it.
           { name: "Quick Draw", price: $(5), description: "Mystery Selection" },
         ],
       },
@@ -572,8 +567,7 @@ export const MENU: SeedCategory[] = [
         name: "Cocktails",
         slug: "house-cocktails",
         items: [
-          // TODO 2026-menu: printed "ESPRESSO TINI'" (apostrophe after TINI; old seed had "Espresso 'Tini"). Transcribed as printed.
-          { name: "Espresso Tini'", slug: "espresso-tini", price: $(13), description: "Cirrus Vodka + Espresso + Kahlua + Agave + Mole Bitters", happyHour: HH_NOTE },
+          { name: "Espresso 'Tini", slug: "espresso-tini", price: $(13), description: "Cirrus Vodka + Espresso + Kahlua + Agave + Mole Bitters", happyHour: HH_NOTE },
           { name: "Mug Mule", price: $(11), description: "Rio J Tequila + Lime + Strawberry + Ginger Beer", happyHour: HH_NOTE },
           { name: "Ranch Water", price: $(9), description: "Rio J Tequila + Lime + Orange Bitters + Soda", happyHour: HH_NOTE },
           { name: "Guava Nice Day", price: $(13), description: "Banhez Mezcal + Guava + Lavender + Lime + Black Salt", happyHour: HH_NOTE },
@@ -615,8 +609,7 @@ export const MENU: SeedCategory[] = [
         items: [
           { name: "House Red - Vegas Altas Tempranillo (Spain)", slug: "house-red-tempranillo", price: $(9), bottle: $(30), description: "Tasting notes: Fresh - Juicy - Smooth", happyHour: WINE_HH },
           { name: "House White - Chateau du Claouset Bordeaux Blanc (France)", slug: "house-white-bordeaux-blanc", price: $(9), bottle: $(30), description: "Tasting notes: Crisp - Citrus - Mineral", happyHour: WINE_HH },
-          // TODO 2026-menu: printed "D'abruzo" (old seed: D'abruzzo). Transcribed as printed.
-          { name: "Red - Cirelli Montepulciano D'abruzo (Italy)", slug: "red-cirelli-montepulciano", price: $(13), bottle: $(42), description: "Tasting notes: Traditional - Full - Smooth", happyHour: WINE_HH },
+          { name: "Red - Cirelli Montepulciano d'Abruzzo (Italy)", slug: "red-cirelli-montepulciano", price: $(13), bottle: $(42), description: "Tasting notes: Traditional - Full - Smooth", happyHour: WINE_HH },
           { name: "Glou-Glou - Domaine Benjamin Taillandier Viti Vini Bibi (France)", slug: "glou-glou-viti-vini-bibi", price: $(10), bottle: $(36), description: "Tasting notes: Bright - Juicy - Spiced", happyHour: WINE_HH },
           { name: "Rose - Domaine des Cognettes Rose (France)", slug: "rose-domaine-des-cognettes", price: $(11), bottle: $(39), description: "Tasting notes: Crisp - Fresh - Crushable", happyHour: WINE_HH },
           { name: "White - Domaine des Cognettes Sauvignon Blanc (France)", slug: "white-domaine-des-cognettes-sauvignon-blanc", price: $(11), bottle: $(39), description: "Tasting notes: Fragrant - Zesty - Refreshing", happyHour: WINE_HH },
@@ -657,7 +650,6 @@ export const MENU: SeedCategory[] = [
           { name: "Au Lait", price: $(2.75), large: $(4.25), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Americano", slug: "hot-americano", price: $(3.75), large: $(6.75), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Espresso", slug: "hot-espresso", price: $(3.75), large: $(6.75), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
-          // TODO 2026-menu: printed "5.95 | 4.75" (small dearer than large; old seed 4.75 | 5.95). Transcribed as printed.
           { name: "Black Eye", price: $(5.95), large: $(4.75), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Hot Cocoa", price: $(3.25), large: $(4.5), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Milk", slug: "hot-milk", price: $(2.5), large: $(3.75), priceNote: "Small / Large" },
@@ -673,12 +665,10 @@ export const MENU: SeedCategory[] = [
             featured: true,
           },
           { name: "Cappuccino", price: $(4.25), large: $(5.95), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
-          // TODO 2026-menu: printed "4.75 | 5.50"; large is below the hot Latte large (5.95) and the old 6.50. Transcribed as printed.
           { name: "Mocha", slug: "hot-mocha", price: $(4.75), large: $(5.5), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Flat White", price: $(4.25), large: $(5.95), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Chai Latte", slug: "hot-chai-latte", price: $(4.25), large: $(5.95), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Dirty Chai", slug: "hot-dirty-chai", price: $(6.25), large: $(7.95), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
-          // TODO 2026-menu: printed "6.25 | 7.95", identical to the Dirty Chai row (old seed 4.25 | 5.95). Transcribed as printed.
           { name: "Matcha Latte", slug: "hot-matcha-latte", price: $(6.25), large: $(7.95), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
         ],
       },
@@ -692,13 +682,11 @@ export const MENU: SeedCategory[] = [
           { name: "Espresso", slug: "iced-espresso", price: $(3.75), large: $(6.75), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Americano", slug: "iced-americano", price: $(3.85), large: $(6.85), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Milk", slug: "iced-milk", price: $(2.6), large: $(3.85), priceNote: "Small / Large" },
-          // TODO 2026-menu: one price printed, sitting in the Large column; size not stated. Possibly the old "Topo Soda" renamed.
           { name: "Dirty Soda", price: $(4.75) },
           { name: "Latte", slug: "iced-latte", price: $(4.35), large: $(6), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Mocha", slug: "iced-mocha", price: $(4.85), large: $(6.55), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Chai Latte", slug: "iced-chai-latte", price: $(4.35), large: $(6.05), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           { name: "Dirty Chai", slug: "iced-dirty-chai", price: $(6.35), large: $(8.05), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
-          // TODO 2026-menu: printed "4.35 | 8.05"; large matches iced Dirty Chai, not iced Chai Latte 6.05 (old seed 4.35 | 6.05). Transcribed as printed.
           { name: "Matcha Latte", slug: "iced-matcha-latte", price: $(4.35), large: $(8.05), priceNote: "Small / Large", modifierGroups: ["drink_options"] },
           {
             name: "Seasonal Sweet Cream Cold Brew",
