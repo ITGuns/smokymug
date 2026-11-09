@@ -33,7 +33,7 @@ test.describe("Homepage", () => {
     await expect(banner.getByRole("link", { name: "Facebook" })).toHaveAttribute("target", "_blank");
     await expect(banner.getByRole("link", { name: /^Email / })).toHaveAttribute("href", "mailto:thesmokymug@gmail.com");
 
-    for (const heading of ["All-Day Craft, Tex-Mex & Barbecue Kitchen", "Best authentic wood-fired smokehouse in Richmond.", "Signature plates", "Hours", "Catering & events", "Gallery", "Gift cards & loyalty", "Visit us in Brookland Park."]) {
+    for (const heading of ["All day craft tex mex and bbq kitchen", "Best authentic wood-fired smokehouse in Richmond.", "Signature plates", "Hours", "Catering & events", "Gallery", "Gift cards & loyalty", "Visit us in Brookland Park."]) {
       const h = page.locator("main").getByRole("heading", { name: heading, exact: true });
       await h.scrollIntoViewIfNeeded();
       await expect(h).toBeVisible();
