@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, Fraunces, Instrument_Sans, Rye } from "next/font/google";
+import { Bebas_Neue, Fraunces, Instrument_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import { SITE_URL } from "@/lib/constants";
 import "./globals.css";
 
@@ -11,8 +12,19 @@ const fraunces = Fraunces({
 });
 const sans = Instrument_Sans({ subsets: ["latin"], variable: "--font-sans-body", display: "swap" });
 const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas", display: "swap" });
-// Roadstore stand-in on buttons (Guns 2 Nov; Q2 license still open, swap when Dan supplies it)
-const rye = Rye({ weight: "400", subsets: ["latin"], variable: "--font-rye", display: "swap" });
+// Roadstore (row 16, 9 Nov 2026): display face for headings and CTAs. The dafont demo copy
+// is caps only and stamps a "personal use" mark on most digits and on & ? ! $ @ #, so the
+// unicode-range keeps only its clean glyphs; everything else falls through to Bebas Neue.
+// Personal-use demo: the foundry Standard Webfont license must be bought before launch.
+const roadstore = localFont({
+  src: "../fonts/Roadstore.ttf",
+  variable: "--font-roadstore",
+  display: "swap",
+  adjustFontFallback: false,
+  declarations: [
+    { prop: "unicode-range", value: "U+0020, U+0022, U+0025, U+0027-0031, U+003A-003E, U+0041-007E, U+2013, U+2018-201D, U+2026" },
+  ],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -39,7 +51,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${sans.variable} ${bebas.variable} ${rye.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${sans.variable} ${bebas.variable} ${roadstore.variable}`}>
       <body>{children}</body>
     </html>
   );

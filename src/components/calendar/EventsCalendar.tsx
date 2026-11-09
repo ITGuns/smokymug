@@ -93,7 +93,7 @@ export function EventsCalendar({
     <div>
       {/* Month switcher drives both the grid and the list */}
       <div className="flex items-center justify-between gap-4">
-        <h2 className="font-display text-3xl font-semibold text-charcoal-900 lg:text-4xl">{label}</h2>
+        <h2 className="font-display text-3xl font-semibold text-ember-600 lg:text-4xl">{label}</h2>
         <div className="flex items-center gap-2">
           <Link
             href={`/calendar?month=${prevMonth}`}
@@ -228,6 +228,8 @@ export function EventsCalendar({
                 const isToday = cell.date === today;
                 // NW01: the hovered/focused list row lights its day square
                 const lit = cell.inMonth && hoveredDate === cell.date;
+                // Row 14 (Dan, 9 Nov): in-month date numbers in teal; event copy stays ink
+                const dayNum = cn("font-semibold", cell.inMonth && "text-teal-600");
                 const base = cn(
                   "relative flex aspect-square flex-col items-start justify-between rounded-xl border p-2 text-[14px] sm:p-2.5",
                   !cell.inMonth
@@ -235,13 +237,13 @@ export function EventsCalendar({
                     : lit
                       ? "border-ember-500/50 bg-ember-600/10 text-charcoal-900"
                       : "border-charcoal-900/8 bg-cream-50 text-charcoal-900",
-                  // Teal today-ring: info marker, not an action (2 Nov accent set)
-                  isToday && "ring-1 ring-inset ring-teal-500/70",
+                  // Rows 13/14 (9 Nov): date numbers turned teal, so today's ring is ember
+                  isToday && "ring-1 ring-inset ring-ember-500/80",
                 );
                 if (!has)
                   return (
                     <div key={cell.date} className={base}>
-                      <span className="font-semibold">{cell.day}</span>
+                      <span className={dayNum}>{cell.day}</span>
                     </div>
                   );
                 return (
@@ -255,7 +257,7 @@ export function EventsCalendar({
                     aria-label={`${longDate(cell.date, { weekday: true })}: ${dayEvents.length} ${dayEvents.length === 1 ? "event" : "events"}`}
                     className={cn(base, "transition-colors hover:border-ember-500/50 hover:bg-ember-600/10")}
                   >
-                    <span className="font-semibold">{cell.day}</span>
+                    <span className={dayNum}>{cell.day}</span>
                     {/* B6: a typed event shows its icon, an untyped one keeps the dot */}
                     <span aria-hidden className="flex flex-wrap items-center gap-1 text-ember-600">
                       {dayEvents.slice(0, 3).map((e) =>

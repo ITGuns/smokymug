@@ -1,6 +1,6 @@
 /**
  * Full menu transcription from the 2026 menu PDF (six pages: Cafe & Drinks,
- * Bar, Sunday Brunch, Craft Barbecue, South Western Breakfast, Tex Mex).
+ * Bar, Sunday Brunch, Craft Barbecue, Southwestern Breakfast, Tex Mex).
  * Prices are cents. Do not "improve" names, prices, or descriptions here:
  * this file follows the 2026 New Menu (FINAL) PDF as printed (Pol's ruling,
  * re-checked line by line 7 Nov 2026, docs/menu-doubts-2026-11-07.md). The
@@ -22,15 +22,16 @@ const BUILD_YOUR_OWN = ["breakfast_basics", ...BREAKFAST_ADD];
 
 export const MENU: SeedCategory[] = [
   /* ================================================================ */
-  /* SOUTH WESTERN BREAKFAST                                          */
+  /* SOUTHWESTERN BREAKFAST                                           */
   /* ================================================================ */
   {
-    name: "South Western Breakfast",
+    name: "Southwestern Breakfast",
     slug: "breakfast",
-    description: "South Western breakfast classics, or build your own on a housemade flour tortilla, biscuit, bagel or toast.",
-    hoursNote: "'Til 11:30am every day",
+    description: "Southwestern breakfast classics, or build your own on a housemade flour tortilla, biscuit, bagel or toast.",
+    hoursNote: "Monday 'til noon, Tue-Sun 'til 11:30am",
     hoursCategory: "breakfast",
-    days: [MON, TUE, WED, THU, FRI, SAT],
+    // Fallback only (hoursCategory wins); row 7 adds Sunday
+    days: [SUN, MON, TUE, WED, THU, FRI, SAT],
     end: "11:30",
     sections: [
       {
@@ -40,7 +41,7 @@ export const MENU: SeedCategory[] = [
           {
             name: "Breakfast Burrito",
             price: $(6.95),
-            description: "egg + crispy shredded potatoes + cheddar + hatch green chiles + salsa roja in house flour tortilla",
+            description: "egg, crispy shredded potatoes, cheddar, hatch green chiles & salsa roja in house flour tortilla",
             dietary: ["gluten-free-option", "vegetarian-option"],
             modifierGroups: BREAKFAST_ADD,
             featured: true,
@@ -48,7 +49,7 @@ export const MENU: SeedCategory[] = [
           {
             name: "Breakfast Sandwich",
             price: $(7.75),
-            description: "egg + american + hatch green chiles on texas toast",
+            description: "egg, american & hatch green chiles on texas toast",
             dietary: ["gluten-free-option", "vegetarian-option"],
             modifierGroups: BREAKFAST_ADD,
             image: "/images/breakfast-sandwich-chorizo.jpg",
@@ -59,7 +60,7 @@ export const MENU: SeedCategory[] = [
             name: "Avocado Bagel",
             slug: "avocado-bagel-toast",
             price: $(9.25),
-            description: "mashed avocado + pickled red onions + crushed red pepper on everything bagel",
+            description: "mashed avocado, pickled red onions & crushed red pepper on everything bagel",
             dietary: ["gluten-free-option", "vegan-option"],
             modifierGroups: BREAKFAST_ADD,
             image: "/images/avocado-toast.jpg",
@@ -68,14 +69,14 @@ export const MENU: SeedCategory[] = [
           {
             name: "Breakfast Bowl",
             price: $(7.25),
-            description: "egg + cubed potatoes + cheddar + hatch green chiles + salsa roja in bowl",
+            description: "egg, cubed potatoes, cheddar, hatch green chiles & salsa roja in bowl",
             dietary: ["gluten-free-option", "vegetarian-option"],
             modifierGroups: BREAKFAST_ADD,
           },
           {
             name: "Bean Burrito",
             price: $(5.45),
-            description: "refried beans + crispy shredded potatoes + cheddar in house flour tortilla",
+            description: "refried beans, crispy shredded potatoes & cheddar in house flour tortilla",
             dietary: ["gluten-free-option", "vegan-option"],
             modifierGroups: BREAKFAST_ADD,
           },
@@ -83,7 +84,7 @@ export const MENU: SeedCategory[] = [
             name: "Buttermilk & Berry",
             slug: "buttermilk-and-berry",
             price: $(4.95),
-            description: "housemade buttermilk biscuit + house jam",
+            description: "housemade buttermilk biscuit & house jam",
             dietary: ["vegetarian-option"],
             modifierGroups: BREAKFAST_ADD,
           },
@@ -184,10 +185,10 @@ export const MENU: SeedCategory[] = [
             modifierGroups: ["sandwich_meat", "top_it_sandwich"],
           },
           {
-            name: "Sandwich w. Side + Soda",
+            name: "Sandwich w. Side & Soda",
             slug: "sandwich-with-side-and-soda",
             price: $(19),
-            description: "w. side + soda",
+            description: "w. side & soda",
             dietary: ["gluten-free-option"],
             notes: "Brisket +$3",
             modifierGroups: ["sandwich_meat", "top_it_sandwich"],
@@ -202,7 +203,7 @@ export const MENU: SeedCategory[] = [
             slug: "smokehouse-cheeseburger",
             price: $(17),
             description:
-              "thicc ½ lb patty + american cheese + hatch green chile aioli + pickles + LTO on toasted potato bun. french fries",
+              "thicc ½ lb patty, american cheese, hatch green chile aioli, pickles & LTO on toasted potato bun. french fries",
             dietary: ["gluten-free-option"],
             notes: "Add bacon jam $2",
             modifierGroups: ["bbq_burger_addons"],
@@ -210,14 +211,14 @@ export const MENU: SeedCategory[] = [
           {
             name: "Smoky Mug Sampler",
             price: $(24),
-            description: "2 wings + 1 taco* + 1 mini nachos* + 2 smoked meat sample bites* + tortilla + pickles",
+            description: "2 wings, 1 taco*, 1 mini nachos*, 2 smoked meat sample bites*, tortilla & pickles",
             notes: "*choice for tacos, nachos, and meat samples: chicken, carnitas, chorizo, turkey, bean, papas, tofu",
             modifierGroups: ["sampler_taco", "sampler_nachos", "sampler_meats"],
           },
           {
             name: "Chicken Wings",
             price: $(12),
-            description: "smoked + fried + sauced (bbq, buffalo, dry rub, mustard). ranch or bleu cheese to dip. 6 pcs",
+            description: "smoked, fried & sauced (bbq, buffalo, dry rub, mustard). ranch or bleu cheese to dip. 6 pcs",
             // gfo is printed; vegan-option kept from the old seed because the item text says "try the vegan tofu option!!"
             dietary: ["gluten-free-option", "vegan-option"],
             notes: "try the vegan tofu option!!",
@@ -226,7 +227,7 @@ export const MENU: SeedCategory[] = [
           {
             name: "Smokehouse Salad",
             price: $(12),
-            description: "romaine + cowboy caviar + pico + pickled red onions + tortilla strips + mustard vin. + pulled pork/chicken",
+            description: "romaine, cowboy caviar, pico, pickled red onions, tortilla strips & mustard vin. add pulled pork/chicken",
             dietary: ["gluten-free-option", "vegan-option"],
             modifierGroups: ["salad_protein"],
           },
@@ -252,8 +253,10 @@ export const MENU: SeedCategory[] = [
         ],
       },
       {
-        // The 2026 Meat Market prints names and prices only, no units; old slugs kept for deep links.
+        // The 2026 Meat Market prints names and prices only; Dan (9 Nov, row 6) adds the
+        // "per 1/2 lb" subtext. Old slugs kept for deep links.
         name: "Meat Market",
+        description: "per 1/2 lb",
         items: [
           {
             name: "Brisket",
@@ -370,7 +373,7 @@ export const MENU: SeedCategory[] = [
           {
             name: "Brisket Taco",
             price: $(13),
-            description: "beans + salsa verde + salsa roja + onion-cilantro",
+            description: "beans, salsa verde, salsa roja & onion-cilantro",
             dietary: ["gluten-free-option"],
             happyHour: "Happy Hour 3-6pm: $2 off",
             image: "/images/brisket-taco.jpg",
@@ -386,7 +389,7 @@ export const MENU: SeedCategory[] = [
           {
             name: "Flight",
             price: $(11),
-            description: "Chips + 3 dips",
+            description: "Chips & 3 dips",
             dietary: ["gluten-free-option", "vegan-option"],
             modifierGroups: ["flight_dips"],
           },
@@ -420,20 +423,20 @@ export const MENU: SeedCategory[] = [
             name: "Brisket Benedict",
             price: $(19),
             description:
-              "brisket + over-medium eggs* on housemade buttermilk biscuit, smothered with hatch green chile hollandaise. topped with onion-cilantro relish. side potatoes & fruit",
+              "brisket & over-medium eggs* on housemade buttermilk biscuit, smothered with hatch green chile hollandaise. topped with onion-cilantro relish. side potatoes & fruit",
             featured: true,
           },
           {
             name: "P.B.L.T",
             slug: "pblt",
             price: $(18),
-            description: "smoked pork belly + lettuce + tomato + hatch green chile aioli on texas toast. side potatoes & fruit",
+            description: "smoked pork belly, lettuce, tomato & hatch green chile aioli on texas toast. side potatoes & fruit",
             dietary: ["gluten-free-option"],
           },
           {
             name: "Breakfast Nachos",
             price: $(16),
-            description: "tortilla chips + scramble + queso + salsa verde + potatoes + crema + grated jack + guac",
+            description: "tortilla chips, scramble, queso, salsa verde, potatoes, crema, grated jack & guac",
             dietary: ["gluten-free-option", "vegetarian-option"],
             modifierGroups: ["breakfast_nacho_addons"],
           },
@@ -441,7 +444,7 @@ export const MENU: SeedCategory[] = [
             name: "Huevos Rancheros",
             price: $(17),
             description:
-              "carnitas + beans + over-medium eggs* on tostada, covered in ranchero sauce + grated jack + onion-cilantro relish. side potatoes & fruit",
+              "carnitas, beans, over-medium eggs* on tostada, covered in ranchero sauce, grated jack & onion-cilantro relish. side potatoes & fruit",
             dietary: ["gluten-free-option", "vegan-option"],
           },
           {
@@ -449,7 +452,7 @@ export const MENU: SeedCategory[] = [
             slug: "brunch-smokehouse-cheeseburger",
             price: $(17),
             description:
-              "thicc ½ lb patty + american cheese + hatch green chile aioli + pickles + LTO on toasted potato bun. french fries",
+              "thicc ½ lb patty, american cheese, hatch green chile aioli, pickles & LTO on toasted potato bun. french fries",
             // No mark printed on the brunch page (the BBQ page prints gfo for the same burger); old tag kept.
             dietary: ["gluten-free-option"],
             notes: "Add egg +$3 · Add bacon jam $2",
@@ -472,13 +475,13 @@ export const MENU: SeedCategory[] = [
             name: "Chicken & Churros",
             slug: "chicken-and-churros",
             price: $(18),
-            description: "hot chicken thigh, smoked and fried + churros + syrup. side potatoes & fruit",
+            description: "hot chicken thigh, smoked and fried, churros & syrup. side potatoes & fruit",
           },
           {
             name: "Breakfast Burrito",
             slug: "brunch-breakfast-burrito",
             price: $(6.95),
-            description: "egg + potatoes + cheddar + hatch green chiles + salsa roja in house flour tortilla",
+            description: "egg, potatoes, cheddar, hatch green chiles & salsa roja in house flour tortilla",
             dietary: ["gluten-free-option", "vegetarian-option"],
             modifierGroups: ["burrito_addins", "burrito_addons"],
           },
@@ -487,10 +490,10 @@ export const MENU: SeedCategory[] = [
       {
         name: "Brunch Bar",
         items: [
-          { name: "Mimosa", price: $(8), description: "cava + juice", modifierGroups: ["mimosa_flavor"] },
-          { name: "Bloody", price: $(8), description: "vodka / tequila + bloody mix", modifierGroups: ["bloody_spirit"] },
-          { name: "Paloma", price: $(12), description: "tequila + lime + grapefruit + sparkling" },
-          { name: "Mexican Coffee", price: $(12), description: "tequila + coffee + chile powder + chocolate + cream" },
+          { name: "Mimosa", price: $(8), description: "cava & juice", modifierGroups: ["mimosa_flavor"] },
+          { name: "Bloody", price: $(8), description: "vodka / tequila & bloody mix", modifierGroups: ["bloody_spirit"] },
+          { name: "Paloma", price: $(12), description: "tequila, lime, grapefruit & sparkling" },
+          { name: "Mexican Coffee", price: $(12), description: "tequila, coffee, chile powder, chocolate & cream" },
           { name: "Pitchers", slug: "pitchers", price: $(28), description: "mimosa | bloody", modifierGroups: ["pitcher_style"] },
         ],
       },
@@ -559,19 +562,19 @@ export const MENU: SeedCategory[] = [
       {
         name: "Lunchboxes",
         items: [
-          { name: "Tecate + Tequila", slug: "lunchbox-tecate-tequila", price: $(7) },
-          { name: "Coors Banquet + Bourbon", slug: "lunchbox-coors-banquet-bourbon", price: $(8) },
+          { name: "Tecate & Tequila", slug: "lunchbox-tecate-tequila", price: $(7) },
+          { name: "Coors Banquet & Bourbon", slug: "lunchbox-coors-banquet-bourbon", price: $(8) },
         ],
       },
       {
         name: "Cocktails",
         slug: "house-cocktails",
         items: [
-          { name: "Espresso 'Tini", slug: "espresso-tini", price: $(13), description: "Cirrus Vodka + Espresso + Kahlua + Agave + Mole Bitters", happyHour: HH_NOTE },
-          { name: "Mug Mule", price: $(11), description: "Rio J Tequila + Lime + Strawberry + Ginger Beer", happyHour: HH_NOTE },
-          { name: "Ranch Water", price: $(9), description: "Rio J Tequila + Lime + Orange Bitters + Soda", happyHour: HH_NOTE },
-          { name: "Guava Nice Day", price: $(13), description: "Banhez Mezcal + Guava + Lavender + Lime + Black Salt", happyHour: HH_NOTE },
-          { name: "Cucumber Cutie", price: $(11), description: "Cirrus Jalapina Vodka + Cucumber + Soda", happyHour: HH_NOTE },
+          { name: "Espresso 'Tini", slug: "espresso-tini", price: $(13), description: "Cirrus Vodka, Espresso, Kahlua, Agave & Mole Bitters", happyHour: HH_NOTE },
+          { name: "Mug Mule", price: $(11), description: "Rio J Tequila, Lime, Strawberry & Ginger Beer", happyHour: HH_NOTE },
+          { name: "Ranch Water", price: $(9), description: "Rio J Tequila, Lime, Orange Bitters & Soda", happyHour: HH_NOTE },
+          { name: "Guava Nice Day", price: $(13), description: "Banhez Mezcal, Guava, Lavender, Lime & Black Salt", happyHour: HH_NOTE },
+          { name: "Cucumber Cutie", price: $(11), description: "Cirrus Jalapina Vodka, Cucumber & Soda", happyHour: HH_NOTE },
           {
             name: "Seasonal Cocktails",
             price: null,
@@ -590,7 +593,7 @@ export const MENU: SeedCategory[] = [
             name: "Esmerelda O.F.",
             slug: "esmerelda-old-fashioned",
             price: $(14),
-            description: "Wild Turkey 101 + Espresso Syrup + Orange Bitters",
+            description: "Wild Turkey 101, Espresso Syrup & Orange Bitters",
             happyHour: HH_NOTE,
             featured: true,
           },
@@ -598,7 +601,7 @@ export const MENU: SeedCategory[] = [
             name: "Oaxacan O.F.",
             slug: "oaxacan-old-fashioned",
             price: $(14),
-            description: "Espolon Reposado + Banhez Mezcal + Agave + Orange + Mole Bitters",
+            description: "Espolon Reposado, Banhez Mezcal, Agave, Orange & Mole Bitters",
             happyHour: HH_NOTE,
           },
         ],
@@ -622,8 +625,8 @@ export const MENU: SeedCategory[] = [
         slug: "stay-on-yer-horse",
         description: "Non-alcoholic",
         items: [
-          { name: "Desert Bloom", price: $(8), description: "Blueberry Lavender Kombucha + Ginger + Lemon", dietary: ["non-alcoholic"] },
-          { name: "Cactus Cooler", price: $(9), description: "Kefir + Hibiscus + Lime + Mexican Sparkling + Smoked Salt", dietary: ["non-alcoholic"] },
+          { name: "Desert Bloom", price: $(8), description: "Blueberry Lavender Kombucha, Ginger & Lemon", dietary: ["non-alcoholic"] },
+          { name: "Cactus Cooler", price: $(9), description: "Kefir, Hibiscus, Lime, Mexican Sparkling & Smoked Salt", dietary: ["non-alcoholic"] },
           { name: "Day Ripper Pils", price: $(8), description: "non-alcoholic", dietary: ["non-alcoholic"], notes: "N.A." },
           { name: "Sun Shifter IPA", price: $(8), description: "non-alcoholic", dietary: ["non-alcoholic"], notes: "N.A." },
         ],
@@ -632,13 +635,13 @@ export const MENU: SeedCategory[] = [
   },
 
   /* ================================================================ */
-  /* CAFE + DRINKS                                                    */
+  /* CAFE DRINKS                                                      */
   /* ================================================================ */
   {
-    name: "Cafe + Drinks",
+    name: "Cafe Drinks",
     slug: "cafe",
     description: "Specialty espresso drinks, cold brew, teas and sodas, served every day.",
-    hoursNote: "'Til 7pm (or close, if earlier)",
+    hoursNote: "Every day til 7 PM, or close if earlier",
     hoursCategory: "cafe_drinks",
     end: "19:00",
     sections: [
@@ -713,7 +716,7 @@ export const MENU: SeedCategory[] = [
           {
             name: "Affogato",
             price: $(5.95),
-            description: "smoked cinnamon dolce ice cream + espresso. Ice cream by ruby scoops",
+            description: "smoked cinnamon dolce ice cream & espresso. Ice cream by ruby scoops",
           },
         ],
       },

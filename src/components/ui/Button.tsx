@@ -7,19 +7,19 @@ type Size = "sm" | "md" | "lg";
 /* B4: buttons are L4-A pills; Book a Table is the one soft square (handoff 6.3) */
 type Shape = "pill" | "soft";
 
-/* Guns 2 Nov: CTAs carry the saloon display font (Roadstore stand-in, single
+/* Guns 2 Nov: CTAs carry the saloon display font (Roadstore since 9 Nov, single
    400 weight, so no font-semibold: it would synthesize a faux bold). */
 type Face = "western" | "ui";
 
 const base =
   "group/btn inline-flex items-center justify-center gap-2 transition-all duration-300 ease-out-expo select-none disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
 const faces: Record<Face, string> = {
-  western: "font-western tracking-[0.02em]",
+  western: "font-western tracking-[0.04em]",
   ui: "font-semibold tracking-tight",
 };
 /* Finish-gate rule: filled CTA variants wear the western face; quiet utility
-   variants (booking steps, cancel dialogs, downloads) keep the UI sans. Rye's
-   subset also lacks the U+2190 back-arrow those labels use. Override with `face`. */
+   variants (booking steps, cancel dialogs, downloads) keep the UI sans. The
+   Roadstore demo set also lacks the U+2190 back-arrow those labels use. Override with `face`. */
 const defaultFace: Record<Variant, Face> = {
   primary: "western",
   secondary: "ui",

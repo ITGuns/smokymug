@@ -6,18 +6,21 @@ import { DietaryBadge, Pill } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { PriceTag } from "./PriceTag";
 
-/** B2 (L2-D): clean list row — name, short description, price at the right.
+/** B2 (L2-D): clean list row: name, short description, price at the right.
  *  No photo per row, no card shadow. Dietary badges, availability tags and
  *  OPTIONS stay as small text inside the row (NW04: they sit one spot up,
  *  above Order Now, which anchors bottom left once the SpotOn URL is set). */
 export function MenuItemRow({
   item,
+  signature = false,
   availability,
   happyHourNow,
   onOpen,
   orderUrl,
 }: {
   item: ItemNode;
+  /** Row 4 (9 Nov): this row is also the tab's featured dish */
+  signature?: boolean;
   availability: AvailabilityInfo | undefined;
   happyHourNow: boolean;
   onOpen: (slug: string) => void;
@@ -25,8 +28,9 @@ export function MenuItemRow({
 }) {
   const customizable = item.modifierGroups.length > 0;
   const unavailableToday = availability && !availability.availableToday;
+  const isSignature = item.featured || signature;
   const hasMeta =
-    item.featured || Boolean(availability?.label) || (happyHourNow && item.happyHourEligible) || item.dietaryTags.length > 0 || customizable;
+    isSignature || Boolean(availability?.label) || (happyHourNow && item.happyHourEligible) || item.dietaryTags.length > 0 || customizable;
 
   return (
     <div className="group">
@@ -41,7 +45,7 @@ export function MenuItemRow({
         {!item.description && item.notes && <p className="mt-1.5 max-w-2xl text-[14px] leading-relaxed text-charcoal-500">{item.notes}</p>}
         {hasMeta && (
           <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-            {item.featured && <Pill tone="ember">Signature</Pill>}
+            {isSignature && <Pill tone="ember">Signature</Pill>}
             {availability?.label && <Pill tone={unavailableToday ? "brick" : "gold"}>{availability.label}</Pill>}
             {happyHourNow && item.happyHourEligible && <Pill tone="sage">Happy hour</Pill>}
             {item.dietaryTags.map((t) => (

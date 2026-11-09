@@ -12,7 +12,8 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
         <div className="lg:col-span-5">
           <Reveal>
             <h2 className="font-display text-[clamp(2.2rem,4.4vw,3.8rem)] font-semibold leading-[1.02] text-charcoal-900 display-sharp">
-              Visit us in Brookland Park.
+              {/* Row 1 (9 Nov): teal second line */}
+              Visit us <span className="text-teal-600">in Brookland Park.</span>
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-charcoal-700">
               In the historic Brookland Park Boulevard business corridor, Northside Richmond. Covered porch is dog-friendly.

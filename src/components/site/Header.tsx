@@ -141,7 +141,7 @@ export function Header({
 
   return (
     <header ref={headerRef} className="fixed inset-x-0 top-0 z-50">
-      {/* Utility strip — the phone lives here, and only here, in BOTH nav modes (C2/B3) */}
+      {/* Utility strip: the phone lives here, and only here, in BOTH nav modes (C2/B3) */}
       <div
         inert={scrolled}
         className={cn(
@@ -189,7 +189,7 @@ export function Header({
         <div className="h-px bg-gradient-to-r from-transparent via-cream-50/15 to-transparent" />
       </div>
 
-      {/* Main bar — desktop: L3-A inline. Compressed: hamburger left, logo centered (B3). */}
+      {/* Main bar. Desktop: L3-A inline. Compressed: hamburger left, logo centered (B3). */}
       <div
         className={cn(
           "transition-[background-color,box-shadow,backdrop-filter] duration-500",
@@ -218,10 +218,10 @@ export function Header({
           <Link
             href="/"
             aria-label="The Smoky Mug home"
-            className="shrink-0 max-lg:absolute max-lg:left-1/2 max-lg:top-1/2 max-lg:-translate-x-1/2 max-lg:-translate-y-1/2 lg:relative lg:z-10"
+            className="shrink-0 py-2 max-lg:absolute max-lg:left-1/2 max-lg:top-1/2 max-lg:-translate-x-1/2 max-lg:-translate-y-1/2 lg:relative lg:z-10"
           >
-            <Logo invert width={110} priority className="md:hidden" />
-            <Logo invert width={136} priority className="hidden md:block" />
+            <Logo invert width={96} priority className="md:hidden" />
+            <Logo invert width={120} priority className="hidden md:block" />
           </Link>
 
           {/* Tighter gap + tracking below xl: with Specials on AND Order Now live the
@@ -235,7 +235,7 @@ export function Header({
                   key={item.href}
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className="group relative whitespace-nowrap py-2 nav-label text-cream-100/85 transition-colors hover:text-cream-50 lg:tracking-[0.14em] xl:tracking-[0.2em]"
+                  className="group relative whitespace-nowrap py-2 nav-label text-cream-100/85 transition-colors hover:text-ember-300 lg:tracking-[0.14em] xl:tracking-[0.2em]"
                 >
                   {item.label}
                   <span
@@ -319,7 +319,7 @@ export function Header({
                       type="button"
                       aria-expanded={menuOpen}
                       onClick={() => setMenuOpen((v) => !v)}
-                      className="flex w-full items-center justify-between py-4 font-display text-[1.8rem] font-medium text-cream-50 display-sharp"
+                      className="flex w-full items-center justify-between py-4 font-display text-[1.8rem] font-medium text-cream-50 display-sharp transition-colors hover:text-ember-300"
                     >
                       Menus
                       <motion.span
@@ -361,7 +361,7 @@ export function Header({
                           </li>
                           {menuLinks.map((m) => (
                             <li key={m.href}>
-                              <Link href={m.href} onClick={close} className="block py-2.5 pl-4 text-[15px] text-cream-100/80 transition hover:text-cream-50">
+                              <Link href={m.href} onClick={close} className="block py-2.5 pl-4 text-[15px] text-cream-100/80 transition hover:text-ember-300">
                                 {m.label}
                               </Link>
                             </li>
@@ -381,7 +381,7 @@ export function Header({
                       <Link
                         href={item.href}
                         onClick={close}
-                        className="flex items-center justify-between border-b border-cream-50/10 py-4 font-display text-[1.8rem] font-medium text-cream-50 display-sharp"
+                        className="flex items-center justify-between border-b border-cream-50/10 py-4 font-display text-[1.8rem] font-medium text-cream-50 display-sharp transition-colors hover:text-ember-300"
                       >
                         {item.label}
                         <span aria-hidden className="font-label text-lg tracking-[0.2em] text-ember-300">

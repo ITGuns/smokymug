@@ -1,4 +1,4 @@
-# The Smoky Mug — design contract (discovery Rev 1)
+# The Smoky Mug: design contract (discovery Rev 1)
 
 Source: `SmokyMug-Dev-Handoff-INTERNAL.pdf` Rev 1, 17 Oct 2026 (Genrou), built from
 Dan Lee's marked-up discovery board. This file encodes the client's own choices;
@@ -9,8 +9,8 @@ the board disagree, ask Genrou. Do not invent beyond it.
 
 Palette and font are **PROPOSED** (handoff Q1/Q2, Dan has not supplied hex values or
 the Roadstore file). They ship as CSS design tokens so the final values are a
-one-line change. Roadstore is NOT shipped until a web license is confirmed; the
-existing Fraunces display stack stays as the heading face until then.
+one-line change. Roadstore (demo file) has set the headings and CTAs since 9 Nov
+2026; the licensed webfont must replace it before launch (section 2).
 
 ## 1. Color tokens (PROPOSED; brick-orange scheme per Guns, amended 2 Nov 2026)
 
@@ -48,21 +48,38 @@ Rules (2 Nov):
   including beside Book a Table / Explore Menu once the SpotOn orderUrl lands
   (Q8). This supersedes the 2 Nov "Order Now goes dark" note; the client's
   direction outranks DESIGN-STANDARD 3.2/3.3 here.
+- **Amended 9 Nov 2026 (Dan's review, FEEDBACK-client-review-9nov.md):** teal and
+  ember may color display text. Second lines of headings (teal: Visit,
+  catering, FoodStory), the home intro tagline span (ember), the calendar month
+  (ember) and in-month date numbers (teal; today's ring moves to ember so it
+  stays distinct), and hover on interactive text (nav, footer, menu tabs,
+  catering cards: ember). Body copy stays ink. Red stays admin/errors only.
 
 ## 2. Typography (handoff 6.2)
 
-- Headings: Roadstore **when licensed** (Q2); until then the current Fraunces stack.
-  Keep a fallback stack; layout must not shift if the font fails to load.
+- **Amended 9 Nov 2026 (row 16):** Roadstore replaces Rye behind
+  `--font-western`, loaded with next/font/local from `src/fonts/Roadstore.ttf`,
+  and now sets public page headings (h1/h2 inside `main#main`) and western
+  CTAs. Fallback is Bebas Neue, then Impact. The file is the dafont demo
+  (personal use only): it is caps only, its 2/4/6/8 are blank and 3/5/7/9 plus
+  `! # $ & ? @` carry a watermark, so a unicode-range limits it to the clean
+  glyphs and Bebas fills the rest. Buy the Almarkha Type Standard Webfont
+  license (almarkhatype.com/product/roadstore) and swap in the full file
+  before launch; then drop the unicode-range. Text font: Instrument Sans
+  stays (humanist grotesque, generous x-height, quiet under condensed caps,
+  the DESIGN-STANDARD sans class). Fraunces stays the serif accent for item
+  names; the Rye notes below are history.
+
+- Headings: Roadstore via `--font-western` (9 Nov 2026, above). Keep the
+  fallback stack; layout must not shift if the font fails to load.
 - Buttons (Guns 2 Nov: "use roadhouse font on the buttons... or at least a
   children font of that"): filled CTA variants (primary/light/dark) use
-  `--font-western` = **Rye** (Google Fonts, free), the closest Roadstore
-  relative we can ship today. Single 400 weight, so no `font-semibold` on
-  western buttons (faux bold). Quiet utility variants (secondary/ghost/outline:
+  `--font-western` (Rye from 2 Nov to 9 Nov 2026, Roadstore since). Single
+  400 weight, so no `font-semibold` on western buttons (faux bold). Quiet utility variants (secondary/ghost/outline:
   booking steps, cancel dialogs, downloads) keep the UI sans via the Button
-  `face` default; Rye's subset also lacks their U+2190 back-arrow. Page CTAs
+  `face` default; the western subset also lacks their U+2190 back-arrow. Page CTAs
   that happen to use a quiet variant (home View Full Menu, Visit Get Directions
-  and Email) pass `face="western"` (3 Nov, "buttons generally"). Swap the
-  family to Roadstore in one token when the license lands.
+  and Email) pass `face="western"` (3 Nov, "buttons generally").
 - Bigger headings, optimized for mobile:
   - H1 `clamp(2.25rem, 6vw, 4rem)`
   - H2 `clamp(1.75rem, 4.5vw, 2.75rem)`
@@ -78,7 +95,7 @@ Rules (2 Nov):
   Guns pulled it 3 Nov: "color lang na brick orange". Brick orange is the
   COLOR; primary CTAs are a plain ember fill. Do not re-add a texture without
   Guns asking for one.
-- Spacing: Standard — keep the current rhythm, do not tighten or loosen.
+- Spacing: Standard. Keep the current rhythm, do not tighten or loosen.
 - Photos: full color. Text over a photo needs a scrim/gradient to 4.5:1. Photos
   without text stay unfiltered.
 - Menu page headers: photo background + scrim, one photo per menu (placeholders
@@ -89,7 +106,7 @@ Rules (2 Nov):
 - **L1-A hero**: full photo, text left. No large logo in the hero (C1).
 - **L2-D menu** (built 1 Nov): tabs + search kept; featured dish in its own
   column beside the list (photo side ~40%, sticky on desktop; stacks on top on
-  phones); the list is clean rows — name, short description, price right, no
+  phones); the list is clean rows (name, short description, price right), no
   photo per row, no card shadows; badges/OPTIONS as small text in the row,
   Order Now bottom left when the SpotOn URL exists. Featured = first item in
   each tab (Q10 default) until Genrou clears an admin pin.

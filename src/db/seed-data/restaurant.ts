@@ -71,26 +71,23 @@ export const HOURS: HoursRow[] = [
   { category: "store", dayOfWeek: THU, opensAt: "07:00", closesAt: "21:00" },
   { category: "store", dayOfWeek: FRI, opensAt: "07:00", closesAt: "22:00" },
   { category: "store", dayOfWeek: SAT, opensAt: "08:00", closesAt: "22:00" },
-  { category: "store", dayOfWeek: SUN, opensAt: "09:30", closesAt: "14:30" },
+  // Row 10 (Dan, 9 Nov): Sunday opens at 8 AM
+  { category: "store", dayOfWeek: SUN, opensAt: "08:00", closesAt: "14:30" },
 
-  // Breakfast (opensAt null = from opening) — 2026 menu: "'til 11:30am every day"
-  // (Sunday runs the brunch menu instead)
-  ...days([MON, TUE, WED, THU, FRI, SAT], {
-    category: "breakfast",
-    opensAt: null,
-    closesAt: "11:30",
-    note: "2026 menu: 'til 11:30am every day",
-  }),
+  // Breakfast (opensAt null = from opening). Row 7 (Dan, 9 Nov): "Breakfast is
+  // Monday 'til noon; Tues-Sun 'til 11:30"
+  { category: "breakfast", dayOfWeek: MON, opensAt: null, closesAt: "12:00" },
+  ...days([TUE, WED, THU, FRI, SAT, SUN], { category: "breakfast", opensAt: null, closesAt: "11:30" }),
 
-  // Cafe + drinks (daily)
+  // Cafe drinks (daily). Row 8 (Dan, 9 Nov): the note is the public chip copy
   ...days([SUN, MON, TUE, WED, THU, FRI, SAT], {
     category: "cafe_drinks",
     opensAt: null,
     closesAt: "19:00",
-    note: "'til 7pm (or close, if earlier)",
+    note: "Every day til 7 PM, or close if earlier",
   }),
 
-  // BBQ — 2026 menu: Wed-Sat 11:30a-9p (Tuesday now belongs to Tex Mex)
+  // BBQ: 2026 menu: Wed-Sat 11:30a-9p (Tuesday now belongs to Tex Mex)
   ...days([WED, THU, FRI, SAT], {
     category: "bbq",
     opensAt: "11:30",
@@ -98,7 +95,7 @@ export const HOURS: HoursRow[] = [
     note: "Early sellout possible; 2026 menu: Wed-Sat 11:30a-9p",
   }),
 
-  // Tex Mex — new 2026 menu page: Tue-Sat 11:30a-9p, Taco Tuesday happy-hour tacos all day
+  // Tex Mex: new 2026 menu page: Tue-Sat 11:30a-9p, Taco Tuesday happy-hour tacos all day
   ...days([TUE, WED, THU, FRI, SAT], {
     category: "tex_mex",
     opensAt: "11:30",
@@ -106,14 +103,15 @@ export const HOURS: HoursRow[] = [
     note: "Taco Tuesdays: happy hour tacos all day",
   }),
 
-  // Taco Tuesdays — board H05 blue addition / R2-03: "Taco Tuesdays, Tues
+  // Taco Tuesdays: board H05 blue addition / R2-03: "Taco Tuesdays, Tues
   // 11:30AM - 9PM". Overlaps the Tex Mex Tuesday window; flagged for Genrou (Q9).
-  { category: "taco_tuesday", dayOfWeek: TUE, opensAt: "11:30", closesAt: "21:00", note: "Happy hour tacos all day" },
+  // Row 9 (9 Nov): the note is the public chip line; wording waits on Dan's OK.
+  { category: "taco_tuesday", dayOfWeek: TUE, opensAt: "11:30", closesAt: "21:00", note: "Tex Mex all day (Taco Tuesday). No Craft BBQ on Tuesdays." },
 
   // Brunch
   { category: "brunch", dayOfWeek: SUN, opensAt: "09:30", closesAt: "14:30", note: "Reservations via TablesReady" },
 
-  // Happy Hour — 2026 bar page: Tues-Sat 3-6pm ($2 off drafts & cocktails, $8/$32 wine).
+  // Happy Hour: 2026 bar page: Tues-Sat 3-6pm ($2 off drafts & cocktails, $8/$32 wine).
   // The BBQ and Tex Mex pages say "3pm-6pm daily"; built as Tue-Sat, flagged for Genrou.
   ...days([TUE, WED, THU, FRI, SAT], {
     category: "happy_hour",

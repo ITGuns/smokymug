@@ -115,7 +115,7 @@ export function MenuExplorer({
                       aria-current={isActive ? "page" : undefined}
                       className={cn(
                         "relative h-10 whitespace-nowrap rounded-full px-4 text-[14px] font-semibold tracking-tight transition-colors",
-                        isActive ? "text-cream-50" : "text-charcoal-700 hover:bg-charcoal-900/5 hover:text-charcoal-900",
+                        isActive ? "text-cream-50" : "text-charcoal-700 hover:bg-charcoal-900/5 hover:text-ember-600",
                       )}
                     >
                       {isActive && <motion.span layoutId="cat-pill" className="absolute inset-0 rounded-full bg-ember-600" transition={{ type: "spring", stiffness: 400, damping: 34 }} />}
@@ -252,9 +252,9 @@ export function MenuExplorer({
                   <div className="space-y-12">
                     {cat.sections.map((sec) => {
                       const isCollapsed = collapsed.has(sec.id);
-                      const items = sec.items.filter((i) => i.id !== featuredDish?.id);
-                      // A section whose only item became the featured dish (or
-                      // was filtered out) would render a heading over nothing.
+                      // Row 4 (Dan, 9 Nov): the featured dish also stays in its list, marked Signature
+                      const items = sec.items;
+                      // A section whose items were all filtered out would render a heading over nothing.
                       if (sec.sectionType === "items" && items.length === 0) return null;
                       return (
                         <section key={sec.id} aria-labelledby={`sec-${sec.id}`}>
@@ -284,7 +284,7 @@ export function MenuExplorer({
                               <ul className="divide-y divide-charcoal-900/8">
                                 {items.map((item) => (
                                   <li key={item.id} className="py-5 first:pt-0">
-                                    <MenuItemRow item={item} availability={availability[item.id]} happyHourNow={happyHourNow} onOpen={openModal} orderUrl={orderUrl} />
+                                    <MenuItemRow item={item} signature={item.id === featuredDish?.id} availability={availability[item.id]} happyHourNow={happyHourNow} onOpen={openModal} orderUrl={orderUrl} />
                                   </li>
                                 ))}
                               </ul>

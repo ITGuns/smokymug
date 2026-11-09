@@ -69,15 +69,15 @@ export default async function CateringPage() {
         <div className="container-site">
           <Reveal className="max-w-2xl">
             <p className="eyebrow text-teal-600">What we cater</p>
-            <h2 className="mt-4 font-display text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.02em] text-charcoal-900 display-sharp">Parties, professional events, holidays. Or rent the whole restaurant.</h2>
+            <h2 className="mt-4 font-display text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.02em] text-charcoal-900 display-sharp">Parties, professional events, holidays. <span className="text-teal-600">Or rent the whole restaurant.</span></h2>
           </Reveal>
           <RevealGroup className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {CATERING.categories.map((c) => (
-              <RevealItem key={c.name} className="flex h-full flex-col rounded-2xl border border-charcoal-900/8 bg-cream-50 p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:shadow-lift">
+              <RevealItem key={c.name} className="group flex h-full flex-col rounded-2xl border border-charcoal-900/8 bg-cream-50 p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:shadow-lift">
                 <span className="flex h-11 w-11 items-center justify-center rounded-full bg-teal-600/10 text-teal-600">
                   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{ICONS[c.name]}</svg>
                 </span>
-                <h3 className="mt-5 font-display text-2xl font-semibold text-charcoal-900">{c.name}</h3>
+                <h3 className="mt-5 font-display text-2xl font-semibold text-charcoal-900 transition-colors group-hover:text-ember-600">{c.name}</h3>
                 <p className="mt-2 text-[14.5px] leading-relaxed text-charcoal-700">{c.description}</p>
               </RevealItem>
             ))}
@@ -85,7 +85,7 @@ export default async function CateringPage() {
 
           <div className="mt-16 grid items-center gap-10 lg:grid-cols-12">
             <Reveal className="lg:col-span-5">
-              <p className="eyebrow text-teal-600">How it works</p>
+              <p className="eyebrow text-teal-600">Cater your way</p>
               <ul className="mt-5 space-y-4">
                 {CATERING.serviceTypes.map((s, i) => (
                   <li key={s} className="flex gap-4 border-l-2 border-teal-500/60 pl-4">

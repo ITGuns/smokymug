@@ -72,9 +72,9 @@
   --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
   --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
   --font-label: var(--font-bebas), "Oswald", Impact, sans-serif;
-  /* Roadstore stand-in (Q2 license still open with Dan): Rye carries the saloon
-     look on CTA buttons, per Guns 2 Nov. Swap the first family when Roadstore lands. */
-  --font-western: var(--font-rye), var(--font-fraunces), Georgia, serif;
+  /* Roadstore (row 16, 9 Nov 2026): page and section headings plus CTAs. Bebas Neue
+     carries the digits and symbols the demo font leaves out (unicode-range in layout.tsx). */
+  --font-western: var(--font-roadstore), var(--font-bebas), Impact, sans-serif;
 
   --shadow-card: 0 1px 2px rgb(15 13 11 / 0.06), 0 10px 30px -12px rgb(15 13 11 / 0.25);
   --shadow-lift: 0 2px 4px rgb(15 13 11 / 0.08), 0 24px 48px -16px rgb(15 13 11 / 0.35);
@@ -174,7 +174,7 @@
     border-radius: 2px;
   }
   body {
-    /* A5: bigger copy, mobile first — min 17px body (handoff 6.2) */
+    /* A5: bigger copy, mobile first, min 17px body (handoff 6.2) */
     font-size: 1.0625rem;
   }
   h1, h2, h3, h4 {
@@ -239,7 +239,7 @@
 @utility text-shadow-hero {
   text-shadow: 0 2px 24px rgb(0 0 0 / 0.45), 0 1px 2px rgb(0 0 0 / 0.5);
 }
-/* 6.2: emails stack at the @ instead of dropping letters — use <EmailLink>
+/* 6.2: emails stack at the @ instead of dropping letters: use <EmailLink>
    (wrap-break-word + <wbr>); pair with min-w-0 on the row */
 @utility mask-fade-b {
   mask-image: linear-gradient(to bottom, black 70%, transparent);
@@ -248,7 +248,7 @@
   mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
 }
 
-/* Smoke layers — pure CSS, GPU transforms only, disabled for reduced motion / small screens */
+/* Smoke layers: pure CSS, GPU transforms only, disabled for reduced motion / small screens */
 .smoke-layer {
   position: absolute;
   inset: -20%;
@@ -279,4 +279,15 @@
 .admin-body {
   @apply bg-[#f4f4f2] text-[#1b1b1a];
   font-feature-settings: "tnum", "cv11";
+}
+
+/* Row 16 (9 Nov 2026): Roadstore is the display face for public page and section
+   headings. Unlayered on purpose so it beats the font-display / tracking utilities
+   those headings carry; sizes and line-heights stay with each heading. Single weight
+   and caps only, so no faux bold and a little open tracking for the condensed caps. */
+main#main :is(h1, h2) {
+  font-family: var(--font-western);
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: 0.015em;
 }

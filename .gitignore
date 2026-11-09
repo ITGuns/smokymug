@@ -20,3 +20,6 @@ tests/.auth/
 tests/report/
 test-results/
 playwright-report/
+
+# local before/after evidence, never committed
+/assets/verify/

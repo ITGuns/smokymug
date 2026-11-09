@@ -50,9 +50,13 @@ export function ServiceHours({ hours, tone = "light" }: { hours: Hours[]; tone?:
           // Teal border: info accent, part of the 2 Nov secondary-accent set
           <li key={c} className={cn("flex flex-col gap-0.5 border-l-2 pl-3", dark ? "border-teal-400/70" : "border-teal-500/60")}>
             <span className={cn("eyebrow", dark ? "text-cream-100/60" : "text-charcoal-500")}>{HOURS_CATEGORY_LABELS[c]}</span>
+            {/* Rows 8/9 (Dan, 9 Nov): the admin-editable note is the public line for these two chips */}
             <span className={cn("text-[15px]", dark ? "text-cream-50" : "text-charcoal-900")}>
-              {rows.map((r) => `${r.days} ${r.hours}`).join(" · ")}
+              {c === "cafe_drinks" && rows[0].note ? rows[0].note : rows.map((r) => `${r.days} ${r.hours}`).join(" · ")}
             </span>
+            {c === "taco_tuesday" && rows[0].note && (
+              <span className={cn("text-[14px]", dark ? "text-cream-100/70" : "text-charcoal-500")}>{rows[0].note}</span>
+            )}
           </li>
         );
       })}

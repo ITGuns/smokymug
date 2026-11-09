@@ -24,7 +24,7 @@ const TACO_FILLINGS: SeedModifier[] = [
 ];
 
 export const MODIFIER_GROUPS: SeedModifierGroup[] = [
-  /* ---------- South Western Breakfast ---------- */
+  /* ---------- Southwestern Breakfast ---------- */
   {
     key: "breakfast_basics",
     name: "Basics",
@@ -128,8 +128,8 @@ export const MODIFIER_GROUPS: SeedModifierGroup[] = [
     min: 1,
     max: 1,
     modifiers: [
-      { name: "Top It! #1", description: "tejano slaw + sauce" },
-      { name: "Top It! #2", description: "pickles, pickled red onions + sauce" },
+      { name: "Top It! #1", description: "tejano slaw & sauce" },
+      { name: "Top It! #2", description: "pickles, pickled red onions & sauce" },
     ],
   },
   {

@@ -43,17 +43,17 @@ export function Footer({
           {/* R2-04 / board H11: the footer tagline renders its stored line breaks */}
           <p className="mt-5 max-w-sm whitespace-pre-line text-[15px] leading-relaxed text-cream-100/70">{r.footerTagline ?? r.tagline}</p>
           <address className="mt-6 not-italic text-[15px] leading-relaxed text-cream-100/85">
-            <a href={mapsUrl(r)} target="_blank" rel="noopener noreferrer" className="hover:text-cream-50">
+            <a href={mapsUrl(r)} target="_blank" rel="noopener noreferrer" className="hover:text-ember-300">
               {r.addressLine1}
               <br />
               {r.city}, {r.state} {r.zip}
             </a>
             <br />
-            <a href={phoneHref} className="mt-2 inline-flex min-h-6 items-center hover:text-cream-50">
+            <a href={phoneHref} className="mt-2 inline-flex min-h-6 items-center hover:text-ember-300">
               {r.phone}
             </a>
             <br />
-            <EmailLink email={r.email} className="inline-block min-h-6 py-0.5 hover:text-cream-50" />
+            <EmailLink email={r.email} className="inline-block min-h-6 py-0.5 hover:text-ember-300" />
           </address>
           <SocialLinks
             instagramUrl={r.instagramUrl}
@@ -69,7 +69,7 @@ export function Footer({
           <ul className="mt-5 space-y-3">
             {links.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="text-[15px] text-cream-100/85 transition hover:text-cream-50">
+                <Link href={l.href} className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   {l.label}
                 </Link>
               </li>
@@ -82,42 +82,42 @@ export function Footer({
           <ul className="mt-5 space-y-3">
             {r.giftCardUrl && (
               <li>
-                <a href={r.giftCardUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-cream-50">
+                <a href={r.giftCardUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Gift Cards
                 </a>
               </li>
             )}
             {r.giftCardBalanceUrl && (
               <li>
-                <a href={r.giftCardBalanceUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-cream-50">
+                <a href={r.giftCardBalanceUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Check Balance
                 </a>
               </li>
             )}
             {r.loyaltyUrl && (
               <li>
-                <a href={r.loyaltyUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-cream-50">
+                <a href={r.loyaltyUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Loyalty
                 </a>
               </li>
             )}
             {r.marketingSignupUrl && (
               <li>
-                <a href={r.marketingSignupUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-cream-50">
+                <a href={r.marketingSignupUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Email List
                 </a>
               </li>
             )}
             {r.instagramUrl && (
               <li>
-                <a href={r.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-cream-50">
+                <a href={r.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Instagram
                 </a>
               </li>
             )}
             {r.facebookUrl && (
               <li>
-                <a href={r.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-cream-50">
+                <a href={r.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Facebook
                 </a>
               </li>

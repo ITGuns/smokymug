@@ -24,7 +24,7 @@ export function FoodStory({ bbqSummary }: { bbqSummary: string | null }) {
             as="h2"
             animate={false}
             stagger={0.04}
-            lines={[{ text: "Best authentic wood-fired" }, { text: "smokehouse in Richmond.", className: "text-ember-300" }]}
+            lines={[{ text: "Best authentic wood-fired" }, { text: "smokehouse in Richmond.", className: "text-teal-300" }]}
             className="font-display text-[clamp(2.2rem,4.4vw,4rem)] font-semibold leading-[1.02] display-sharp lg:col-span-8"
           />
           <Reveal className="flex flex-col items-start gap-5 lg:col-span-4 lg:items-end lg:text-right">

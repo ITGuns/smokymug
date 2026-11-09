@@ -4,11 +4,11 @@ test.describe("Menu", () => {
   test("lists categories with real items, prices and modifiers", async ({ page }) => {
     await page.goto("/menu");
     const cats = page.getByRole("navigation", { name: "Menu categories" }).getByRole("button");
-    await expect(cats).toHaveText(["South Western Breakfast", "Craft Barbecue", "Tex Mex", "Sunday Brunch", "Bar & Happy Hour", "Cafe + Drinks"]);
+    await expect(cats).toHaveText(["Southwestern Breakfast", "Craft Barbecue", "Tex Mex", "Sunday Brunch", "Bar & Happy Hour", "Cafe Drinks"]);
 
     const burrito = page.locator("button[aria-haspopup='dialog']", { hasText: "Breakfast Burrito" }).first();
     await expect(burrito).toContainText("$6.95");
-    await expect(burrito).toContainText("egg + crispy shredded potatoes + cheddar + hatch green chiles + salsa roja");
+    await expect(burrito).toContainText("egg, crispy shredded potatoes, cheddar, hatch green chiles & salsa roja");
 
     await cats.filter({ hasText: "Craft Barbecue" }).click();
     await expect(page.getByRole("heading", { name: "Craft Barbecue", level: 2 })).toBeVisible();
@@ -60,7 +60,8 @@ test.describe("Menu", () => {
     await expect(page.locator("button[aria-haspopup='dialog']").filter({ has: page.getByRole("heading", { name: "Everything Bagel", exact: true }) })).toBeVisible();
     await expect(page.locator("button[aria-haspopup='dialog']", { hasText: "Breakfast Sandwich" })).toHaveCount(0);
     await page.getByRole("button", { name: "Clear all" }).click();
-    await expect(page.locator("button[aria-haspopup='dialog']", { hasText: "Breakfast Sandwich" })).toBeVisible();
+    // Row 4 (9 Nov): the featured dish also stays in its own section, so it renders twice
+    await expect(page.locator("button[aria-haspopup='dialog']", { hasText: "Breakfast Sandwich" })).toHaveCount(2);
 
     await page.getByRole("searchbox", { name: "Search the menu" }).fill("zzzz-nothing");
     await expect(page.getByRole("status")).toContainText("No items match");
