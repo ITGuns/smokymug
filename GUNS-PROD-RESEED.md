@@ -1,11 +1,14 @@
-# Prod database steps for Guns (updated 4 Nov 2026)
+# Prod database steps for Guns (updated 9 Nov 2026)
 
 Why: prod still runs the 23 Sep seed, so Dan's board copy, the 2026 menu and
 the hours updates are not live, and the new features from the 3-4 Nov rounds
 need their tables. The code deploys from main on every push; only the database
 is behind. Pol pushes code; you run these on your machine.
 
-Run these AFTER Pol confirms the 4 Nov round is pushed and deployed. The site is
+Run these AFTER Pol confirms the 9 Nov round is pushed and deployed. The seed
+on main must carry it (Southwestern spelling, Meat Market "per 1/2 lb", the new
+breakfast and Cafe drinks windows, Sunday 8 AM); a reseed from an older main
+would need a second reseed later, which wipes Dan's admin entries again. The site is
 safe in the meantime: every new table and column is read defensively, so pages
 render and new admin screens show a "needs db:push" note until you run step 1.
 
@@ -60,7 +63,9 @@ overrides.
 
 ## After the reseed: refresh the live site's cache
 The site caches content and the menu separately. In prod admin:
-1. Settings: change nothing, press Save (refreshes copy, hours, events).
+1. Settings: change nothing, press Save (refreshes copy, hours, events). Do
+   this even if the pages already look right: the cached menu tree keeps
+   serving the old names until a save or a purge.
 2. Menu: open any item, press Save (refreshes the menu).
 Or in Vercel: Project Settings, Data Cache, Purge.
 
@@ -69,6 +74,11 @@ Or in Vercel: Project Settings, Data Cache, Purge.
   "Coffee, cocktail, and pastry programs included." on the next.
 - Home intro starts "A morning to night Tex-Mex experience".
 - Service windows list Taco Tuesdays; the menu has a Tex Mex tab.
+- 9 Nov round: Sunday opens 8 AM; breakfast Monday til 12 PM, Tuesday to
+  Sunday til 11:30 AM; Cafe drinks every day til 7 PM or close if earlier; the
+  Tuesday line reads "Tex Mex all day (Taco Tuesday). No Craft BBQ on
+  Tuesdays."; the menu says "Southwestern" (one word) and "per 1/2 lb" under
+  Meat Market; item descriptions use commas and "&", no "+" separators.
 - Nav shows Menus and Calendar (no Gallery); /menus shows the three tiles.
 - Admin shows Reviews, Orders, Gallery with "+ Add photo", and Menu items have
   a Schedule section; none of them shows a "needs db:push" note.
