@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { CateringForm } from "@/components/catering/CateringForm";
 import { EmailLink } from "@/components/site/EmailLink";
-import { ImageCarousel } from "@/components/motion/ImageCarousel";
 import { ParallaxImage } from "@/components/motion/ParallaxImage";
 import { SplitText } from "@/components/motion/SplitText";
 import { ButtonLink } from "@/components/ui/Button";
@@ -34,19 +33,11 @@ export default async function CateringPage() {
   return (
     <>
       <section className="relative isolate flex min-h-[80svh] items-end overflow-hidden bg-charcoal-950 text-cream-50">
-        <ImageCarousel
-          priority
-          interval={5500}
-          className="absolute inset-0 -z-10"
-          slides={[
-            { src: "/images/catering-taco-platter.png", alt: "Tex Mex taco platter with homemade tortillas, smoked meats and sides", position: "50% 40%" },
-            { src: "/images/catering-full-service.png", alt: "Full service catering for parties and special events", position: "50% 40%" },
-            { src: "/images/catering-pork-butt.png", alt: "Herb smoked pork butt, wood-fired smoked BBQ", position: "50% 50%" },
-            { src: "/images/catering-brisket-taco-guac.png", alt: "Brisket taco, chips n guac, guacamole", position: "50% 50%" },
-          ]}
-          progressClassName="bottom-8 right-6 lg:right-12"
-          overlay={<div aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-charcoal-950 via-charcoal-950/55 to-charcoal-950/25" />}
-        />
+        {/* Row 12 (Dan, 9 Nov): one still image slot, his board photo; a later "party-centric" photo swaps this one file */}
+        <div className="absolute inset-0 -z-10">
+          <Image src="/images/catering-board.jpg" alt="Catering board: sliced brisket and smoked meats, pulled pork, sausage, mac and cheese, greens, slaw, pickles, flour tortillas and sauces on a tray" fill priority sizes="100vw" className="object-cover object-[50%_45%]" />
+          <div aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-charcoal-950 via-charcoal-950/55 to-charcoal-950/25" />
+        </div>
         <div className="container-site relative z-10 pb-20 pt-40">
           <SplitText as="h1" delay={0.2} lines={[{ text: "Catering &" }, { text: "events.", className: "text-ember-300" }]} className="mt-4 font-display text-[clamp(3rem,8vw,7rem)] font-semibold leading-[0.95] tracking-[-0.02em] display-wonk text-shadow-hero" />
           <p className="mt-6 max-w-xl text-lg text-cream-100/85">{CATERING.quote}</p>
