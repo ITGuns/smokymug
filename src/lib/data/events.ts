@@ -8,7 +8,7 @@ import { isMissingSchema } from "@/lib/db-errors";
 import { isEventKind, type EventKind } from "@/lib/event-kinds";
 import { CONTENT_TAG } from "./restaurant";
 
-const { events, specialEvents, specialEventImages } = schema;
+const { events, specialEvents, specialEventImages, dateOverrides } = schema;
 
 /* ---- Uncached reads (admin) ---- */
 
@@ -47,6 +47,19 @@ export async function readEventKinds(): Promise<Record<number, EventKind>> {
     if (isMissingSchema(err)) return {};
     throw err;
   }
+}
+
+/** F10: Hours date overrides in a range, for closed days on the public calendar.
+ *  Uncached on purpose: saving an override in Admin, Hours does not touch the content tag. */
+export async function readDateOverridesBetween(
+  from: string,
+  to: string,
+): Promise<{ date: string; closed: boolean; reason: string | null }[]> {
+  return db
+    .select({ date: dateOverrides.date, closed: dateOverrides.closed, reason: dateOverrides.reason })
+    .from(dateOverrides)
+    .where(and(gte(dateOverrides.date, from), lte(dateOverrides.date, to)))
+    .orderBy(asc(dateOverrides.date));
 }
 
 /* ---- Cached reads (public site), invalidated via revalidateTag(CONTENT_TAG) ---- */

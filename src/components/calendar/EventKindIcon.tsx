@@ -11,3 +11,13 @@ export function EventKindIcon({ kind, className }: { kind: EventKind; className?
     </svg>
   );
 }
+
+/** F10: a closed day (a circle with a slash). Decorative like the type icons. */
+export function ClosedIcon({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden viewBox="0 0 20 20" className={cn("h-4 w-4 shrink-0", className)} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="10" r="7" />
+      <path d="M5 15L15 5" />
+    </svg>
+  );
+}

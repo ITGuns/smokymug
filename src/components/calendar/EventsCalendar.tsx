@@ -6,7 +6,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SiteEvent } from "@/db/schema";
 import { cn } from "@/lib/cn";
 import { EVENT_KINDS, eventKindLabel, type EventKind } from "@/lib/event-kinds";
-import { EventKindIcon } from "./EventKindIcon";
+import { ClosedIcon, EventKindIcon } from "./EventKindIcon";
+import { closedNote, type CalendarClosure } from "@/lib/calendar-closures";
 import { longDate, parseDate, time12 } from "@/lib/format";
 import { monthGridCells, type MonthRef } from "@/lib/month-grid";
 import { NewTabCue } from "@/components/ui/NewTabCue";
@@ -24,10 +25,13 @@ function monthDay(ymd: string): string {
   return parseDate(ymd).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
+type ListRow = { closure: CalendarClosure } | { event: SiteEvent };
+
 /** NW01: month grid (hover highlights the day square; clicking a day with
  *  events pops details out OVER the calendar, X to exit) beside a "List by
  *  date" panel whose rows drop open. On phones the list stacks on top.
- *  B6: typed events show their icon instead of a dot, with a legend. */
+ *  B6: typed events show their icon instead of a dot, with a legend.
+ *  F10: closed dates from Admin, Hours show as closed days in both views. */
 export function EventsCalendar({
   month,
   label,
@@ -36,6 +40,7 @@ export function EventsCalendar({
   today,
   events,
   kinds = {},
+  closures = [],
 }: {
   month: MonthRef;
   label: string;
@@ -44,6 +49,7 @@ export function EventsCalendar({
   today: string;
   events: SiteEvent[];
   kinds?: Record<number, EventKind>;
+  closures?: CalendarClosure[];
 }) {
   const [openDate, setOpenDate] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -63,6 +69,18 @@ export function EventsCalendar({
     }
     return map;
   }, [events]);
+  const closedOn = useMemo(() => new Map(closures.map((c) => [c.date, c])), [closures]);
+  /** Both lists arrive sorted by date; a closure leads its day. */
+  const rows = useMemo(() => {
+    const out: ListRow[] = [];
+    let i = 0;
+    for (const e of events) {
+      while (i < closures.length && closures[i].date <= e.date) out.push({ closure: closures[i++] });
+      out.push({ event: e });
+    }
+    while (i < closures.length) out.push({ closure: closures[i++] });
+    return out;
+  }, [events, closures]);
 
   useEffect(() => {
     setOpenDate(null);
@@ -89,6 +107,7 @@ export function EventsCalendar({
   }, [openDate, closePopout]);
 
   const openEvents = openDate ? (byDate.get(openDate) ?? []) : [];
+  const openClosure = openDate ? closedOn.get(openDate) : undefined;
 
   return (
     <div>
@@ -123,13 +142,36 @@ export function EventsCalendar({
       <div className="mt-8 flex flex-col gap-10 lg:grid lg:grid-cols-12 lg:items-start lg:gap-12">
         <section aria-label="List by date" className="lg:order-2 lg:col-span-5">
           <p className="eyebrow text-teal-600">List by date</p>
-          {events.length === 0 ? (
+          {rows.length === 0 ? (
             <div className="mt-5 rounded-2xl border border-dashed border-charcoal-900/15 p-8 text-[15px] text-charcoal-500">
               Nothing on the calendar for {label} yet. Check back soon, or follow us on Instagram for pop-ups and specials.
             </div>
           ) : (
             <ul className="mt-5 divide-y divide-charcoal-900/8">
-              {events.map((e) => {
+              {rows.map((row) => {
+                if ("closure" in row) {
+                  const c = row.closure;
+                  return (
+                    <li
+                      key={`closed-${c.date}`}
+                      className="py-4 first:pt-0"
+                      onMouseEnter={() => setHoveredDate(c.date)}
+                      onMouseLeave={() => setHoveredDate(null)}
+                    >
+                      <div className="flex items-baseline gap-4">
+                        <span className="w-16 shrink-0 font-label text-[13px] tracking-[0.14em] text-teal-600">{monthDay(c.date)}</span>
+                        <span className="flex-1">
+                          <span className="block font-display text-[1.15rem] font-semibold leading-tight text-charcoal-900">{c.label}</span>
+                          <span className="mt-0.5 inline-flex items-center gap-1 text-[13px] text-charcoal-500">
+                            <ClosedIcon className="h-3.5 w-3.5" />
+                            {closedNote(c)}
+                          </span>
+                        </span>
+                      </div>
+                    </li>
+                  );
+                }
+                const e = row.event;
                 const open = expanded === e.id;
                 const range = timeRange(e);
                 return (
@@ -226,7 +268,12 @@ export function EventsCalendar({
             <div className="grid grid-cols-7 gap-1.5">
               {cells.map((cell) => {
                 const dayEvents = cell.inMonth ? (byDate.get(cell.date) ?? []) : [];
-                const has = dayEvents.length > 0;
+                const closure = cell.inMonth ? closedOn.get(cell.date) : undefined;
+                const has = dayEvents.length > 0 || closure !== undefined;
+                const says = [
+                  ...(closure ? [closure.label === "Closed" ? "closed" : `closed, ${closure.label}`] : []),
+                  ...(dayEvents.length > 0 ? [`${dayEvents.length} ${dayEvents.length === 1 ? "event" : "events"}`] : []),
+                ];
                 const isToday = cell.date === today;
                 // NW01: the hovered/focused list row lights its day square
                 const lit = cell.inMonth && hoveredDate === cell.date;
@@ -256,12 +303,13 @@ export function EventsCalendar({
                       triggerRef.current = e.currentTarget;
                       setOpenDate(cell.date);
                     }}
-                    aria-label={`${longDate(cell.date, { weekday: true })}: ${dayEvents.length} ${dayEvents.length === 1 ? "event" : "events"}`}
+                    aria-label={`${longDate(cell.date, { weekday: true })}: ${says.join(", ")}`}
                     className={cn(base, "transition-colors hover:border-ember-500/50 hover:bg-ember-600/10")}
                   >
                     <span className={dayNum}>{cell.day}</span>
                     {/* B6: a typed event shows its icon, an untyped one keeps the dot */}
                     <span aria-hidden className="flex flex-wrap items-center gap-1 text-ember-600">
+                      {closure && <ClosedIcon className="h-3.5 w-3.5 text-charcoal-500 sm:h-4 sm:w-4" />}
                       {dayEvents.slice(0, 3).map((e) =>
                         kinds[e.id] ? (
                           <EventKindIcon key={e.id} kind={kinds[e.id]} className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -282,6 +330,12 @@ export function EventsCalendar({
                   {k.label}
                 </li>
               ))}
+              {closures.length > 0 && (
+                <li className="inline-flex items-center gap-1.5">
+                  <ClosedIcon className="text-charcoal-500" />
+                  Closed
+                </li>
+              )}
             </ul>
           </div>
 
@@ -312,6 +366,15 @@ export function EventsCalendar({
                   </button>
                 </div>
                 <ul className="mt-5 space-y-6">
+                  {openClosure && (
+                    <li>
+                      <h3 className="font-display text-2xl font-semibold leading-tight">{openClosure.label}</h3>
+                      <p className="mt-1.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-cream-100/85">
+                        <ClosedIcon />
+                        {closedNote(openClosure)}
+                      </p>
+                    </li>
+                  )}
                   {openEvents.map((e) => {
                     const range = timeRange(e);
                     return (

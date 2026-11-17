@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { longDate } from "../helpers/dates";
 import { closePool, query } from "../helpers/db";
 import { expectToast, gotoReady } from "../helpers/ui";
 
 const TITLE = "QA Live Music Night";
-const pad = (n: number) => String(n).padStart(2, "0");
 
 test.afterAll(async () => {
   await query(`delete from events where title like 'QA %'`);
@@ -11,11 +11,11 @@ test.afterAll(async () => {
 });
 
 test("an admin event goes live on the public calendar and can be removed", async ({ page }) => {
-  // The 15th of next month: always in the future, always inside one month view.
-  const now = new Date();
-  const next = new Date(now.getFullYear(), now.getMonth() + 1, 15);
-  const date = `${next.getFullYear()}-${pad(next.getMonth() + 1)}-15`;
-  const monthParam = `${next.getFullYear()}-${pad(next.getMonth() + 1)}`;
+  // Audit F4 (18 Nov 2026): a far-future month no seed touches, so the checks below
+  // hold on a seeded database and an empty one alike.
+  const date = "2099-03-15";
+  const monthParam = "2099-03";
+  const dayButton = page.getByRole("button", { name: `${longDate(date)}: 1 event`, exact: true });
 
   await gotoReady(page, "/admin/calendar");
   await page.getByRole("button", { name: "+ Add event" }).first().click();
@@ -42,7 +42,7 @@ test("an admin event goes live on the public calendar and can be removed", async
   await expect(page.getByRole("link", { name: /Details/ })).toHaveAttribute("href", "https://www.instagram.com/thesmokymug");
 
   // Month grid: the day pops out over the calendar and the X exits (NW01).
-  await page.getByRole("button", { name: /: 1 event$/ }).click();
+  await dayButton.click();
   const popout = page.getByRole("dialog");
   await expect(popout).toContainText(TITLE);
   await expect(popout).toContainText("Live music");
@@ -50,11 +50,13 @@ test("an admin event goes live on the public calendar and can be removed", async
   await page.getByRole("button", { name: "Back to calendar view" }).click();
   await expect(popout).toBeHidden();
 
-  // Remove it in admin; the public calendar goes back to empty.
+  // Remove it in admin; the event and its day button leave the public calendar.
   await gotoReady(page, "/admin/calendar");
   await page.getByRole("listitem").filter({ hasText: TITLE }).getByRole("button", { name: "Remove" }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Remove" }).click();
   await expectToast(page, "Event removed");
   await page.goto(`/calendar?month=${monthParam}`);
-  await expect(page.getByText(/Nothing on the calendar for /)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "March 2099" })).toBeVisible();
+  await expect(page.getByText(TITLE)).toHaveCount(0);
+  await expect(page.getByRole("button", { name: new RegExp(`^${longDate(date)}:`) })).toHaveCount(0);
 });

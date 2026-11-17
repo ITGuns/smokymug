@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { dayButtonName, nextWeekday } from "../helpers/dates";
+import { addDays, dayButtonName, longDate, nextWeekday } from "../helpers/dates";
 import { cleanupAll, closePool, QA, query } from "../helpers/db";
 import { expectToast, gotoReady } from "../helpers/ui";
 
@@ -30,8 +30,18 @@ test.describe("Admin hours & settings", () => {
     await expect(mondayClose).toHaveValue("12:00");
   });
 
-  test("blackout dates close booking for that day", async ({ page, browser }) => {
-    const saturday = nextWeekday(6, 16);
+  test("blackout dates close booking for that day and show on the calendar", async ({ page, browser }) => {
+    // Skip Saturdays the seed already uses (an override or a "Closed" event): saving here
+    // would overwrite Dan's closure and the Remove below would delete it.
+    const taken = new Set(
+      (
+        await query<{ date: string }>(
+          `select date::text as date from date_overrides union select date::text from events where title ilike '%closed%'`,
+        )
+      ).map((r) => r.date),
+    );
+    let saturday = nextWeekday(6, 16);
+    while (taken.has(saturday)) saturday = addDays(saturday, 7);
     await gotoReady(page, "/admin/hours");
     await page.getByRole("button", { name: "+ Add date" }).click();
     const d = page.getByRole("dialog", { name: "Add a date override" });
@@ -46,6 +56,11 @@ test.describe("Admin hours & settings", () => {
     const btn = pub.getByRole("button", { name: dayButtonName(saturday) });
     if (!(await btn.isVisible())) await pub.getByRole("button", { name: "Next month" }).click();
     await expect(btn).toBeDisabled();
+
+    // Audit F10: the same closure shows on the public calendar, entered once.
+    await pub.goto(`/calendar?month=${saturday.slice(0, 7)}`);
+    await expect(pub.getByRole("button", { name: new RegExp(`^${longDate(saturday)}: closed, ${QA.prefix}blackout`) })).toBeVisible();
+    await expect(pub.getByRole("region", { name: "List by date" })).toContainText(`${QA.prefix}blackout`);
     await pub.close();
 
     await page.locator("main li", { hasText: `${QA.prefix}blackout` }).getByRole("button", { name: "Remove" }).click();

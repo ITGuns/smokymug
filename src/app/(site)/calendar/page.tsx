@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { EventsCalendar } from "@/components/calendar/EventsCalendar";
-import { getEventsBetween, readEventKinds } from "@/lib/data/events";
+import { calendarClosures } from "@/lib/calendar-closures";
+import { getEventsBetween, readDateOverridesBetween, readEventKinds } from "@/lib/data/events";
 import { addMonths, monthBounds, monthKey, monthLabel, parseMonthParam } from "@/lib/month-grid";
 import { getSiteChrome } from "@/lib/site";
 
@@ -20,7 +21,13 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
   const [y, m] = clock.date.split("-").map(Number);
   const ref = parseMonthParam(params.month, { year: y, month: m });
   const { from, to } = monthBounds(ref);
-  const [events, allKinds] = await Promise.all([getEventsBetween(from, to), readEventKinds()]);
+  const [events, allKinds, overrides] = await Promise.all([
+    getEventsBetween(from, to),
+    readEventKinds(),
+    readDateOverridesBetween(from, to),
+  ]);
+  // F10: closed dates from Admin, Hours show here too, without a second entry
+  const closures = calendarClosures(overrides, events);
   // Only this month's types travel to the client
   const kinds = Object.fromEntries(events.filter((e) => allKinds[e.id]).map((e) => [e.id, allKinds[e.id]]));
 
@@ -49,6 +56,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
             today={clock.date}
             events={events}
             kinds={kinds}
+            closures={closures}
           />
         </div>
       </section>
