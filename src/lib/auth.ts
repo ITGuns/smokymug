@@ -1,10 +1,11 @@
 import "server-only";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { SignJWT } from "jose/jwt/sign";
 import { jwtVerify } from "jose/jwt/verify";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db, schema } from "@/db";
+import { pgCode } from "@/lib/db-errors";
 
 export const SESSION_COOKIE = "sm_admin";
 const SESSION_TTL_SEC = 60 * 60 * 24 * 7; // 7 days
@@ -43,6 +44,26 @@ export async function destroySession(): Promise<void> {
   jar.delete(SESSION_COOKIE);
 }
 
+/** Sign-out (audit F6): raise session_version so this cookie, and any copy of it,
+ *  stops working, then clear it. The bump only applies while the token's version is
+ *  still current, so a stale cookie cannot sign out a newer session. The cookie is
+ *  cleared even when the write fails; a stale token is useless without the DB anyway. */
+export async function endSession(): Promise<void> {
+  const session = await getSession();
+  if (session) {
+    const { adminUsers } = schema;
+    try {
+      await db
+        .update(adminUsers)
+        .set({ sessionVersion: session.sv + 1, updatedAt: new Date().toISOString() })
+        .where(and(eq(adminUsers.id, session.sub), eq(adminUsers.sessionVersion, session.sv)));
+    } catch (err) {
+      console.error(`sign-out: session revoke failed (pg ${pgCode(err)})`);
+    }
+  }
+  await destroySession();
+}
+
 export async function verifySessionToken(token: string | undefined): Promise<AdminSession | null> {
   if (!token) return null;
   try {
@@ -65,8 +86,8 @@ export async function getSession(): Promise<AdminSession | null> {
   return verifySessionToken(jar.get(SESSION_COOKIE)?.value);
 }
 
-/** A password change bumps session_version, so older cookies stop working everywhere. */
-async function sessionIsCurrent(session: AdminSession): Promise<boolean> {
+/** A password change or a sign-out bumps session_version, so older cookies stop working everywhere. */
+export async function sessionIsCurrent(session: AdminSession): Promise<boolean> {
   const [row] = await db
     .select({ v: schema.adminUsers.sessionVersion })
     .from(schema.adminUsers)

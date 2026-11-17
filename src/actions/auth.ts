@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { db, schema } from "@/db";
-import { clientKey, createSession, destroySession, requireAdmin } from "@/lib/auth";
+import { clientKey, createSession, requireAdmin } from "@/lib/auth";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import { rateLimit } from "@/lib/rate-limit";
 import { loginInput } from "@/lib/validation";
@@ -27,11 +27,6 @@ export async function login(_prev: ActionResult | null, formData: FormData): Pro
   await createSession({ sub: user.id, email: user.email, name: user.name, role: user.role, sv: user.sessionVersion });
   const next = String(formData.get("next") ?? "/admin");
   redirect(next.startsWith("/admin") ? next : "/admin");
-}
-
-export async function logout(): Promise<void> {
-  await destroySession();
-  redirect("/admin/login");
 }
 
 export async function changePassword(current: string, next: string): Promise<ActionResult> {
