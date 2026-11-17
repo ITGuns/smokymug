@@ -4,14 +4,22 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
 
 test.describe("Calendar page (NW01)", () => {
   test("renders the board copy and an empty month", async ({ page }) => {
-    await page.goto("/calendar");
+    // Dan's 16 Nov events are seeded for Nov and Dec 2026; March 2027 has none.
+    await page.goto("/calendar?month=2027-03");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("What's happening?");
     await expect(page.getByText("Events and special programming: Do things. Meet people.")).toBeVisible();
-    // Nothing is seeded on the calendar, so the list panel shows the empty state.
     await expect(page.getByText(/Nothing on the calendar for /)).toBeVisible();
     // Scoped to main: the footer hours table also contains an exact "Sun".
     await expect(page.locator("main").getByText("Sun", { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "Next month" })).toBeVisible();
+  });
+
+  test("shows Dan's seeded December events (16 Nov)", async ({ page }) => {
+    await page.goto("/calendar?month=2026-12");
+    const main = page.locator("main");
+    await expect(main.getByText('Brookland Park Blvd "Walk the Block"').first()).toBeVisible();
+    await expect(main.getByText("Trivia", { exact: true }).first()).toBeVisible();
+    await expect(main.getByText("Early closure at 12pm").first()).toBeVisible();
   });
 
   test("month navigation and deep links work", async ({ page }) => {

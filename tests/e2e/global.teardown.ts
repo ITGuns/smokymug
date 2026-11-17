@@ -2,11 +2,13 @@ import { test as teardown } from "@playwright/test";
 import { closePool } from "./helpers/db";
 import { cleanupOrdering, setOrdering } from "./helpers/ordering";
 import { setBookingWizard, setReservationsUrl } from "./helpers/site-settings";
+import { SITE_SETTINGS } from "../../src/db/seed-data/restaurant";
 
-// Back to the shipped default after the suite: /book shows the SpotOn box (BK02).
+// Back to the shipped default after the suite: /book shows the SpotOn box (BK02)
+// with Dan's seeded reservations link (16 Nov).
 teardown("restore the reservations defaults", async () => {
   await setBookingWizard(false);
-  await setReservationsUrl(null);
+  await setReservationsUrl(SITE_SETTINGS.reservationsUrl);
   await closePool();
 });
 

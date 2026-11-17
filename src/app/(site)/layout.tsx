@@ -46,6 +46,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         menuLinks={menuLinks}
         orderingLinks={orderingLinks}
         specialsEnabled={specials.settings.enabled}
+        orderHref={restaurant.orderUrl || "/menu"}
       />
       <main id="main">{children}</main>
       <Footer restaurant={restaurant} hours={hours} phoneHref={phoneHref} todayDow={clock.dayOfWeek} specialsEnabled={specials.settings.enabled} />

@@ -57,7 +57,7 @@ export function RestaurantForm({ info }: { info: RestaurantInfo }) {
           <Field label="Features (one per line)" htmlFor="r-features" className="sm:col-span-2"><Textarea {...t("features")} className="min-h-[140px]" /></Field>
         </div>
       </Card>
-      <Card title="Links" description="External services: Toast gift cards & loyalty, TablesReady, social profiles.">
+      <Card title="Links" description="External services: gift cards & loyalty, TablesReady, social profiles.">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Website" htmlFor="r-website" error={errors.website}><Input {...t("website")} /></Field>
           <Field label="Instagram" htmlFor="r-instagramUrl" error={errors.instagramUrl}><Input {...t("instagramUrl")} /></Field>
@@ -67,7 +67,7 @@ export function RestaurantForm({ info }: { info: RestaurantInfo }) {
           <Field label="Loyalty signup URL" htmlFor="r-loyaltyUrl" error={errors.loyaltyUrl}><Input {...t("loyaltyUrl")} /></Field>
           <Field label="Email list signup URL" htmlFor="r-marketingSignupUrl" error={errors.marketingSignupUrl}><Input {...t("marketingSignupUrl")} /></Field>
           <Field label="Brunch reservations URL (TablesReady)" htmlFor="r-brunchReservationUrl" error={errors.brunchReservationUrl}><Input {...t("brunchReservationUrl")} /></Field>
-          <Field label="Online ordering URL (SpotOn)" htmlFor="r-orderUrl" error={errors.orderUrl} hint="Order Now buttons stay hidden until this is set."><Input {...t("orderUrl")} /></Field>
+          <Field label="Online ordering URL (SpotOn)" htmlFor="r-orderUrl" error={errors.orderUrl} hint="Every Order Now button opens this link in a new tab. Left empty, they open the menu page."><Input {...t("orderUrl")} /></Field>
         </div>
       </Card>
     </form>

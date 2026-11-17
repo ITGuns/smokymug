@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { RESTAURANT } from "../../../src/db/seed-data/restaurant";
 
 test.describe("Homepage", () => {
   test("renders hero, navigation and every section from the database", async ({ page }) => {
@@ -14,9 +15,11 @@ test.describe("Homepage", () => {
     await expect(nav.getByRole("link")).toHaveText(["Menus", "Our Story", "Catering", "Calendar", "Contact"], { ignoreCase: true });
     await expect(nav.getByRole("link", { name: "Menus" })).toHaveAttribute("href", "/menus");
     await expect(page.getByRole("banner").getByRole("link", { name: "Book a Table" })).toBeVisible();
-    // Board H01: [Book a Table] [ORDER NOW], Order Now rightmost; NW03-2: it opens the restaurant menu
+    // Board H01: [Book a Table] [ORDER NOW], Order Now rightmost; Dan, 16 Nov: it opens the seeded SpotOn ordering link in a new tab
     const orderNow = page.getByRole("banner").getByRole("link", { name: "Order Now" });
-    await expect(orderNow).toHaveAttribute("href", "/menu");
+    await expect(orderNow).toHaveAttribute("href", RESTAURANT.orderUrl!);
+    await expect(orderNow).toHaveAttribute("target", "_blank");
+    await expect(orderNow).toHaveAttribute("rel", "noopener noreferrer");
     const [bookBox, orderBox] = await Promise.all([page.getByRole("banner").getByRole("link", { name: "Book a Table" }).boundingBox(), orderNow.boundingBox()]);
     expect(orderBox!.x).toBeGreaterThan(bookBox!.x);
     // H01 + NW03-1: Explore Menu drops to the ordering menus (both phase 2 switches off: 2 options)
@@ -33,7 +36,8 @@ test.describe("Homepage", () => {
     await expect(banner.getByRole("link", { name: "Facebook" })).toHaveAttribute("target", "_blank");
     await expect(banner.getByRole("link", { name: /^Email / })).toHaveAttribute("href", "mailto:thesmokymug@gmail.com");
 
-    for (const heading of ["All day craft tex mex and bbq kitchen", "Best authentic wood-fired smokehouse in Richmond.", "Signature plates", "Hours", "Catering & events", "Gallery", "Gift cards & loyalty", "Visit us in Brookland Park."]) {
+    // Dan, 16 Nov: the intro headline reads in three lines
+    for (const heading of ["All Day Craft Tex Mex & BBQ Kitchen", "Best authentic wood-fired smokehouse in Richmond.", "Signature plates", "Hours", "Catering & events", "Gallery", "Gift cards & loyalty", "Visit us in Brookland Park."]) {
       const h = page.locator("main").getByRole("heading", { name: heading, exact: true });
       await h.scrollIntoViewIfNeeded();
       await expect(h).toBeVisible();

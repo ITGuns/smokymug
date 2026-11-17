@@ -35,31 +35,46 @@ export function HoursTable({
   );
 }
 
+// C8: the Cafe Fare window stays off the public service chips.
+// Dan, 16 Nov: the menus in one column (Craft BBQ just under Tex Mex), the
+// specials in the other. Each column stacks on its own, so no chip is
+// stretched to its neighbour's height.
+const SERVICE_COLUMNS: HoursCategory[][] = [
+  ["breakfast", "tex_mex", "bbq", "brunch", "cafe_drinks"],
+  ["happy_hour", "taco_tuesday", "trivia_night"],
+];
+
 /** Compact "service" chips: breakfast/bbq/brunch/happy hour windows summarised. */
 export function ServiceHours({ hours, tone = "light" }: { hours: Hours[]; tone?: "light" | "dark" }) {
-  // C8: the Cafe Fare window stays off the public service chips.
-  // R2-03: Taco Tuesdays shows as its own chip, right after Tex Mex.
-  const cats: HoursCategory[] = ["breakfast", "bbq", "tex_mex", "taco_tuesday", "brunch", "happy_hour", "cafe_drinks"];
-  const dark = tone === "dark";
+  // A column whose windows are all deleted in Admin drops out, so there is no empty half.
+  const columns = SERVICE_COLUMNS.filter((cats) => cats.some((c) => summarizeHours(hours, c).length > 0));
   return (
-    <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
-      {cats.map((c) => {
-        const rows = summarizeHours(hours, c);
-        if (!rows.length) return null;
-        return (
-          // Teal border: info accent, part of the 2 Nov secondary-accent set
-          <li key={c} className={cn("flex flex-col gap-0.5 border-l-2 pl-3", dark ? "border-teal-400/70" : "border-teal-500/60")}>
-            <span className={cn("eyebrow", dark ? "text-cream-100/60" : "text-charcoal-500")}>{HOURS_CATEGORY_LABELS[c]}</span>
-            {/* Rows 8/9 (Dan, 9 Nov): the admin-editable note is the public line for these two chips */}
-            <span className={cn("text-[15px]", dark ? "text-cream-50" : "text-charcoal-900")}>
-              {c === "cafe_drinks" && rows[0].note ? rows[0].note : rows.map((r) => `${r.days} ${r.hours}`).join(" · ")}
-            </span>
-            {c === "taco_tuesday" && rows[0].note && (
-              <span className={cn("text-[14px]", dark ? "text-cream-100/70" : "text-charcoal-500")}>{rows[0].note}</span>
-            )}
-          </li>
-        );
-      })}
-    </ul>
+    <div className={cn("grid gap-x-8 gap-y-3", columns.length > 1 && "sm:grid-cols-2")}>
+      {columns.map((cats) => (
+        <ul key={cats[0]} className="flex flex-col gap-3">
+          {cats.map((c) => (
+            <ServiceChip key={c} category={c} hours={hours} dark={tone === "dark"} />
+          ))}
+        </ul>
+      ))}
+    </div>
+  );
+}
+
+function ServiceChip({ category: c, hours, dark }: { category: HoursCategory; hours: Hours[]; dark: boolean }) {
+  const rows = summarizeHours(hours, c);
+  if (!rows.length) return null;
+  return (
+    // Teal border: info accent, part of the 2 Nov secondary-accent set
+    <li className={cn("flex flex-col gap-0.5 border-l-2 pl-3", dark ? "border-teal-400/70" : "border-teal-500/60")}>
+      <span className={cn("eyebrow", dark ? "text-cream-100/60" : "text-charcoal-500")}>{HOURS_CATEGORY_LABELS[c]}</span>
+      {/* Rows 8/9 (Dan, 9 Nov): the admin-editable note is the public line for these two chips */}
+      <span className={cn("text-[15px]", dark ? "text-cream-50" : "text-charcoal-900")}>
+        {c === "cafe_drinks" && rows[0].note ? rows[0].note : rows.map((r) => `${r.days} ${r.hours}`).join(" · ")}
+      </span>
+      {c === "taco_tuesday" && rows[0].note && (
+        <span className={cn("text-[14px]", dark ? "text-cream-100/70" : "text-charcoal-500")}>{rows[0].note}</span>
+      )}
+    </li>
   );
 }

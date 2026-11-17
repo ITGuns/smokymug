@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { closePool } from "./helpers/db";
 import { cleanupOrdering, holidayWindow, insertOrderItem, resetOrdering, setOrdering } from "./helpers/ordering";
+import { RESTAURANT } from "../../src/db/seed-data/restaurant";
 
 test.describe("Mobile layout", () => {
   test("home: hamburger menu, sticky booking bar, no horizontal overflow", async ({ page }) => {
@@ -97,7 +98,8 @@ test.describe("Mobile layout", () => {
       await expect(drawer.getByRole("link", { name: "Express Catering" })).toHaveCount(0);
       await expect(drawer.getByRole("link", { name: "Holiday Preorder" })).toHaveCount(0);
       await expect(drawer.locator('a[href="/menus"]')).toHaveCount(1);
-      await expect(drawer.getByRole("link", { name: "Order Now" })).toHaveAttribute("href", "/menu");
+      // Dan, 16 Nov: Order Now follows the seeded SpotOn ordering link
+      await expect(drawer.getByRole("link", { name: "Order Now" })).toHaveAttribute("href", RESTAURANT.orderUrl!);
 
       const win = holidayWindow();
       await insertOrderItem("express", "Drawer Pack");

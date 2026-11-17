@@ -1,5 +1,6 @@
 import { config as loadEnv } from "dotenv";
-import { sql } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
+import { DATE_OVERRIDES, EVENTS } from "./seed-data/calendar";
 import { MENU } from "./seed-data/menu";
 import { MODIFIER_GROUPS } from "./seed-data/modifiers";
 import { BOOKING_SETTINGS, BOOKING_WINDOWS, GALLERY, HOURS, RESTAURANT, REVIEWS, SITE_SETTINGS, SPECIAL_EVENTS } from "./seed-data/restaurant";
@@ -18,6 +19,7 @@ async function main() {
   const existing = await db.select({ id: menuCategories.id }).from(menuCategories).limit(1);
   if (existing.length && !force) {
     console.log("Database already seeded. Run `npm run db:reseed` to wipe menu/content tables and re-seed (reservations are kept).");
+    await seedRound16Nov(db, schema);
     await seedAdmin(db, adminUsers);
     process.exit(0);
   }
@@ -138,13 +140,47 @@ async function main() {
     );
   });
 
+  await seedRound16Nov(db, schema);
   await seedAdmin(db, adminUsers);
   process.exit(0);
 }
 
 type SeedDb = Awaited<ReturnType<typeof importDb>>["db"];
-type AdminTable = Awaited<ReturnType<typeof importDb>>["schema"]["adminUsers"];
+type SeedSchema = Awaited<ReturnType<typeof importDb>>["schema"];
+type AdminTable = SeedSchema["adminUsers"];
 const importDb = () => import("./index"); // eslint-disable-line @typescript-eslint/no-unused-vars -- type source only
+
+/** Dan's 16 Nov events, closures and SpotOn reservations link. Add-only on
+ *  every run (seed and reseed): events by date and title, closures by date,
+ *  the reservations link only where it is still empty. Never deletes. */
+// Dan's 16 Nov round goes in once, then Admin owns it: his events and closures, the Trivia Night
+// hours row, the SpotOn ordering and reservations links. When any seeded event (same date and
+// title) is already there the whole step is skipped, so an event, closure, hours row or link Dan
+// deletes or clears stays gone on every later seed. A plain db:seed carries the round too; a
+// reseed still rewrites hours and restaurant info (order link included) from the seed files.
+async function seedRound16Nov(db: SeedDb, { events, dateOverrides, hours, restaurantInfo, siteSettings }: SeedSchema) {
+  await db.transaction(async (tx) => {
+    const have = await tx.select({ date: events.date, title: events.title }).from(events);
+    const seeded = new Set(have.map((e) => `${e.date}|${e.title}`));
+    if (EVENTS.some((e) => seeded.has(`${e.date}|${e.title}`))) {
+      console.log("16 Nov round: already seeded once. Events, closures, hours and links left as Admin has them.");
+      return;
+    }
+    await tx.insert(events).values(EVENTS);
+    const closures = await tx.insert(dateOverrides).values(DATE_OVERRIDES).onConflictDoNothing({ target: dateOverrides.date }).returning({ id: dateOverrides.id });
+    await tx
+      .update(siteSettings)
+      .set({ reservationsUrl: SITE_SETTINGS.reservationsUrl })
+      .where(and(eq(siteSettings.id, SITE_SETTINGS.id), isNull(siteSettings.reservationsUrl)));
+    await tx
+      .update(restaurantInfo)
+      .set({ orderUrl: RESTAURANT.orderUrl })
+      .where(and(eq(restaurantInfo.id, RESTAURANT.id), isNull(restaurantInfo.orderUrl)));
+    const trivia = await tx.select({ id: hours.id }).from(hours).where(eq(hours.category, "trivia_night")).limit(1);
+    if (!trivia.length) await tx.insert(hours).values(HOURS.filter((h) => h.category === "trivia_night"));
+    console.log(`16 Nov round: ${EVENTS.length} events added, ${closures.length} of ${DATE_OVERRIDES.length} closures added, trivia hours ${trivia.length ? "kept" : "added"}, empty links filled.`);
+  });
+}
 
 async function seedAdmin(db: SeedDb, adminUsers: AdminTable) {
   const email = process.env.ADMIN_EMAIL;

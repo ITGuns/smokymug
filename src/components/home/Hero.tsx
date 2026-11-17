@@ -27,12 +27,15 @@ export function Hero({
   status,
   addressShort,
   menus,
+  orderHref,
 }: {
   tagline: string;
   status: { isOpen: boolean; label: string; detail: string };
   addressShort: string;
   /** NW03-1: orderingMenus() from the server (2 or 3 options, per the admin switches). */
   menus: MenuLink[];
+  /** Dan, 16 Nov: the SpotOn ordering link (opens a new tab), else /menu. */
+  orderHref: string;
 }) {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
@@ -94,11 +97,11 @@ export function Hero({
             className="mt-9 flex flex-wrap items-center gap-3"
           >
             {/* L4 note: "Highlight the Menu and Ordering on the hero page". H01 +
-                NW03-1: Explore Menu drops to the ordering menus; NW03-2: Order Now
-                goes straight to the restaurant menu. */}
+                NW03-1: Explore Menu drops to the ordering menus. Dan, 16 Nov: Order
+                Now opens the SpotOn ordering link, /menu while none is set. */}
             <MenuDropdown links={menus} />
             <Magnetic>
-              <ButtonLink href="/menu" size="lg" arrow>
+              <ButtonLink href={orderHref} size="lg" arrow>
                 Order Now
               </ButtonLink>
             </Magnetic>

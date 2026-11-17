@@ -3,6 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { closePool, QA, query } from "../helpers/db";
 import { addDays, todayInZone } from "../helpers/dates";
 import { cleanupOrdering, freshClient, holidayWindow, insertOrderItem, linesFor, requestsFor, resetOrdering, rewriteNextSubmit, setOrdering } from "../helpers/ordering";
+import { RESTAURANT } from "../../../src/db/seed-data/restaurant";
 
 /**
  * Phase 2 order requests (docs/phase2-ordering-spec.md 7.2, public half): the
@@ -79,10 +80,10 @@ test("both switches off: tiles, links, Explore Menu, 404s and no CA01 button", a
   await expect(holidayTile).toContainText("Not taking holiday preorders right now.");
   expect(await holidayTile.evaluate((el) => el.tagName)).toBe("DIV");
 
-  // NW03-3: header and footer "Menus" land here; every Order Now stays on /menu (NW03-2)
+  // NW03-3: header and footer "Menus" land here; Dan, 16 Nov: every Order Now opens the SpotOn link
   await expect(page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Menus" })).toHaveAttribute("aria-current", "page");
   await expect(page.locator("footer h2:has-text('Explore') + ul").getByRole("link", { name: "Menus" })).toHaveAttribute("href", "/menus");
-  await expect(page.getByRole("banner").getByRole("link", { name: "Order Now" })).toHaveAttribute("href", "/menu");
+  await expect(page.getByRole("banner").getByRole("link", { name: "Order Now" })).toHaveAttribute("href", RESTAURANT.orderUrl!);
 
   expect((await request.get(EXPRESS)).status()).toBe(404);
   expect((await request.get(HOLIDAY)).status()).toBe(404);
@@ -93,7 +94,7 @@ test("both switches off: tiles, links, Explore Menu, 404s and no CA01 button", a
   await expect(drop).toHaveText(["Restaurant", "Express Catering"]);
   await expect(page.getByRole("link", { name: "Express Catering", exact: true })).toHaveAttribute("href", "/catering");
   await page.keyboard.press("Escape");
-  await expect(page.locator("main").getByRole("link", { name: "Order Now" }).first()).toHaveAttribute("href", "/menu");
+  await expect(page.locator("main").getByRole("link", { name: "Order Now" }).first()).toHaveAttribute("href", RESTAURANT.orderUrl!);
 
   await page.goto("/catering");
   await expect(page.getByRole("link", { name: "Plan Your Event" })).toBeVisible();

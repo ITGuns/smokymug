@@ -25,7 +25,9 @@ export type ReservationStatus = (typeof RESERVATION_STATUSES)[number];
 // R2-03 / board H05: taco_tuesday is its own public window ("Taco Tuesdays,
 // Tues 11:30AM - 9PM"); it overlaps the Tex Mex Tuesday window on purpose
 // until Genrou reconciles the hours (Q9).
-export const HOURS_CATEGORIES = ["store", "breakfast", "cafe_fare", "cafe_drinks", "bbq", "tex_mex", "taco_tuesday", "brunch", "happy_hour", "wine_wednesday"] as const;
+// trivia_night (Dan, 16 Nov): "Trivia Night to Wednesdays 7pm - 9pm (this will
+// be a fixture)". A text column, not a pg enum, so it needs no db:push.
+export const HOURS_CATEGORIES = ["store", "breakfast", "cafe_fare", "cafe_drinks", "bbq", "tex_mex", "taco_tuesday", "brunch", "happy_hour", "wine_wednesday", "trivia_night"] as const;
 export type HoursCategory = (typeof HOURS_CATEGORIES)[number];
 
 export const SECTION_TYPES = ["items", "addons"] as const;

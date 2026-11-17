@@ -47,6 +47,7 @@ export default async function HomePage() {
         status={status}
         addressShort={`${restaurant.addressLine1} · Brookland Park, RVA`}
         menus={orderingMenus(ordering)}
+        orderHref={restaurant.orderUrl || "/menu"}
       />
       <Ticker items={["Texas craft brisket", "Homemade tortillas", "Specialty lattes", "Taco Tuesday", "Happy hour Tue–Sat", "Sunday brunch", "Dog-friendly porch"]} />
       <Intro blurb={blurb} cafeSummary={restaurant.cafeSummary} bbqSummary={restaurant.bbqSummary} features={restaurant.features} />

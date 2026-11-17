@@ -3,7 +3,7 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 
 export function Programs({ restaurant: r }: { restaurant: RestaurantInfo }) {
   const cards = [
-    { href: r.giftCardUrl, title: "Buy a Gift Card", body: "e-Gift cards for client appreciation, Airbnb welcomes, birthdays and holidays.", cta: "Buy on Toast" },
+    { href: r.giftCardUrl, title: "Buy a Gift Card", body: "e-Gift cards for client appreciation, Airbnb welcomes, birthdays and holidays.", cta: "Buy online" },
     { href: r.giftCardBalanceUrl, title: "Check Gift Card Balance", body: "Look up the remaining value on a Smoky Mug gift card.", cta: "Check balance" },
     { href: r.loyaltyUrl, title: "Join Loyalty", body: "Earn points toward free drinks and food. $2 credit when you sign up.", cta: "Activate rewards" },
     { href: r.marketingSignupUrl, title: "Join the Email List", body: "Product and event news, food photos, monthly coupons and deals.", cta: "Sign up" },

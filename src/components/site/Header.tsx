@@ -40,6 +40,8 @@ export type HeaderProps = {
   orderingLinks?: MenuLink[];
   /** NW02: a Specials nav link renders only while the admin switch is on. */
   specialsEnabled?: boolean;
+  /** Dan, 16 Nov: the SpotOn ordering link (opens a new tab); /menu when unset. */
+  orderHref?: string;
 };
 
 function StatusDot({ isOpen, className }: { isOpen: boolean; className?: string }) {
@@ -63,6 +65,7 @@ export function Header({
   menuLinks = [],
   orderingLinks = [],
   specialsEnabled = false,
+  orderHref = "/menu",
 }: HeaderProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -251,14 +254,14 @@ export function Header({
           </nav>
 
           {/* Board H01: the nav phone became Book a Table and the old button became
-              ORDER NOW, so ORDER NOW sits rightmost. NW03-2: Order Now from other
-              pages goes straight to the restaurant menu; the SpotOn link lives on
-              each menu item (NW04). */}
+              ORDER NOW, so ORDER NOW sits rightmost. Dan, 16 Nov: Order Now opens
+              the SpotOn ordering link (Admin, Settings) in a new tab, falling
+              back to /menu while no link is set. */}
           <div className="hidden items-center gap-3 lg:flex">
             <ButtonLink href="/book" shape="soft" size="sm" className="h-10 px-5" arrow>
               Book a Table
             </ButtonLink>
-            <ButtonLink href="/menu" size="sm" className="h-10 px-5">
+            <ButtonLink href={orderHref} size="sm" className="h-10 px-5">
               Order Now
             </ButtonLink>
           </div>
@@ -396,7 +399,7 @@ export function Header({
                   <ButtonLink href="/book" shape="soft" size="lg" className="w-full" arrow onClick={close}>
                     Book a Table
                   </ButtonLink>
-                  <ButtonLink href="/menu" size="lg" className="w-full" onClick={close}>
+                  <ButtonLink href={orderHref} size="lg" className="w-full" onClick={close}>
                     Order Now
                   </ButtonLink>
                   <div className="grid gap-4 rounded-2xl border border-cream-50/10 p-5 text-[14px] text-cream-100/75">

@@ -32,8 +32,9 @@ export const RESTAURANT = {
   loyaltyUrl: "https://www.toasttab.com/thesmokymug/rewardsSignup",
   marketingSignupUrl: "https://www.toasttab.com/thesmokymug/marketing-signup",
   brunchReservationUrl: "https://host.tablesready.com/p/book/add/thesmokymug",
-  // OPEN Q8: Dan has not supplied the SpotOn ordering link yet. Set it in Admin → Settings.
-  orderUrl: null as string | null,
+  // Q8 closed (Dan, 16 Nov): "Ordering Online URL". Every Order Now button follows
+  // it (new tab); with no URL they fall back to /menu. Editable in Admin, Settings.
+  orderUrl: "https://order.spoton.com/so-the-smoky-mug-30187/richmond-va/6a95c794f0fa9c0b853d673f" as string | null,
   logoUrl: "/images/logo.png",
   ogImageUrl: "/images/og-square-logo.png",
   features: [
@@ -106,7 +107,7 @@ export const HOURS: HoursRow[] = [
   // Taco Tuesdays: board H05 blue addition / R2-03: "Taco Tuesdays, Tues
   // 11:30AM - 9PM". Overlaps the Tex Mex Tuesday window; flagged for Genrou (Q9).
   // Row 9 (9 Nov): the note is the public chip line; wording waits on Dan's OK.
-  { category: "taco_tuesday", dayOfWeek: TUE, opensAt: "11:30", closesAt: "21:00", note: "Tex Mex all day (Taco Tuesday). No Craft BBQ on Tuesdays." },
+  { category: "taco_tuesday", dayOfWeek: TUE, opensAt: "11:30", closesAt: "21:00", note: "Happy Hour Tacos All Day. No Craft BBQ Menu" },
 
   // Brunch
   { category: "brunch", dayOfWeek: SUN, opensAt: "09:30", closesAt: "14:30", note: "Reservations via TablesReady" },
@@ -120,6 +121,10 @@ export const HOURS: HoursRow[] = [
     note: "$2 off drafts & cocktails; $8 glass / $32 bottle wine. Bar page says Tue-Sat; BBQ/Tex Mex pages say daily",
   }),
   // Wine Wednesdays is not on the 2026 menu; no rows seeded.
+
+  // Trivia Night (Dan, 16 Nov): "Trivia Night to Wednesdays 7pm - 9pm (this will
+  // be a fixture)".
+  { category: "trivia_night", dayOfWeek: WED, opensAt: "19:00", closesAt: "21:00" },
 ];
 
 /** NW02 defaults: the Special Events page ships switched OFF (/special-events
@@ -131,12 +136,13 @@ export const SPECIAL_EVENTS = {
   subtitle: null as string | null,
 };
 
-/** BK02 / CA03 defaults (3 Nov): /book shows the SpotOn reservations box
- *  (phone card until the link is entered in Admin, Settings); the native
- *  wizard stays hidden; no inquiry CC addresses. */
+/** BK02 / CA03 defaults (3 Nov): /book shows the SpotOn reservations box;
+ *  the native wizard stays hidden; no inquiry CC addresses. The reservations
+ *  link is Dan's (16 Nov, "Reservations link"); the seed fills it only where
+ *  the stored value is empty, so an admin edit is never overwritten. */
 export const SITE_SETTINGS = {
   id: 1,
-  reservationsUrl: null as string | null,
+  reservationsUrl: "https://reserve.spoton.com/restaurant/78940" as string | null,
   bookingWizard: false,
   inquiryCc: [] as string[],
 };

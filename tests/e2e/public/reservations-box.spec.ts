@@ -1,13 +1,14 @@
 import { expect, test } from "@playwright/test";
 import { closePool } from "../helpers/db";
 import { setBookingWizard, setReservationsUrl } from "../helpers/site-settings";
+import { SITE_SETTINGS } from "../../../src/db/seed-data/restaurant";
 
 // BK02: with the wizard off (the shipped default) /book is the SpotOn box.
 // The rest of the suite runs with the wizard on (auth.setup.ts), so restore that.
 test.describe("Book a Table: SpotOn reservations box (BK02)", () => {
   test.beforeAll(async () => setBookingWizard(false));
   test.afterAll(async () => {
-    await setReservationsUrl(null);
+    await setReservationsUrl(SITE_SETTINGS.reservationsUrl);
     await setBookingWizard(true);
     await closePool();
   });

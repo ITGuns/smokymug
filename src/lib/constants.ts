@@ -33,6 +33,7 @@ export const HOURS_CATEGORY_LABELS: Record<HoursCategory, string> = {
   brunch: "Sunday brunch",
   happy_hour: "Happy hour",
   wine_wednesday: "Wine Wednesdays",
+  trivia_night: "Trivia Night",
 };
 
 export const RESERVATION_STATUS_LABELS: Record<ReservationStatus, string> = {

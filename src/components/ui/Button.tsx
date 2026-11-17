@@ -105,6 +105,7 @@ export function ButtonLink({
       {...rest}
     >
       {children}
+      {external && <span className="sr-only"> (opens in a new tab)</span>}
       {arrow && <Arrow />}
     </Link>
   );

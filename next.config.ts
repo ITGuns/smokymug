@@ -31,6 +31,13 @@ const nextConfig: NextConfig = {
     // Default is 1 MB, which rejects most phone photos sent to the image-upload action.
     serverActions: { bodySizeLimit: "4mb" },
   },
+  // Dan, 16 Nov: the old site's /holiday preorder page is linked from outside
+  // (www.smokymug.com/holiday). Until the December holiday phase ships, send it
+  // to catering. Temporary (307), so browsers do not cache it once a real
+  // /holiday page exists.
+  async redirects() {
+    return [{ source: "/holiday", destination: "/catering", permanent: false }];
+  },
   async headers() {
     return [
       {

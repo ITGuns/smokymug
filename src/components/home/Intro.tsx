@@ -8,9 +8,14 @@ export function Intro({ blurb, cafeSummary, bbqSummary, features }: { blurb: str
       <div aria-hidden className="pointer-events-none absolute -right-40 top-10 h-[520px] w-[520px] rounded-full bg-ember-400/10 blur-3xl" />
       <div className="container-site grid items-center gap-16 lg:grid-cols-12 lg:gap-10">
         <div className="lg:col-span-5">
-          {/* Row 2 (Dan, 9 Nov): no comma; "All day" and "kitchen" in ink, the middle in ember */}
+          {/* Dan, 16 Nov: three lines so the colour reads; the middle line in ember. On
+          phones under ~420px the middle line wraps; the non-breaking spaces keep
+          "Tex Mex &" in one piece, so it never splits between Tex and Mex (his note),
+          and text-balance stops a lone "BBQ" line. */}
           <h2 className="font-display text-[clamp(2.2rem,3.2vw,2.9rem)] font-semibold leading-[1.06] text-charcoal-900 display-sharp">
-            All day <span className="text-ember-600">craft tex mex and bbq</span> kitchen
+            <span className="block">All Day</span>{" "}
+            <span className="block text-balance text-ember-600">Craft Tex&nbsp;Mex&nbsp;&amp; BBQ</span>{" "}
+            <span className="block">Kitchen</span>
           </h2>
           <Reveal delay={0.1}>
             <p className="mt-7 max-w-md text-[17px] leading-relaxed text-charcoal-700">{blurb}</p>

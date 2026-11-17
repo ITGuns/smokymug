@@ -135,6 +135,10 @@ Rules (2 Nov):
   the featured dish (NW04), hidden until the URL is set. Alternative reading
   (header/hero Order Now straight to SpotOn, handoff C2) is recorded in
   FEEDBACK-client-review-3nov.md for Pol.
+  **Amended 16 Nov 2026 (Dan: "let's link it!", FEEDBACK-client-review-16nov.md):**
+  header, drawer and hero Order Now follow `restaurant.orderUrl` (the SpotOn
+  ordering link, seeded from Dan's note) and open it in a new tab; with no
+  link set they fall back to /menu in the same tab. Colour unchanged (ember).
 - **Explore Menu (board H01 + NW03-1, 3 Nov; switches 4 Nov)**: the hero drop
   lists `orderingMenus()` from `src/lib/ordering-menus.ts`: Restaurant (/menu),
   Express Catering (/menus/express-catering while its switch is on, else
