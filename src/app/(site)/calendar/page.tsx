@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { EventsCalendar } from "@/components/calendar/EventsCalendar";
 import { calendarClosures } from "@/lib/calendar-closures";
-import { getEventsBetween, readDateOverridesBetween, readEventKinds } from "@/lib/data/events";
+import { getEventsBetween, readDateOverridesBetween, readEventKinds, readEventKindTypes } from "@/lib/data/events";
 import { addMonths, monthBounds, monthKey, monthLabel, parseMonthParam } from "@/lib/month-grid";
 import { getSiteChrome } from "@/lib/site";
 
@@ -21,15 +21,17 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
   const [y, m] = clock.date.split("-").map(Number);
   const ref = parseMonthParam(params.month, { year: y, month: m });
   const { from, to } = monthBounds(ref);
-  const [events, allKinds, overrides] = await Promise.all([
+  const [events, allKinds, overrides, { types }] = await Promise.all([
     getEventsBetween(from, to),
     readEventKinds(),
     readDateOverridesBetween(from, to),
+    readEventKindTypes(),
   ]);
   // F10: closed dates from Admin, Hours show here too, without a second entry
   const closures = calendarClosures(overrides, events);
-  // Only this month's types travel to the client
-  const kinds = Object.fromEntries(events.filter((e) => allKinds[e.id]).map((e) => [e.id, allKinds[e.id]]));
+  // Only this month's types travel to the client, and only types still listed in Admin (F11)
+  const known = new Set(types.map((t) => t.key));
+  const kinds = Object.fromEntries(events.filter((e) => known.has(allKinds[e.id])).map((e) => [e.id, allKinds[e.id]]));
 
   return (
     <>
@@ -56,6 +58,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
             today={clock.date}
             events={events}
             kinds={kinds}
+            types={types}
             closures={closures}
           />
         </div>

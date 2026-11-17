@@ -5,7 +5,7 @@ import { cache } from "react";
 import { db, schema } from "@/db";
 import type { SiteEvent, SpecialEventImage, SpecialEventsSettings } from "@/db/schema";
 import { isMissingSchema } from "@/lib/db-errors";
-import { isEventKind, type EventKind } from "@/lib/event-kinds";
+import { EVENT_KINDS, type KindOption } from "@/lib/event-kinds";
 import { CONTENT_TAG } from "./restaurant";
 
 const { events, specialEvents, specialEventImages, dateOverrides } = schema;
@@ -35,16 +35,31 @@ export async function readSpecialEvents(): Promise<{ settings: SpecialEventsSett
   return { settings, images };
 }
 
-/** B6: event id → type. Uncached and defensive: a database without the
- *  event_kinds table (prod before db:push) shows every event untyped. */
-export async function readEventKinds(): Promise<Record<number, EventKind>> {
+/** B6: event id → type key. Uncached and defensive: a database without the
+ *  event_kinds table (prod before db:push) shows every event untyped. Keys are
+ *  checked against the type list by the caller (F11). */
+export async function readEventKinds(): Promise<Record<number, string>> {
   try {
     const rows = await db.select().from(schema.eventKinds);
-    const out: Record<number, EventKind> = {};
-    for (const r of rows) if (isEventKind(r.kind)) out[r.eventId] = r.kind;
-    return out;
+    return Object.fromEntries(rows.map((r) => [r.eventId, r.kind]));
   } catch (err) {
     if (isMissingSchema(err)) return {};
+    throw err;
+  }
+}
+
+/** F11: the event types from Admin, Calendar, in their order. Uncached (the
+ *  calendar pages render per request). A database without the table (prod
+ *  before db:push) gets the four built-in types, and available = false. */
+export async function readEventKindTypes(): Promise<{ types: KindOption[]; available: boolean }> {
+  try {
+    const types = await db
+      .select({ key: schema.eventKindTypes.key, label: schema.eventKindTypes.label })
+      .from(schema.eventKindTypes)
+      .orderBy(asc(schema.eventKindTypes.displayOrder), asc(schema.eventKindTypes.key));
+    return { types, available: true };
+  } catch (err) {
+    if (isMissingSchema(err)) return { types: EVENT_KINDS.map(({ key, label }) => ({ key, label })), available: false };
     throw err;
   }
 }

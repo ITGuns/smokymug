@@ -1,9 +1,11 @@
 import { config as loadEnv } from "dotenv";
 import { and, eq, isNull, sql } from "drizzle-orm";
 import { DATE_OVERRIDES, EVENTS } from "./seed-data/calendar";
+import { CATERING_PACKAGES, EVENT_KIND_TYPES } from "./seed-data/admin-lists";
 import { MENU } from "./seed-data/menu";
 import { MODIFIER_GROUPS } from "./seed-data/modifiers";
 import { BOOKING_SETTINGS, BOOKING_WINDOWS, GALLERY, HOURS, RESTAURANT, REVIEWS, SITE_SETTINGS, SPECIAL_EVENTS } from "./seed-data/restaurant";
+import { isMissingSchema } from "../lib/db-errors";
 import { hashPassword } from "../lib/password";
 import { slugify } from "../lib/slug";
 
@@ -21,6 +23,7 @@ async function main() {
     console.log("Database already seeded. Run `npm run db:reseed` to wipe menu/content tables and re-seed (reservations are kept).");
     await seedRound16Nov(db, schema);
     await seedAdmin(db, adminUsers);
+    await seedAdminLists(db, schema);
     process.exit(0);
   }
 
@@ -142,6 +145,7 @@ async function main() {
 
   await seedRound16Nov(db, schema);
   await seedAdmin(db, adminUsers);
+  await seedAdminLists(db, schema);
   process.exit(0);
 }
 
@@ -179,6 +183,32 @@ async function seedRound16Nov(db: SeedDb, { events, dateOverrides, hours, restau
     const trivia = await tx.select({ id: hours.id }).from(hours).where(eq(hours.category, "trivia_night")).limit(1);
     if (!trivia.length) await tx.insert(hours).values(HOURS.filter((h) => h.category === "trivia_night"));
     console.log(`16 Nov round: ${EVENTS.length} events added, ${closures.length} of ${DATE_OVERRIDES.length} closures added, trivia hours ${trivia.length ? "kept" : "added"}, empty links filled.`);
+  });
+}
+
+/** Audit F11 + F12 (18 Nov 2026): event types and catering packages are filled
+ *  only while their table is empty, on every seed and reseed, and never wiped.
+ *  Admin owns them after that. (Delete every package and the next seed puts the
+ *  four printed ones back.) Runs last: a database that has not run `db:push`
+ *  yet keeps everything else the seed did and is told what to do. */
+async function seedAdminLists(db: SeedDb, { cateringPackages, eventKindTypes }: SeedSchema) {
+  try {
+    await fillAdminLists(db, cateringPackages, eventKindTypes);
+  } catch (err) {
+    if (!isMissingSchema(err)) throw err;
+    console.warn("Event types and catering packages skipped: their tables are missing. Run `npm run db:push`, then `npm run db:seed`.");
+  }
+}
+
+async function fillAdminLists(db: SeedDb, cateringPackages: SeedSchema["cateringPackages"], eventKindTypes: SeedSchema["eventKindTypes"]) {
+  await db.transaction(async (tx) => {
+    const types = await tx.select({ key: eventKindTypes.key }).from(eventKindTypes).limit(1);
+    if (!types.length) await tx.insert(eventKindTypes).values(EVENT_KIND_TYPES).onConflictDoNothing();
+    const packages = await tx.select({ id: cateringPackages.id }).from(cateringPackages).limit(1);
+    if (!packages.length) await tx.insert(cateringPackages).values(CATERING_PACKAGES);
+    console.log(
+      `Event types: ${types.length ? "kept as Admin has them" : `${EVENT_KIND_TYPES.length} added`}. Catering packages: ${packages.length ? "kept as Admin has them" : `${CATERING_PACKAGES.length} added`}.`,
+    );
   });
 }
 

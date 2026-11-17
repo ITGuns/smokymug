@@ -440,6 +440,35 @@ export const eventKinds = pgTable("event_kinds", {
   kind: text("kind").notNull(),
 });
 
+/** Audit F11 (18 Nov 2026): the list of event types the admin picks from
+ *  (`event_kinds` above holds each event's pick). Keyed by slug, which is also
+ *  the icon key; a key with no icon of its own gets the fallback icon. No foreign
+ *  key from `event_kinds.kind`: prod runs `db:push` before the seed fills this.
+ *  Admin-owned: the seed fills it only while it is empty, `db:reseed` never wipes it. */
+export const eventKindTypes = pgTable("event_kind_types", {
+  key: text("key").primaryKey(),
+  label: text("label").notNull(),
+  displayOrder: integer("display_order").notNull().default(0),
+  ...timestamps,
+});
+
+/** Audit F12 (18 Nov 2026): the catering packages on /catering, edited in Admin,
+ *  Catering. The seed fills it once from the printed copy (CATERING.categories)
+ *  while it is empty; `db:reseed` never wipes it. Reads fall back to that copy
+ *  while the table is missing (prod before `db:push`). */
+export const cateringPackages = pgTable("catering_packages", {
+  id: autoId(),
+  name: text("name").notNull(),
+  blurb: text("blurb"),
+  /** Optional price line, shown only when set. */
+  priceLine: text("price_line"),
+  /** Optional "what's included" list, one entry per line in admin. */
+  includes: jsonArray<string[]>("includes"),
+  displayOrder: integer("display_order").notNull().default(0),
+  visible: boolean("visible").notNull().default(true),
+  ...timestamps,
+});
+
 /** Settings added 3 Nov (BK02 SpotOn box, CA03 dual paper trail). One row,
  *  id 1, in its own table so the site chrome's all-columns reads never touch
  *  it; every read falls back to the defaults while the table is missing
@@ -637,6 +666,8 @@ export type Modifier = typeof modifiers.$inferSelect;
 export type GalleryImage = typeof galleryImages.$inferSelect;
 export type SiteEvent = typeof events.$inferSelect;
 export type SpecialEventsSettings = typeof specialEvents.$inferSelect;
+export type EventKindType = typeof eventKindTypes.$inferSelect;
+export type CateringPackage = typeof cateringPackages.$inferSelect;
 export type SpecialEventImage = typeof specialEventImages.$inferSelect;
 export type SiteSettingsRow = typeof siteSettings.$inferSelect;
 export type Review = typeof reviews.$inferSelect;

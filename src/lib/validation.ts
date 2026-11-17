@@ -402,23 +402,63 @@ export const restaurantInfoInput = z.object({
 
 /* ---------------- Admin: calendar + special events ---------------- */
 
-export const eventInput = z.object({
-  id: z.coerce.number().int().optional(),
-  title: z.string().trim().min(1, "Title is required").max(120),
-  date: ymd,
-  startTime: optionalHhmm.optional(),
-  endTime: optionalHhmm.optional(),
-  description: emptyToNull(600),
-  linkUrl: optionalHttpUrl(300),
-  linkLabel: emptyToNull(60),
-  active: z.coerce.boolean().default(true),
-  /** B6 event type; "" = no type */
-  kind: z
-    .union([z.enum(EVENT_KIND_KEYS), z.literal(""), z.null()])
-    .optional()
-    .transform((v) => (v ? v : null)),
-});
+/** B6 + F11: `kindKeys` are the event types in Admin, Calendar (event_kind_types). */
+export const eventInputFor = (kindKeys: readonly string[]) =>
+  z.object({
+    id: z.coerce.number().int().optional(),
+    title: z.string().trim().min(1, "Title is required").max(120),
+    date: ymd,
+    startTime: optionalHhmm.optional(),
+    endTime: optionalHhmm.optional(),
+    description: emptyToNull(600),
+    linkUrl: optionalHttpUrl(300),
+    linkLabel: emptyToNull(60),
+    active: z.coerce.boolean().default(true),
+    /** B6 event type; "" = no type */
+    kind: z
+      .union([z.literal(""), z.null(), z.string().refine((v) => kindKeys.includes(v), "Pick a type from the list")])
+      .optional()
+      .transform((v) => (v ? v : null)),
+  });
+/** The built-in four types; saveEvent checks against the live list instead. */
+export const eventInput = eventInputFor(EVENT_KIND_KEYS);
 export type EventInput = z.infer<typeof eventInput>;
+
+/** F11: an event type's name. The key is made from it once, on add, and never changes. */
+const eventKindTypeLabel = z.string("Name the type").trim().min(1, "Name the type").max(40, "Keep it under 40 characters");
+export const eventKindTypeAddInput = z.object({ label: eventKindTypeLabel });
+export const eventKindTypeRenameInput = z.object({ key: z.string().min(1).max(80), label: eventKindTypeLabel });
+export const eventKindTypeKeyInput = z.string().min(1).max(80);
+
+/* ---------------- Admin: catering packages (F12) ---------------- */
+
+const lines = (v: string) =>
+  v
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+export const cateringPackageInput = z.object({
+  id: z.number().int().positive().optional(),
+  name: z.string("Name the package").trim().min(1, "Name the package").max(60, "Keep it under 60 characters"),
+  blurb: emptyToNull(400),
+  priceLine: emptyToNull(80),
+  /** Typed one per line; blank lines are dropped. */
+  includes: z
+    .string()
+    .max(4000, "Keep the list shorter")
+    .transform(lines)
+    .refine((l) => l.length <= 30, "Keep it to 30 lines or fewer")
+    .refine((l) => l.every((x) => x.length <= 120), "Keep each line under 120 characters"),
+  visible: z.boolean(),
+});
+export const cateringPackageIdInput = z.number().int().positive();
+/** Full package order: every package id once, first id = first shown. */
+export const cateringPackageOrderInput = z
+  .array(z.number().int().positive())
+  .min(1, "The package order can't be empty")
+  .max(200)
+  .refine((ids) => new Set(ids).size === ids.length, "Each package can appear only once");
 
 /** BK02: SpotOn reservations link + the native-wizard switch. */
 export const reservationSettingsInput = z.object({

@@ -7,6 +7,7 @@ import { SplitText } from "@/components/motion/SplitText";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { CATERING } from "@/db/seed-data/restaurant";
+import { getCateringPackages } from "@/lib/data/catering";
 import { readOrderingSettings } from "@/lib/data/ordering";
 import { getRestaurant } from "@/lib/data/restaurant";
 import { EXPRESS_PATH } from "@/lib/ordering-menus";
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/catering" },
 };
 
+/** Drawn icons for the printed four, by name; a package added in Admin gets the serving dome. */
 const ICONS: Record<string, React.ReactNode> = {
   Parties: <path d="M4 20l4-12 4 6 4-8 4 14M2 20h20" />,
   Professional: <path d="M3 8h18v12H3zM8 8V5h8v3M3 13h18" />,
@@ -26,7 +28,7 @@ const ICONS: Record<string, React.ReactNode> = {
 };
 
 export default async function CateringPage() {
-  const [r, { clock }] = await Promise.all([getRestaurant(), getSiteChrome()]);
+  const [r, { clock }, packages] = await Promise.all([getRestaurant(), getSiteChrome(), getCateringPackages()]);
   const cateringEmail = r.cateringEmail ?? r.email;
   // CA01 (phase 2): the express ordering button shows only while its switch is on
   const { expressOn } = await readOrderingSettings(clock.date);
@@ -62,17 +64,30 @@ export default async function CateringPage() {
             <p className="eyebrow text-teal-600">What we cater</p>
             <h2 className="mt-4 font-display text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.02em] text-charcoal-900 display-sharp">Parties, professional events, holidays. <span className="text-teal-600">Or rent the whole restaurant.</span></h2>
           </Reveal>
-          <RevealGroup className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {CATERING.categories.map((c) => (
-              <RevealItem key={c.name} className="group flex h-full flex-col rounded-2xl border border-charcoal-900/8 bg-cream-50 p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:shadow-lift">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-teal-600/10 text-teal-600">
-                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{ICONS[c.name]}</svg>
-                </span>
-                <h3 className="mt-5 font-display text-2xl font-semibold text-charcoal-900 transition-colors group-hover:text-ember-600">{c.name}</h3>
-                <p className="mt-2 text-[14.5px] leading-relaxed text-charcoal-700">{c.description}</p>
-              </RevealItem>
-            ))}
-          </RevealGroup>
+          {packages.length > 0 && (
+            <RevealGroup className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {packages.map((c) => (
+                <RevealItem key={c.id} className="group flex h-full flex-col rounded-2xl border border-charcoal-900/8 bg-cream-50 p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:shadow-lift">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-teal-600/10 text-teal-600">
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{Object.hasOwn(ICONS, c.name) ? ICONS[c.name] : ICONS["Full Service"]}</svg>
+                  </span>
+                  <h3 className="mt-5 font-display text-2xl font-semibold text-charcoal-900 transition-colors group-hover:text-ember-600">{c.name}</h3>
+                  {c.blurb && <p className="mt-2 text-[14.5px] leading-relaxed text-charcoal-700">{c.blurb}</p>}
+                  {c.includes.length > 0 && (
+                    <ul className="mt-4 space-y-1.5 text-[14px] leading-snug text-charcoal-700">
+                      {c.includes.map((line, i) => (
+                        <li key={i} className="flex gap-2">
+                          <span aria-hidden className="mt-[0.45em] h-1.5 w-1.5 shrink-0 rounded-full bg-teal-600" />
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {c.priceLine && <p className="mt-auto pt-4 text-[14.5px] font-semibold text-charcoal-900">{c.priceLine}</p>}
+                </RevealItem>
+              ))}
+            </RevealGroup>
+          )}
 
           <div className="mt-16 grid items-center gap-10 lg:grid-cols-12">
             <Reveal className="lg:col-span-5">

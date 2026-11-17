@@ -1,4 +1,4 @@
-# Prod database steps for Guns (updated 17 Nov 2026)
+# Prod database steps for Guns (updated 18 Nov 2026)
 
 Why: prod still runs the 23 Sep seed, so Dan's board copy, the 2026 menu, the
 hours updates and his 16 Nov round (Trivia Night, his November and December
@@ -16,6 +16,13 @@ admin entries again. If the reseed already ran from an older main, a plain
 anything (see "The 16 Nov round step"). The site is safe in the meantime:
 every new table and column is read defensively, so pages render and new admin
 screens show a "needs db:push" note until you run step 1.
+
+18 Nov audit fixes: event types (Admin, Calendar) and the catering packages
+(Admin, Catering) moved into two new tables, `event_kind_types` and
+`catering_packages`. They need `db:push` too. If the reseed already ran from a
+main without them, run `npm run db:push` and then a plain `npm run db:seed`
+once they are pushed: that fills the two tables and wipes nothing (see "The
+18 Nov step").
 
 Do the reseed ONCE, now, before Dan starts entering content in admin. After
 that, never reseed prod again without exporting what he typed (see "What the
@@ -43,9 +50,10 @@ git pull
 npm run db:push
 npm run db:reseed
 ```
-`db:push` comes first even though the 16 Nov round adds no table or column:
-the seed writes to `site_settings`, `events` and `date_overrides`, and stops
-with an error if those tables are missing.
+`db:push` comes first: the seed writes to `site_settings`, `events` and
+`date_overrides`, and stops with an error if those tables are missing. It
+also fills `event_kind_types` and `catering_packages`; if those two are
+missing it only warns and skips them, so run `db:push` and `db:seed` again.
 
 ### What `db:push` should show (all additive)
 - New tables: `site_settings`, `event_kinds` (3 Nov round, if not pushed yet),
@@ -55,6 +63,10 @@ with an error if those tables are missing.
   `admin_added` (default false).
 - Nothing for the 16 Nov round: Trivia Night is a new value in the existing
   `hours.category` text column, which has no enum or check.
+- 18 Nov audit fixes: two new tables, `event_kind_types` and
+  `catering_packages`, with no foreign keys. If `drizzle-kit` asks whether a
+  table is created or renamed from another table, pick "create table". A
+  rename would turn an existing table into one of these and lose its data.
 - If it lists ANY `DROP`, `ALTER ... TYPE`, renamed column or data-loss
   warning, stop and send Pol the output.
 
@@ -67,11 +79,18 @@ Dan's SpotOn ordering URL), gallery photos and their order (including photos
 uploaded in admin), and the seeded review summaries.
 
 ### What the reseed keeps
-Reservations, admin users, calendar events and their event types, Special
-Events flyers and switch, reviews typed in admin, the SpotOn reservations link
-and catering CC list (site settings), all ordering data (Express Catering and
-Holiday Preorder items, requests, switches), catering inquiries, uploads, date
-overrides.
+Reservations, admin users, calendar events and the type picked on each,
+the event types list (Admin, Calendar, Event types), the catering packages
+(Admin, Catering), Special Events flyers and switch, reviews typed in admin,
+the SpotOn reservations link and catering CC list (site settings), all
+ordering data (Express Catering and Holiday Preorder items, requests,
+switches), catering inquiries, uploads, date overrides.
+
+The reseed wipes exactly these tables: `menu_item_modifier_groups`,
+`menu_items`, `menu_sections`, `menu_categories`, `modifiers`,
+`modifier_groups`, `hours`, `booking_windows`, `gallery_images`,
+`restaurant_info`, `booking_settings`, and the seeded rows of `reviews`.
+Every other table is left alone.
 
 ### The 16 Nov round step (runs once, adds only)
 `db:reseed` and a plain `db:seed` both end with it. On its first run it adds:
@@ -97,11 +116,31 @@ already has an override typed in admin keeps it. Expected output:
 - Any later run: `16 Nov round: already seeded once. Events, closures, hours
   and links left as Admin has them.`
 
+### The 18 Nov step (event types and catering packages, adds only)
+`db:reseed` and a plain `db:seed` both end with it. It fills each of the two
+tables only while that table is empty, and never wipes them:
+- Event types: Live music, Specials, Pop-up, Community, in that order (the
+  four the calendar already shows).
+- Catering packages: Parties, Professional, Holiday, Full Service, with the
+  same descriptions /catering shows today, no price lines or included lists.
+
+Expected output:
+- First run: `Event types: 4 added. Catering packages: 4 added.`
+- Any later run: `Event types: kept as Admin has them. Catering packages: kept
+  as Admin has them.`
+- Tables not pushed yet: `Event types and catering packages skipped: their
+  tables are missing.` Run `npm run db:push`, then `npm run db:seed`.
+
+If Dan ever removes every catering package (or every event type), the next
+seed puts the starting four back. To take all the catering cards off the site
+for good, hide them in Admin, Catering instead of removing them.
+
 ## After the reseed: refresh the live site's cache
 The site caches content and the menu separately. In prod admin:
-1. Settings: change nothing, press Save (refreshes copy, hours, events). Do
-   this even if the pages already look right: the cached menu tree keeps
-   serving the old names until a save or a purge.
+1. Settings: change nothing, press Save (refreshes copy, hours, events,
+   event types and catering packages). Do this even if the pages already look
+   right: the cached menu tree keeps serving the old names until a save or a
+   purge.
 2. Menu: open any item, press Save (refreshes the menu).
 Or in Vercel: Project Settings, Data Cache, Purge.
 
@@ -130,6 +169,13 @@ Or in Vercel: Project Settings, Data Cache, Purge.
 - Nav shows Menus and Calendar (no Gallery); /menus shows the three tiles.
 - Admin shows Reviews, Orders, Gallery with "+ Add photo", and Menu items have
   a Schedule section; none of them shows a "needs db:push" note.
+- 18 Nov audit fixes:
+  - /catering shows the same four cards as before, in Dan's words.
+  - Admin, Catering lists the four packages with Edit, Remove and the order
+    arrows.
+  - Admin, Calendar ends with an Event types card listing Live music,
+    Specials, Pop-up and Community, and the Type field on an event offers the
+    same four. Neither shows a "needs db:push" note.
 
 ## Expected until Dan sends links or content (not bugs)
 - Gift card and loyalty buttons still go to the old Toast links. When Dan

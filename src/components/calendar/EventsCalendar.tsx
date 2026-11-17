@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SiteEvent } from "@/db/schema";
 import { cn } from "@/lib/cn";
-import { EVENT_KINDS, eventKindLabel, type EventKind } from "@/lib/event-kinds";
+import type { KindOption } from "@/lib/event-kinds";
 import { ClosedIcon, EventKindIcon } from "./EventKindIcon";
 import { closedNote, type CalendarClosure } from "@/lib/calendar-closures";
 import { longDate, parseDate, time12 } from "@/lib/format";
@@ -40,6 +40,7 @@ export function EventsCalendar({
   today,
   events,
   kinds = {},
+  types,
   closures = [],
 }: {
   month: MonthRef;
@@ -48,9 +49,12 @@ export function EventsCalendar({
   nextMonth: string;
   today: string;
   events: SiteEvent[];
-  kinds?: Record<number, EventKind>;
+  kinds?: Record<number, string>;
+  /** F11: the types from Admin, Calendar, in order; they fill the legend. */
+  types: KindOption[];
   closures?: CalendarClosure[];
 }) {
+  const labelOf = useMemo(() => new Map(types.map((t) => [t.key, t.label])), [types]);
   const [openDate, setOpenDate] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<number | null>(null);
   /** NW01 sketch note: hovering a "List by date" row lights that day's square. */
@@ -201,7 +205,7 @@ export function EventsCalendar({
                             {kinds[e.id] && (
                               <span className="inline-flex items-center gap-1 text-ember-600">
                                 <EventKindIcon kind={kinds[e.id]} className="h-3.5 w-3.5" />
-                                {eventKindLabel(kinds[e.id])}
+                                {labelOf.get(kinds[e.id])}
                               </span>
                             )}
                           </span>
@@ -324,7 +328,7 @@ export function EventsCalendar({
             </div>
             {/* B6 legend (board L6: "Icon design legend") */}
             <ul aria-label="Event types" className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-charcoal-700">
-              {EVENT_KINDS.map((k) => (
+              {types.map((k) => (
                 <li key={k.key} className="inline-flex items-center gap-1.5">
                   <EventKindIcon kind={k.key} className="text-ember-600" />
                   {k.label}
@@ -383,7 +387,7 @@ export function EventsCalendar({
                         {kinds[e.id] && (
                           <p className="mt-1.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ember-300">
                             <EventKindIcon kind={kinds[e.id]} />
-                            {eventKindLabel(kinds[e.id])}
+                            {labelOf.get(kinds[e.id])}
                           </p>
                         )}
                         {range && <p className="mt-1 font-label text-[13px] tracking-[0.16em] text-teal-300">{range}</p>}

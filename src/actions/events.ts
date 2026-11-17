@@ -4,10 +4,10 @@ import { eq, notInArray } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { requireAdmin } from "@/lib/auth";
 import { isMissingSchema } from "@/lib/db-errors";
-import type { EventKind } from "@/lib/event-kinds";
+import { readEventKindTypes } from "@/lib/data/events";
 import { revalidateContent } from "@/lib/revalidate";
 import { dropUnusedUploads } from "@/lib/upload-refs";
-import { eventInput, fieldErrors, specialEventImagesInput, specialEventsInput } from "@/lib/validation";
+import { eventInputFor, fieldErrors, specialEventImagesInput, specialEventsInput } from "@/lib/validation";
 import { fail, type ActionResult } from "./types";
 
 const { events, eventKinds, specialEvents, specialEventImages } = schema;
@@ -25,7 +25,7 @@ async function guard(): Promise<ActionResult<never> | null> {
 
 /** B6: writes the event's type. false = the event_kinds table is missing on
  *  this database (needs db:push), so the type was not stored. */
-async function saveKind(eventId: number, kind: EventKind | null): Promise<boolean> {
+async function saveKind(eventId: number, kind: string | null): Promise<boolean> {
   try {
     if (kind) {
       await db.insert(eventKinds).values({ eventId, kind }).onConflictDoUpdate({ target: eventKinds.eventId, set: { kind } });
@@ -42,7 +42,9 @@ async function saveKind(eventId: number, kind: EventKind | null): Promise<boolea
 export async function saveEvent(input: unknown): Promise<ActionResult<{ id: number; kindSkipped: boolean }>> {
   const g = await guard();
   if (g) return g;
-  const parsed = eventInput.safeParse(input);
+  // F11: the type must be one of the types listed in Admin, Calendar right now
+  const { types } = await readEventKindTypes();
+  const parsed = eventInputFor(types.map((t) => t.key)).safeParse(input);
   if (!parsed.success) return fail("Check the highlighted fields.", { fieldErrors: fieldErrors(parsed.error) });
   const { id, kind, ...data } = parsed.data;
   if (data.startTime && data.endTime && data.endTime <= data.startTime)

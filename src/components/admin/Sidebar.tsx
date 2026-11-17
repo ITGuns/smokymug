@@ -22,6 +22,7 @@ const NAV = [
       { href: "/admin/menu/ordering", label: "Express + Holiday" },
     ],
   },
+  { href: "/admin/catering", label: "Catering", icon: "M3 17h18M5 17a7 7 0 0 1 14 0M12 8V6M10 6h4" },
   { href: "/admin/gallery", label: "Gallery", icon: "M4 5h16v14H4zM4 16l5-5 5 5M13 14l2-2 5 5M15.5 8.5h.01" },
   { href: "/admin/reviews", label: "Reviews", icon: "M4 5h16v11H9l-5 4zM8 9h8M8 12h5" },
   { href: "/admin/calendar", label: "Calendar", icon: "M4 5h16v15H4zM4 10h16M8 3v4M16 3v4M8 14h.01M12 14h.01M16 14h.01" },

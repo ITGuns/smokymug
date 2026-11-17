@@ -18,6 +18,10 @@ export function isEventKind(v: unknown): v is EventKind {
   return typeof v === "string" && (EVENT_KIND_KEYS as readonly string[]).includes(v);
 }
 
+/** F11 (18 Nov 2026): the types Admin, Calendar lists (event_kind_types). Any
+ *  key may exist there; the four built-in keys keep their icons. */
+export type KindOption = { key: string; label: string };
+
 export function eventKindLabel(kind: EventKind): string {
   return EVENT_KINDS.find((k) => k.key === kind)?.label ?? kind;
 }
@@ -33,3 +37,10 @@ export const EVENT_KIND_ICON: Record<EventKind, string[]> = {
   // two people
   community: ["M7.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z", "M2.5 17c0-2.8 2.2-5 5-5s5 2.2 5 5", "M13.5 9.5a2 2 0 1 0 0-4", "M14.5 12.2c1.8.5 3 2.1 3 4.3"],
 };
+
+/** F11: a type added in Admin has no drawn icon of its own, so it gets a star. */
+export const EVENT_KIND_FALLBACK_ICON = ["M10 2.5l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L2.8 7.8l5-.7z"];
+
+export function eventKindIcon(key: string): string[] {
+  return isEventKind(key) ? EVENT_KIND_ICON[key] : EVENT_KIND_FALLBACK_ICON;
+}
