@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
+import { getSession, sessionIsCurrent } from "@/lib/auth";
 import { LoginForm } from "./LoginForm";
 
 export const metadata: Metadata = { title: { absolute: "Staff login | The Smoky Mug" }, robots: { index: false, follow: false } };
@@ -9,7 +9,9 @@ export const dynamic = "force-dynamic";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const [session, { next }] = await Promise.all([getSession(), searchParams]);
-  if (session) redirect(next?.startsWith("/admin") ? next : "/admin");
+  // A cookie from before a sign-out or password change still verifies but is no longer
+  // current; the panel sends it here, so only bounce back when it is current (no loop).
+  if (session && (await sessionIsCurrent(session))) redirect(next?.startsWith("/admin") ? next : "/admin");
   return (
     <div className="admin-body flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm">

@@ -27,11 +27,6 @@ test.describe("Admin dashboard & shell", () => {
     expect(await toggle.getAttribute("aria-checked")).toBe("true");
   });
 
-  test("sign out ends the session", async ({ page }) => {
-    await page.goto("/admin");
-    await page.getByRole("button", { name: "Sign out" }).click();
-    await expect(page).toHaveURL(/\/admin\/login/);
-    const res = await page.request.get("/admin", { maxRedirects: 0 });
-    expect(res.status()).toBe(307);
-  });
+  // "sign out ends the session" lives in tests/e2e/signout.spec.ts: signing out now
+  // revokes every session of that admin, the shared login included, so it runs last.
 });
