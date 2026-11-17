@@ -4,6 +4,7 @@ import { PasswordForm } from "@/components/admin/settings/PasswordForm";
 import { RestaurantForm } from "@/components/admin/settings/RestaurantForm";
 import { SiteExtrasForm } from "@/components/admin/settings/SiteExtrasForm";
 import { PageHeader } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { readBookingSettings, readRestaurant } from "@/lib/data/restaurant";
 import { readSiteSettings } from "@/lib/data/site-settings";
 import { inquiryMailConfig } from "@/lib/inquiry-mail";
@@ -11,6 +12,7 @@ import { inquiryMailConfig } from "@/lib/inquiry-mail";
 export const metadata: Metadata = { title: "Settings" };
 
 export default async function SettingsPage() {
+  await requireAdminPage();
   const [settings, info, site] = await Promise.all([readBookingSettings(), readRestaurant(), readSiteSettings()]);
   return (
     <>

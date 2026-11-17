@@ -103,7 +103,12 @@ export async function requireAdmin(): Promise<AdminSession> {
   return session;
 }
 
-/** Use in admin pages/layouts: redirects to login. */
+/**
+ * Use at the top of every admin page AND in the panel layout: redirects to login.
+ * Next renders a layout and its page in parallel, so the layout check alone let a
+ * revoked cookie read the page's data in the redirect body (18 Nov 2026).
+ * tests/unit/admin-page-guard.test.ts fails if a panel page skips it.
+ */
 export async function requireAdminPage(): Promise<AdminSession> {
   const session = await getSession();
   if (!session || !(await sessionIsCurrent(session))) {

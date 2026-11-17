@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { OrderDetailActions } from "@/components/admin/ordering/OrderDetailActions";
 import { OrderStatusTag } from "@/components/admin/ordering/OrderStatusTag";
 import { Card, PageHeader, Tag } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { readOrderRequest } from "@/lib/data/ordering";
 import { formatRelative, longDate, money, phoneHref, time12 } from "@/lib/format";
 import { NOTIFY_LABELS, notEmailed, ORDER_MENU_INFO, orderReference } from "@/lib/ordering";
@@ -12,6 +13,7 @@ export const metadata: Metadata = { title: "Order request" };
 
 /** One request: contact (tel/mailto), lines, notes as plain text, estimate, email outcome, staff actions. */
 export default async function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdminPage();
   const raw = (await params).id;
   const id = /^\d{1,9}$/.test(raw) ? Number(raw) : 0;
   const r = id > 0 ? await readOrderRequest(id) : null;

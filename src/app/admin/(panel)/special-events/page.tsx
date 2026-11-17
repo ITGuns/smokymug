@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { SpecialEventsManager } from "@/components/admin/special-events/SpecialEventsManager";
 import { PageHeader } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { readSpecialEvents } from "@/lib/data/events";
 
 export const metadata: Metadata = { title: "Special Events" };
 
 export default async function AdminSpecialEventsPage() {
+  await requireAdminPage();
   const { settings, images } = await readSpecialEvents();
   return (
     <>

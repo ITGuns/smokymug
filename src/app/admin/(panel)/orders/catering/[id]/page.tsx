@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CateringInquiryDelete } from "@/components/admin/ordering/OrderDetailActions";
 import { Card, PageHeader } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { readCateringInquiry } from "@/lib/data/ordering";
 import { formatRelative, longDate, phoneHref } from "@/lib/format";
 
@@ -10,6 +11,7 @@ export const metadata: Metadata = { title: "Catering inquiry" };
 
 /** P8 (4 Nov): one catering inquiry, read-only, with delete. */
 export default async function AdminCateringInquiryPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdminPage();
   const raw = (await params).id;
   const id = /^\d{1,9}$/.test(raw) ? Number(raw) : 0;
   const q = id > 0 ? await readCateringInquiry(id) : null;

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CateringInquiriesTable, OrderRequestsTable } from "@/components/admin/ordering/OrdersInbox";
 import { Btn, Card, Input, PageHeader, Select } from "@/components/admin/ui";
 import { ORDER_MENUS, ORDER_REQUEST_STATUSES, type OrderMenu, type OrderRequestStatus } from "@/db/schema";
+import { requireAdminPage } from "@/lib/auth";
 import { getClock } from "@/lib/availability";
 import { purgeExpiredOrderRequests, readCateringInquiries, readOrderRequests } from "@/lib/data/ordering";
 import { readBookingSettings } from "@/lib/data/restaurant";
@@ -18,6 +19,7 @@ const YMD = /^\d{4}-\d{2}-\d{2}$/;
 
 /** Phase 2 Orders (docs/phase2-ordering-spec.md 4.5) + the catering inquiries tab (P8). */
 export default async function AdminOrdersPage({ searchParams }: { searchParams: Promise<Search> }) {
+  await requireAdminPage();
   const sp = await searchParams;
   const tab = sp.tab === "catering" ? "catering" : "requests";
   const today = getClock((await readBookingSettings()).timezone).date;

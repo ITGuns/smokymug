@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { EventsManager } from "@/components/admin/calendar/EventsManager";
 import { EventTypesManager } from "@/components/admin/calendar/EventTypesManager";
 import { PageHeader } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { getClock } from "@/lib/availability";
 import { readEventKinds, readEventKindTypes, readEvents } from "@/lib/data/events";
 import { readBookingSettings } from "@/lib/data/restaurant";
@@ -9,6 +10,7 @@ import { readBookingSettings } from "@/lib/data/restaurant";
 export const metadata: Metadata = { title: "Calendar" };
 
 export default async function AdminCalendarPage() {
+  await requireAdminPage();
   const [events, kinds, { types, available }, settings] = await Promise.all([readEvents(), readEventKinds(), readEventKindTypes(), readBookingSettings()]);
   const clock = getClock(settings.timezone);
   // How many events use each type: a used type can be renamed but not removed (F11).

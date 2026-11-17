@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { OrderStatusTag } from "@/components/admin/ordering/OrderStatusTag";
 import { Btn, Card, EmptyState, Stat, StatusBadge } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { countNewOrderRequests, readUpcomingPickups } from "@/lib/data/ordering";
 import { ORDER_MENU_INFO, orderReference } from "@/lib/ordering";
 import { getClock, storeStatus, hoursFor } from "@/lib/availability";
@@ -15,6 +16,7 @@ import { longDate, money, shortDate, time12 } from "@/lib/format";
 import type { HoursCategory } from "@/db/schema";
 
 export default async function DashboardPage() {
+  await requireAdminPage();
   const settings = await readBookingSettings();
   const clock = getClock(settings.timezone);
   const [hours, stats, tree, reviewRows, newOrders, upcomingPickups] = await Promise.all([

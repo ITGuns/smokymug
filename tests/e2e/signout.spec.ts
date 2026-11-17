@@ -12,6 +12,10 @@ test("sign out ends the session, and the old cookie lands on sign-in", async ({ 
 
   // Replay the cookie from before sign-out: refused, and the sign-in form shows (no redirect loop)
   await context.addCookies(before);
+  // The redirect body must not carry the page's data either (layout and page render in parallel)
+  const replay = await page.request.get("/admin", { maxRedirects: 0 });
+  expect(replay.status()).toBe(307);
+  expect(await replay.text()).not.toContain("Today at a glance");
   await page.goto("/admin");
   await expect(page).toHaveURL(/\/admin\/login/);
   await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible();

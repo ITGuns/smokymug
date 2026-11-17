@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { MenuManager } from "@/components/admin/menu/MenuManager";
 import { PageHeader } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { getClock } from "@/lib/availability";
 import { readMenuTree } from "@/lib/data/menu";
 import { readBookingSettings } from "@/lib/data/restaurant";
@@ -9,6 +10,7 @@ import { readBookingSettings } from "@/lib/data/restaurant";
 export const metadata: Metadata = { title: "Menu" };
 
 export default async function AdminMenuPage() {
+  await requireAdminPage();
   const [tree, settings] = await Promise.all([readMenuTree(true), readBookingSettings()]);
   // D1: "today" for the Scheduled / Ends labels, in the restaurant's timezone (same clock as the public menu)
   const today = getClock(settings.timezone).date;

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { GalleryManager } from "@/components/admin/gallery/GalleryManager";
 import { PageHeader } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { readGallery } from "@/lib/data/restaurant";
 
 export const metadata: Metadata = { title: "Gallery" };
 
 export default async function GalleryAdminPage() {
+  await requireAdminPage();
   const images = await readGallery(true);
   return (
     <>

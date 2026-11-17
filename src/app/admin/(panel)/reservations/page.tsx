@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ReservationsHeaderLink, ReservationsView, type Filters } from "@/components/admin/reservations/ReservationsView";
 import { PageHeader } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { getClock } from "@/lib/availability";
 import { listReservations, reservationCountsByDate } from "@/lib/data/reservations";
 import { readBookingSettings } from "@/lib/data/restaurant";
@@ -9,6 +10,7 @@ import type { ReservationStatus } from "@/db/schema";
 export const metadata: Metadata = { title: "Reservations" };
 
 export default async function ReservationsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  await requireAdminPage();
   const sp = await searchParams;
   const settings = await readBookingSettings();
   const clock = getClock(settings.timezone);

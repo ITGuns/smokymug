@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CateringPackagesManager } from "@/components/admin/catering/CateringPackagesManager";
 import { PageHeader } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { readCateringPackages } from "@/lib/data/catering";
 import { NEEDS_DB_PUSH } from "@/lib/db-errors";
 
@@ -8,6 +9,7 @@ export const metadata: Metadata = { title: "Catering" };
 
 // Audit F12 (18 Nov 2026): the package cards on /catering. The page intro and the inquiry form stay in code.
 export default async function CateringAdminPage() {
+  await requireAdminPage();
   const packages = await readCateringPackages();
   return (
     <>

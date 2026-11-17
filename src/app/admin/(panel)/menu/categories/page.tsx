@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { CategoriesManager } from "@/components/admin/menu/CategoriesManager";
 import { PageHeader } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { readMenuTree } from "@/lib/data/menu";
 
 export const metadata: Metadata = { title: "Menu categories" };
 
 export default async function CategoriesPage() {
+  await requireAdminPage();
   const tree = await readMenuTree(true);
   return (
     <>

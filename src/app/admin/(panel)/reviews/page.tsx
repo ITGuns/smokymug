@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ReviewsManager } from "@/components/admin/reviews/ReviewsManager";
 import { PageHeader } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { getClock } from "@/lib/availability";
 import { readAllReviews, readBookingSettings } from "@/lib/data/restaurant";
 import { GOOD_RATING, HOME_REVIEW_LIMIT, reviewFreshness, selectHomeReviews } from "@/lib/reviews";
@@ -8,6 +9,7 @@ import { GOOD_RATING, HOME_REVIEW_LIMIT, reviewFreshness, selectHomeReviews } fr
 export const metadata: Metadata = { title: "Reviews" };
 
 export default async function ReviewsAdminPage() {
+  await requireAdminPage();
   const [{ rows, available }, settings] = await Promise.all([readAllReviews(), readBookingSettings()]);
   const today = getClock(settings.timezone).date;
   const shown = selectHomeReviews(rows);

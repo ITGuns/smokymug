@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { ModifiersManager } from "@/components/admin/menu/ModifiersManager";
 import { PageHeader } from "@/components/admin/ui";
+import { requireAdminPage } from "@/lib/auth";
 import { flattenItems, readMenuTree } from "@/lib/data/menu";
 
 export const metadata: Metadata = { title: "Modifiers" };
 
 export default async function ModifiersPage() {
+  await requireAdminPage();
   const tree = await readMenuTree(true);
   const usage: Record<number, string[]> = {};
   for (const item of flattenItems(tree)) for (const g of item.modifierGroups) (usage[g.id] ??= []).push(item.name);
