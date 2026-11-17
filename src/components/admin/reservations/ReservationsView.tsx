@@ -13,6 +13,7 @@ import { DAY_SHORT, RESERVATION_STATUS_LABELS } from "@/lib/constants";
 import { addDays, longDate, parseDate, shortDate, time12, toYmd, formatRelative } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import { ReservationForm } from "./ReservationForm";
+import { NewTabCue } from "@/components/ui/NewTabCue";
 
 type View = "list" | "calendar" | "day";
 export type Filters = { view: View; date: string; month: string; status: string; q: string; from: string; to: string };
@@ -279,5 +280,5 @@ function DayView({ date, reservations, onDate, actions, onNew }: { date: string;
 }
 
 export function ReservationsHeaderLink() {
-  return <Link href="/book" target="_blank" className="text-[13px] text-zinc-500 hover:text-zinc-900">Open public booking page ↗</Link>;
+  return <Link href="/book" target="_blank" className="text-[13px] text-zinc-500 hover:text-zinc-900">Open public booking page ↗<NewTabCue /></Link>;
 }

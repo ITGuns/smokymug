@@ -4,6 +4,7 @@ import { HoursTable } from "@/components/site/HoursTable";
 import { Reveal } from "@/components/ui/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { mapsEmbedUrl, mapsUrl } from "@/lib/site";
+import { NewTabCue } from "@/components/ui/NewTabCue";
 
 export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = false }: { restaurant: RestaurantInfo; hours: Hours[]; phoneHref: string; todayDow: number; compact?: boolean }) {
   return (
@@ -26,6 +27,7 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
                 {r.addressLine1}
                 <br />
                 {r.city}, {r.state} {r.zip}
+                <NewTabCue />
               </a>
             </div>
             {/* C11: email first, phone second; emails stack instead of dropping letters; Call button removed */}
@@ -54,11 +56,13 @@ export function Visit({ restaurant: r, hours, phoneHref, todayDow, compact = fal
               {r.instagramUrl && (
                 <a href={r.instagramUrl} target="_blank" rel="noopener noreferrer" className="hover:text-ember-600">
                   Instagram ↗
+                  <NewTabCue />
                 </a>
               )}
               {r.facebookUrl && (
                 <a href={r.facebookUrl} target="_blank" rel="noopener noreferrer" className="hover:text-ember-600">
                   Facebook ↗
+                  <NewTabCue />
                 </a>
               )}
             </div>

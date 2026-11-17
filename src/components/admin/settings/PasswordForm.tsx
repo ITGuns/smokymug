@@ -4,7 +4,8 @@ import { useState } from "react";
 import { changePassword } from "@/actions/auth";
 import { useToast } from "@/components/admin/toast";
 import { useAction } from "@/components/admin/useAction";
-import { Btn, Card, Field, Input } from "@/components/admin/ui";
+import { PasswordInput } from "@/components/admin/PasswordInput";
+import { Btn, Card, Field } from "@/components/admin/ui";
 
 export function PasswordForm() {
   const toast = useToast();
@@ -25,9 +26,9 @@ export function PasswordForm() {
     <form onSubmit={submit}>
       <Card title="Change password" description="At least 10 characters." actions={<Btn type="submit" variant="primary" loading={busy}>Update password</Btn>}>
         <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Current password" htmlFor="p-cur"><Input id="p-cur" type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} required /></Field>
-          <Field label="New password" htmlFor="p-new"><Input id="p-new" type="password" autoComplete="new-password" value={next} onChange={(e) => setNext(e.target.value)} minLength={10} required /></Field>
-          <Field label="Confirm new password" htmlFor="p-conf"><Input id="p-conf" type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} minLength={10} required /></Field>
+          <Field label="Current password" htmlFor="p-cur"><PasswordInput id="p-cur" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} required /></Field>
+          <Field label="New password" htmlFor="p-new"><PasswordInput id="p-new" autoComplete="new-password" value={next} onChange={(e) => setNext(e.target.value)} minLength={10} required /></Field>
+          <Field label="Confirm new password" htmlFor="p-conf"><PasswordInput id="p-conf" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} minLength={10} required /></Field>
         </div>
       </Card>
     </form>

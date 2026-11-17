@@ -1,4 +1,5 @@
 import { ButtonLink } from "@/components/ui/Button";
+import { NewTabCue } from "@/components/ui/NewTabCue";
 
 /**
  * BK02 (board: "Integrate SpotOn Reservations basically a box with the spotOn
@@ -35,6 +36,7 @@ export function ReservationsBox({ url, phone }: { url: string | null; phone: str
         Box not loading?{" "}
         <a href={url} target="_blank" rel="noopener noreferrer" className="font-semibold text-ember-600 underline-offset-4 hover:underline">
           Open reservations ↗
+          <NewTabCue />
         </a>{" "}
         or call{" "}
         <a href={tel} className="font-semibold text-charcoal-900">

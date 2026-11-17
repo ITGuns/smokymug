@@ -1,5 +1,6 @@
 import type { RestaurantInfo } from "@/db/schema";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
+import { NewTabCue } from "@/components/ui/NewTabCue";
 
 export function Programs({ restaurant: r }: { restaurant: RestaurantInfo }) {
   const cards = [
@@ -30,6 +31,7 @@ export function Programs({ restaurant: r }: { restaurant: RestaurantInfo }) {
                   {c.cta}
                   <span className="transition-transform group-hover:translate-x-1">↗</span>
                 </span>
+                <NewTabCue />
               </a>
             </RevealItem>
           ))}

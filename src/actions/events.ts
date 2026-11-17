@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth";
 import { isMissingSchema } from "@/lib/db-errors";
 import type { EventKind } from "@/lib/event-kinds";
 import { revalidateContent } from "@/lib/revalidate";
+import { dropUnusedUploads } from "@/lib/upload-refs";
 import { eventInput, fieldErrors, specialEventImagesInput, specialEventsInput } from "@/lib/validation";
 import { fail, type ActionResult } from "./types";
 
@@ -83,7 +84,8 @@ export async function saveSpecialEvents(input: unknown): Promise<ActionResult> {
   return { ok: true, data: undefined };
 }
 
-/** Replaces the flyer set: rows keep their id, order = array order. */
+/** Replaces the flyer set: rows keep their id, order = array order. A flyer that leaves the
+ *  set takes its `uploads` row with it unless another record still uses the file (audit F9). */
 export async function saveSpecialEventImages(input: unknown): Promise<ActionResult> {
   const g = await guard();
   if (g) return g;
@@ -92,6 +94,7 @@ export async function saveSpecialEventImages(input: unknown): Promise<ActionResu
   const list = parsed.data;
 
   await db.transaction(async (tx) => {
+    const before = await tx.select({ file: specialEventImages.file }).from(specialEventImages);
     const keep = list.filter((i) => i.id != null).map((i) => i.id!) as number[];
     if (keep.length) await tx.delete(specialEventImages).where(notInArray(specialEventImages.id, keep));
     else await tx.delete(specialEventImages);
@@ -105,6 +108,7 @@ export async function saveSpecialEventImages(input: unknown): Promise<ActionResu
         await tx.insert(specialEventImages).values({ file: img.file, alt: img.alt, displayOrder: order });
       }
     }
+    await dropUnusedUploads(tx, before.map((b) => b.file));
   });
   revalidateContent();
   return { ok: true, data: undefined };

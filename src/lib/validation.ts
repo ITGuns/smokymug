@@ -105,9 +105,16 @@ export const cateringInput = z.object({
   phone: z.union([phone, z.literal("")]).transform((v) => (v ? v : null)),
   occasion: z.string().trim().min(1, "Tell us the occasion").max(120),
   eventDate: z.union([ymd, z.literal("")]).transform((v) => (v ? v : null)),
-  guestCount: z
-    .union([z.coerce.number().int().min(1).max(5000), z.literal("")])
-    .transform((v) => (v === "" ? null : v)),
+  // Plain words for every way the count can be wrong (audit F3: 0 used to show zod's own text).
+  guestCount: z.preprocess(
+    (v) => (v === "" ? null : v),
+    z.coerce
+      .number("Enter a number of guests")
+      .int("Enter a whole number of guests")
+      .min(1, "Enter at least 1 guest")
+      .max(5000, "Enter 5000 guests or fewer")
+      .nullable(),
+  ),
   serviceType: z.string().trim().min(1, "Choose a service type").max(60),
   message: emptyToNull(2000),
   // Honeypot. The action checks it on the raw body BEFORE this parse (P7, 4 Nov), so a

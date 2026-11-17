@@ -4,18 +4,18 @@ import type { DietaryTag } from "@/db/schema";
 /**
  * Static footnote section rendered below the menu explorer.
  * Covers:
- *  – Dietary-badge legend (GF*, VG*, V* — the "option" variants from the
+ *  - Dietary-badge legend (GF*, VG*, V*: the "option" variants from the
  *    printed 2026 menu plus the non-option forms)
- *  – FDA raw/undercooked-egg consumer advisory (items marked with * in
+ *  - FDA raw/undercooked-egg consumer advisory (items marked with * in
  *    descriptions, e.g. Brisket Benedict, Huevos Rancheros)
  */
 
 const LEGEND: { tag: DietaryTag; meaning: string }[] = [
-  { tag: "gluten-free-option", meaning: "Gluten-free option available — ask your server" },
+  { tag: "gluten-free-option", meaning: "Gluten-free option available (ask your server)" },
   { tag: "gluten-free", meaning: "Gluten-free" },
-  { tag: "vegan-option", meaning: "Vegan option available — ask your server" },
+  { tag: "vegan-option", meaning: "Vegan option available (ask your server)" },
   { tag: "vegan", meaning: "Vegan" },
-  { tag: "vegetarian-option", meaning: "Vegetarian option available — ask your server" },
+  { tag: "vegetarian-option", meaning: "Vegetarian option available (ask your server)" },
   { tag: "vegetarian", meaning: "Vegetarian" },
   { tag: "non-alcoholic", meaning: "Non-alcoholic" },
 ];

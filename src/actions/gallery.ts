@@ -4,15 +4,15 @@ import { eq, sql } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { requireAdmin } from "@/lib/auth";
 import { revalidateContent } from "@/lib/revalidate";
-import { readImageUpload, uploadNameFromPath, uploadPath } from "@/lib/uploads";
+import { dropUnusedUploads } from "@/lib/upload-refs";
+import { readImageUpload, uploadPath } from "@/lib/uploads";
 import { fieldErrors, galleryOrderInput, galleryPhotoEditInput, galleryPhotoIdInput, galleryPhotoNewInput } from "@/lib/validation";
 import { fail, type ActionResult } from "./types";
 
 // Admin gallery CRUD (4 Nov 2026, full-CRUD standing order): add, edit
 // (description, category, show/hide), remove and reorder. Crop and captions are not built.
 
-const { galleryImages, uploads, specialEventImages, menuItems, restaurantInfo, events } = schema;
-type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+const { galleryImages, uploads } = schema;
 
 async function guard(): Promise<ActionResult<never> | null> {
   try {
@@ -105,22 +105,8 @@ export async function deleteGalleryImage(id: unknown): Promise<ActionResult> {
 
   await db.transaction(async (tx) => {
     const [row] = await tx.delete(galleryImages).where(eq(galleryImages.id, parsed.data)).returning({ file: galleryImages.file });
-    const name = row ? uploadNameFromPath(row.file) : null;
-    if (name && !(await uploadInUse(tx, name))) await tx.delete(uploads).where(eq(uploads.name, name));
+    await dropUnusedUploads(tx, [row?.file]);
   });
   revalidateContent();
   return { ok: true, data: undefined };
-}
-
-/** Every column an admin can point at an upload: another gallery row, a Special Events flyer,
- *  a menu item photo, the logo or share image, an event link. Substring match, so absolute
- *  URLs to the same file count as a reference too; when in doubt the bytes are kept. */
-async function uploadInUse(tx: Tx, name: string): Promise<boolean> {
-  const { rows } = await tx.execute<{ used: boolean }>(sql`select
-    exists (select 1 from ${galleryImages} where position(${name} in ${galleryImages.file}) > 0)
-    or exists (select 1 from ${specialEventImages} where position(${name} in ${specialEventImages.file}) > 0)
-    or exists (select 1 from ${menuItems} where position(${name} in ${menuItems.image}) > 0)
-    or exists (select 1 from ${restaurantInfo} where position(${name} in concat_ws(' ', ${restaurantInfo.logoUrl}, ${restaurantInfo.ogImageUrl})) > 0)
-    or exists (select 1 from ${events} where position(${name} in ${events.linkUrl}) > 0) as used`);
-  return rows[0]?.used ?? true;
 }

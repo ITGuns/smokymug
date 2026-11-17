@@ -9,6 +9,7 @@ import { EVENT_KINDS, eventKindLabel, type EventKind } from "@/lib/event-kinds";
 import { EventKindIcon } from "./EventKindIcon";
 import { longDate, parseDate, time12 } from "@/lib/format";
 import { monthGridCells, type MonthRef } from "@/lib/month-grid";
+import { NewTabCue } from "@/components/ui/NewTabCue";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -195,6 +196,7 @@ export function EventsCalendar({
                                 className="mt-2 inline-block text-[13px] font-semibold text-ember-600 hover:underline"
                               >
                                 {e.linkLabel ?? "Details"} ↗
+                                <NewTabCue />
                               </a>
                             )}
                           </div>
@@ -331,6 +333,7 @@ export function EventsCalendar({
                             className="mt-2 inline-block text-[13px] font-semibold text-ember-300 hover:text-cream-50"
                           >
                             {e.linkLabel ?? "Details"} ↗
+                            <NewTabCue />
                           </a>
                         )}
                       </li>

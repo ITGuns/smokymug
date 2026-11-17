@@ -1,3 +1,4 @@
+import { NEW_TAB_TEXT } from "@/components/ui/NewTabCue";
 import { cn } from "@/lib/cn";
 
 type IconProps = { className?: string };
@@ -59,7 +60,7 @@ export function SocialLinks({
     <ul className={cn("flex items-center", className)}>
       {links.map(({ key, href, label, Icon, external }) => (
         <li key={key}>
-          <a href={href} aria-label={label} className={linkClassName} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+          <a href={href} aria-label={external ? `${label} ${NEW_TAB_TEXT}` : label} className={linkClassName} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
             <Icon className={iconClassName} />
           </a>
         </li>

@@ -66,6 +66,20 @@ describe("cateringInput", () => {
     expect(honeypotHit(bot)).toBe(true);
     expect(honeypotHit({ ...bot, website: "" })).toBe(false);
   });
+  it("explains a bad guest count in plain words, never zod's own text (F3)", () => {
+    const base = { name: "Jo", email: "jo@example.com", phone: "", occasion: "Birthday", eventDate: "", serviceType: "Delivery", message: "", website: "" };
+    const err = (guestCount: unknown) => {
+      const r = cateringInput.safeParse({ ...base, guestCount });
+      expect(r.success).toBe(false);
+      return fieldErrors(r.error!).guestCount;
+    };
+    expect(err(0)).toBe("Enter at least 1 guest");
+    expect(err("-3")).toBe("Enter at least 1 guest");
+    expect(err("2.5")).toBe("Enter a whole number of guests");
+    expect(err("6000")).toBe("Enter 5000 guests or fewer");
+    expect(err("abc")).toBe("Enter a number of guests");
+    expect(cateringInput.parse({ ...base, guestCount: "40" }).guestCount).toBe(40);
+  });
 });
 
 describe("menuItemInput", () => {

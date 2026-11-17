@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
+import { NewTabCue } from "@/components/ui/NewTabCue";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: "M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10" },
@@ -78,7 +79,7 @@ export function Sidebar({ user, pendingCount, newOrderCount = 0 }: { user: { nam
       <p className="truncate text-[13px] font-medium text-zinc-800">{user.name}</p>
       <p className="truncate text-[12px] text-zinc-500">{user.email}</p>
       <div className="mt-2 flex gap-3 text-[12px]">
-        <Link href="/" target="_blank" className="text-zinc-500 hover:text-zinc-900">View site ↗</Link>
+        <Link href="/" target="_blank" className="text-zinc-500 hover:text-zinc-900">View site ↗<NewTabCue /></Link>
         <form action="/admin/logout" method="post"><button type="submit" className="text-zinc-500 hover:text-zinc-900">Sign out</button></form>
       </div>
     </div>

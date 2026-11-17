@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { NewTabCue } from "./NewTabCue";
 
 type Variant = "primary" | "secondary" | "ghost" | "outline" | "light" | "dark";
 type Size = "sm" | "md" | "lg";
@@ -105,7 +106,7 @@ export function ButtonLink({
       {...rest}
     >
       {children}
-      {external && <span className="sr-only"> (opens in a new tab)</span>}
+      {external && <NewTabCue />}
       {arrow && <Arrow />}
     </Link>
   );

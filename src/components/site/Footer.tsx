@@ -5,6 +5,7 @@ import { Logo } from "./Logo";
 import { SocialLinks } from "./SocialLinks";
 import { HoursTable } from "./HoursTable";
 import { mapsUrl } from "@/lib/site";
+import { NewTabCue } from "@/components/ui/NewTabCue";
 
 const LINKS = [
   // NW03-3 (phase 2, 4 Nov): the footer "Menus" link lands on the Menus page
@@ -47,6 +48,7 @@ export function Footer({
               {r.addressLine1}
               <br />
               {r.city}, {r.state} {r.zip}
+              <NewTabCue />
             </a>
             <br />
             <a href={phoneHref} className="mt-2 inline-flex min-h-6 items-center hover:text-ember-300">
@@ -84,6 +86,7 @@ export function Footer({
               <li>
                 <a href={r.giftCardUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Gift Cards
+                  <NewTabCue />
                 </a>
               </li>
             )}
@@ -91,6 +94,7 @@ export function Footer({
               <li>
                 <a href={r.giftCardBalanceUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Check Balance
+                  <NewTabCue />
                 </a>
               </li>
             )}
@@ -98,6 +102,7 @@ export function Footer({
               <li>
                 <a href={r.loyaltyUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Loyalty
+                  <NewTabCue />
                 </a>
               </li>
             )}
@@ -105,6 +110,7 @@ export function Footer({
               <li>
                 <a href={r.marketingSignupUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Email List
+                  <NewTabCue />
                 </a>
               </li>
             )}
@@ -112,6 +118,7 @@ export function Footer({
               <li>
                 <a href={r.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Instagram
+                  <NewTabCue />
                 </a>
               </li>
             )}
@@ -119,6 +126,7 @@ export function Footer({
               <li>
                 <a href={r.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-[15px] text-cream-100/85 transition hover:text-ember-300">
                   Facebook
+                  <NewTabCue />
                 </a>
               </li>
             )}
