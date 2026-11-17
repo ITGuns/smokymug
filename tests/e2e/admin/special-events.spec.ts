@@ -5,7 +5,33 @@ import { expectToast, gotoReady } from "../helpers/ui";
 test.afterAll(async () => {
   // Safety net: the switch must never stay on after the suite.
   await query(`update special_events set enabled = false, title = 'Specials & Events', subtitle = null where id = 1`);
+  // A failed flyer test can leave its flyer and upload behind
+  await query(`delete from uploads where '/uploads/' || name in (select file from special_event_images where alt = 'QA flyer')`);
+  await query(`delete from special_event_images where alt = 'QA flyer'`);
   await closePool();
+});
+
+test("a saved flyer drops its Unsaved tag, and removing it drops its upload", async ({ page }) => {
+  const uploads = async () => Number((await query<{ n: string }>(`select count(*) as n from uploads`))[0].n);
+  const start = await uploads();
+  await gotoReady(page, "/admin/special-events");
+  // A real JPEG: several public/images/*.jpg files are WebP inside, which the upload check refuses
+  await page.locator("input[type=file]").setInputFiles("public/images/catering-board.jpg");
+  await expect(page.getByText("Unsaved", { exact: true })).toHaveCount(1);
+  await page.getByPlaceholder("Describe the image (required)").last().fill("QA flyer");
+  await page.getByRole("button", { name: "Save flyers" }).click();
+  await expectToast(page, "Flyers saved");
+  await expect(page.getByText("Unsaved", { exact: true })).toHaveCount(0);
+  expect(await uploads()).toBe(start + 1);
+
+  await gotoReady(page, "/admin/special-events");
+  const alts = page.getByPlaceholder("Describe the image (required)");
+  await expect(alts.last()).toHaveValue("QA flyer");
+  await page.locator("li").filter({ has: alts }).last().getByRole("button", { name: "Remove", exact: true }).click();
+  await page.getByRole("button", { name: "Save flyers" }).click();
+  await expectToast(page, "Flyers saved");
+  expect(await uploads()).toBe(start);
+  expect(await query(`select id from special_event_images where alt = 'QA flyer'`)).toHaveLength(0);
 });
 
 test("the Special Events switch drives /special-events (NW02)", async ({ page, request }) => {

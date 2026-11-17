@@ -88,14 +88,16 @@ export async function saveSpecialEvents(input: unknown): Promise<ActionResult> {
 
 /** Replaces the flyer set: rows keep their id, order = array order. A flyer that leaves the
  *  set takes its `uploads` row with it unless another record still uses the file (audit F9). */
-export async function saveSpecialEventImages(input: unknown): Promise<ActionResult> {
+/** Returns the saved list (with ids) so the editor drops its "Unsaved" tags and a
+ *  second save updates rows instead of re-creating them. */
+export async function saveSpecialEventImages(input: unknown): Promise<ActionResult<{ id: number; file: string; alt: string }[]>> {
   const g = await guard();
   if (g) return g;
   const parsed = specialEventImagesInput.safeParse(input);
   if (!parsed.success) return fail("Check the image list and try again.", { fieldErrors: fieldErrors(parsed.error) });
   const list = parsed.data;
 
-  await db.transaction(async (tx) => {
+  const saved = await db.transaction(async (tx) => {
     const before = await tx.select({ file: specialEventImages.file }).from(specialEventImages);
     const keep = list.filter((i) => i.id != null).map((i) => i.id!) as number[];
     if (keep.length) await tx.delete(specialEventImages).where(notInArray(specialEventImages.id, keep));
@@ -111,7 +113,11 @@ export async function saveSpecialEventImages(input: unknown): Promise<ActionResu
       }
     }
     await dropUnusedUploads(tx, before.map((b) => b.file));
+    return tx
+      .select({ id: specialEventImages.id, file: specialEventImages.file, alt: specialEventImages.alt })
+      .from(specialEventImages)
+      .orderBy(specialEventImages.displayOrder);
   });
   revalidateContent();
-  return { ok: true, data: undefined };
+  return { ok: true, data: saved };
 }

@@ -74,6 +74,7 @@ export function SpecialEventsManager({ settings, images }: { settings: SpecialEv
     }
     const res = await imagesAction.run(() => saveSpecialEventImages(list));
     if (res.ok) {
+      setList(res.data);
       toast.success("Flyers saved", "Live on the website now.");
       router.refresh();
     } else toast.error(res.error);
