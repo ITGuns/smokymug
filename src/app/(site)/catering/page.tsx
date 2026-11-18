@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { createElement } from "react";
+import { Briefcase, Gift, PartyPopper, UtensilsCrossed, type LucideIcon } from "lucide-react";
 import { CateringForm } from "@/components/catering/CateringForm";
 import { EmailLink } from "@/components/site/EmailLink";
 import { ParallaxImage } from "@/components/motion/ParallaxImage";
@@ -19,12 +21,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/catering" },
 };
 
-/** Drawn icons for the printed four, by name; a package added in Admin gets the serving dome. */
-const ICONS: Record<string, React.ReactNode> = {
-  Parties: <path d="M4 20l4-12 4 6 4-8 4 14M2 20h20" />,
-  Professional: <path d="M3 8h18v12H3zM8 8V5h8v3M3 13h18" />,
-  Holiday: <path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.6L7.1 18.2l.9-5.5-4-3.9L9.5 8z" />,
-  "Full Service": <path d="M3 17h18M5 17a7 7 0 0 1 14 0M12 8V6M10 6h4" />,
+/** lucide icons for the printed four, by name (DESIGN.md Icons); a package added in Admin gets Full Service's. */
+const ICONS: Record<string, LucideIcon> = {
+  Parties: PartyPopper,
+  Professional: Briefcase,
+  Holiday: Gift,
+  "Full Service": UtensilsCrossed,
 };
 
 export default async function CateringPage() {
@@ -69,7 +71,7 @@ export default async function CateringPage() {
               {packages.map((c) => (
                 <RevealItem key={c.id} className="group flex h-full flex-col rounded-2xl border border-charcoal-900/8 bg-cream-50 p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:shadow-lift">
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-teal-600/10 text-teal-600">
-                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{Object.hasOwn(ICONS, c.name) ? ICONS[c.name] : ICONS["Full Service"]}</svg>
+                    {createElement(Object.hasOwn(ICONS, c.name) ? ICONS[c.name] : UtensilsCrossed, { "aria-hidden": true, className: "h-5 w-5", strokeWidth: 1.8 })}
                   </span>
                   <h3 className="mt-5 font-display text-2xl font-semibold text-charcoal-900 transition-colors group-hover:text-ember-600">{c.name}</h3>
                   {c.blurb && <p className="mt-2 text-[14.5px] leading-relaxed text-charcoal-700">{c.blurb}</p>}

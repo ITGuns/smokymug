@@ -1,5 +1,6 @@
 "use client";
 
+import { MapPin, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -163,10 +164,7 @@ export function Header({
         </div>
         <div className="container-site hidden h-9 items-center justify-between font-label text-[12.5px] tracking-[0.16em] text-cream-100/85 lg:flex">
           <span className="inline-flex items-center gap-2">
-            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-teal-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z" />
-              <circle cx="12" cy="10" r="3" />
-            </svg>
+            <MapPin aria-hidden className="h-3.5 w-3.5 text-teal-300" />
             {address}
           </span>
           <div className="flex items-center gap-6">
@@ -306,9 +304,7 @@ export function Header({
                     onClick={closeAndFocus}
                     className="flex h-11 w-11 items-center justify-center rounded-full border border-cream-50/15 text-cream-50"
                   >
-                    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <path d="M5 5l10 10M15 5L5 15" />
-                    </svg>
+                    <X aria-hidden className="h-4 w-4" />
                   </button>
                 </div>
                 <nav aria-label="Mobile" className="flex flex-col">

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { motion } from "motion/react";
@@ -104,18 +105,7 @@ export function MenuDropdown({ links, label = "Explore Menu", className }: { lin
         className="group/btn inline-flex h-13 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-ember-600 px-8 text-base font-western tracking-[0.02em] text-cream-50 shadow-[0_8px_24px_-8px_rgb(165_79_31/0.7)] transition-all duration-300 ease-out-expo select-none hover:bg-ember-700 hover:shadow-glow active:scale-[0.98]"
       >
         {label}
-        <svg
-          aria-hidden
-          viewBox="0 0 20 20"
-          className={cn("h-4 w-4 transition-transform duration-300 ease-out-expo", open && "rotate-180")}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M5 8l5 5 5-5" />
-        </svg>
+        <ChevronDown aria-hidden className={cn("h-4 w-4 transition-transform duration-300 ease-out-expo", open && "rotate-180")} />
       </button>
       {/* No exit animation: the panel must unmount with `open`, or an invisible
           copy keeps intercepting clicks over the hero buttons. */}

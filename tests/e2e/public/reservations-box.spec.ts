@@ -33,6 +33,19 @@ test.describe("Book a Table: SpotOn reservations box (BK02)", () => {
     await expect(page.getByRole("heading", { name: "When are you coming in?" })).toHaveCount(0);
   });
 
+  test("unreachable host: the plain link and the phone, no frame", async ({ page }) => {
+    // .invalid never resolves (RFC 2606), so the reachability probe fails and the frame gives way to the card
+    const url = "https://qa-reservations.invalid/";
+    await setReservationsUrl(url);
+    await page.goto("/book");
+    await expect(page.locator('iframe[title="SpotOn reservations"]')).toHaveCount(0);
+    const link = page.getByRole("link", { name: /Open reservations/ });
+    await expect(link).toHaveAttribute("href", url);
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(page.getByRole("link", { name: "(804) 562-3722" }).first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "When are you coming in?" })).toHaveCount(0);
+  });
+
   test("Book a Table CTAs still lead to /book", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("banner").getByRole("link", { name: "Book a Table" })).toHaveAttribute("href", "/book");

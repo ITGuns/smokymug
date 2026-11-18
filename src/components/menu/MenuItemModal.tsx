@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useRef } from "react";
@@ -58,9 +59,7 @@ export function MenuItemModal({
               data-autofocus
               className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-charcoal-950/60 text-cream-50 backdrop-blur transition hover:bg-charcoal-950"
             >
-              <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M5 5l10 10M15 5L5 15" />
-              </svg>
+              <X aria-hidden className="h-4 w-4" />
             </button>
             <div className="overflow-y-auto">
               {item.image ? (

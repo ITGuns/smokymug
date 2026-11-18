@@ -100,6 +100,27 @@ Rules (2 Nov):
   without text stay unfiltered.
 - Menu page headers: photo background + scrim, one photo per menu (placeholders
   until Dan supplies photos, Q7).
+- **Icons (18 Nov 2026, Pol's order "the icons for the events grab anywhere
+  from ui libraries")**: every UI icon comes from `lucide-react` (MIT, named
+  per-icon imports, stroke on currentColor, so the colour is the parent's text
+  token as before). Lucide draws on a 24 grid at stroke 2, which matches the
+  old 1.7 on a 20 grid; catering cards, the admin sidebar, the hero pin and
+  the phone button keep 1.8. Sizes stay as they were: h-4 w-4 for event types
+  and controls, h-5 w-5 for catering cards, 18px in the admin sidebar.
+  Mapping: event types Live music Music, Specials Tag, Pop-up Store, Community
+  Users, a type added in Admin Star, closed day Ban; catering Parties
+  PartyPopper, Professional Briefcase, Holiday Gift, Full Service
+  UtensilsCrossed (also the fallback for a package added in Admin). Controls
+  use the plain glyphs (X, Menu, ChevronLeft/Right/Down, Search, ListFilter,
+  MapPin, Phone, Play, Pause, Plus, Minus, ArrowRight on buttons, Eye and
+  EyeOff on the admin password toggle, X on the cancelled booking).
+  Review stars are Star filled with currentColor at stroke 1. Still inline
+  by design: the animated check on a confirmed booking (its stroke draws in
+  with motion pathLength) and the admin select arrow (a CSS data-URI
+  background, not markup). Decorative icons carry
+  aria-hidden; the meaning is always also text or the control's aria-label.
+  Not lucide: the wordmark, the favicon, the social brand marks
+  (SocialLinks.tsx), the NewTabCue and decorative artwork.
 
 ## 4. Layouts chosen by Dan
 
@@ -209,6 +230,13 @@ Rules (2 Nov):
   (default off, also after `db:reseed`); its "Online booking enabled" pause
   still applies inside it, and its server actions refuse while it is off. /book
   alone sends a CSP whose frame-src allows https (middleware, `src/lib/csp.ts`).
+  18 Nov 2026: the same /book CSP also sets connect-src 'self' https: so the
+  page can probe the reservations host (a no-cors fetch, 8 second timeout,
+  `src/lib/probe-url.ts`); when the probe fails the frame is swapped for the
+  existing "Open reservations" button and "or call" phone line
+  (ReservationsFrame.tsx). Chrome fires the frame's load event even on its
+  own error page, so the frame cannot detect this itself. Every other page
+  keeps connect-src 'self'.
 - **CA03 dual paper trail (built 3 Nov)**: Admin, Settings, "Catering inquiry
   copies" (up to 10 addresses). Each inquiry is emailed to the catering email
   with those copies, via Resend, only once RESEND_API_KEY and

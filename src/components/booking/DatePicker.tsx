@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 import { addDays, parseDate, toYmd } from "@/lib/format";
 import { DAY_SHORT } from "@/lib/constants";
@@ -40,11 +41,11 @@ export function DatePicker({
     <div className="rounded-2xl border border-charcoal-900/10 bg-cream-50 p-4 sm:p-6">
       <div className="flex items-center justify-between">
         <button type="button" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1, 12))} disabled={!canPrev} aria-label="Previous month" className="flex h-10 w-10 items-center justify-center rounded-full border border-charcoal-900/10 text-charcoal-900 transition hover:bg-charcoal-900/5 disabled:opacity-30">
-          <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4l-6 6 6 6" /></svg>
+          <ChevronLeft aria-hidden className="h-4 w-4" />
         </button>
         <h3 className="font-display text-xl font-semibold text-charcoal-900" aria-live="polite">{monthLabel}</h3>
         <button type="button" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1, 12))} disabled={!canNext} aria-label="Next month" className="flex h-10 w-10 items-center justify-center rounded-full border border-charcoal-900/10 text-charcoal-900 transition hover:bg-charcoal-900/5 disabled:opacity-30">
-          <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 4l6 6-6 6" /></svg>
+          <ChevronRight aria-hidden className="h-4 w-4" />
         </button>
       </div>
       <div className="mt-4 grid grid-cols-7 gap-1 text-center">

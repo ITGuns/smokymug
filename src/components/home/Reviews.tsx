@@ -1,3 +1,4 @@
+import { Star } from "lucide-react";
 import type { Review } from "@/db/schema";
 import { Carousel } from "@/components/motion/Carousel";
 import { Reveal } from "@/components/ui/Reveal";
@@ -66,9 +67,7 @@ function Stars({ rating }: { rating: number | null }) {
   return (
     <div className="mt-5 flex items-center gap-0.5" role="img" aria-label={label}>
       {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} viewBox="0 0 20 20" className={i < filled ? "h-4 w-4 text-gold-500" : "h-4 w-4 text-charcoal-900/15"} fill="currentColor" aria-hidden>
-          <path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L10 14.9l-5.3 2.8 1.1-5.9L1.5 7.7l5.9-.8L10 1.5z" />
-        </svg>
+        <Star key={i} aria-hidden className={i < filled ? "h-4 w-4 text-gold-500" : "h-4 w-4 text-charcoal-900/15"} fill="currentColor" strokeWidth={1} />
       ))}
     </div>
   );

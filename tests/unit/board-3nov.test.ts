@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import nextConfig from "../../next.config";
 import { buildCsp } from "@/lib/csp";
 import { isMissingSchema } from "@/lib/db-errors";
+import { Music, Store, Tag, Users } from "lucide-react";
 import { EVENT_KIND_ICON, EVENT_KINDS, isEventKind } from "@/lib/event-kinds";
 import { buildInquiryEmail, inquiryMailConfig } from "@/lib/inquiry-mail";
 import { balanceColumns } from "@/lib/masonry";
@@ -43,7 +44,8 @@ describe("B6 event types", () => {
   it("has 3 or 4 types, each with an icon", () => {
     expect(EVENT_KINDS.length).toBeGreaterThanOrEqual(3);
     expect(EVENT_KINDS.length).toBeLessThanOrEqual(4);
-    for (const k of EVENT_KINDS) expect(EVENT_KIND_ICON[k.key].length).toBeGreaterThan(0);
+    expect(EVENT_KIND_ICON).toEqual({ music: Music, special: Tag, popup: Store, community: Users });
+    expect(new Set(EVENT_KINDS.map((k) => EVENT_KIND_ICON[k.key])).size).toBe(EVENT_KINDS.length);
   });
 
   it("validates the admin type field", () => {
@@ -116,5 +118,10 @@ describe("CSP", () => {
   it("only the /book variant allows any https frame", () => {
     expect(buildCsp({ dev: false })).not.toMatch(/frame-src[^;]* https:(;|$)/);
     expect(buildCsp({ dev: false, frameAnyHttps: true })).toMatch(/frame-src[^;]* https:(;|$)/);
+  });
+
+  it("only the /book variant lets the reservations probe connect to https hosts", () => {
+    expect(buildCsp({ dev: false })).toMatch(/connect-src 'self';/);
+    expect(buildCsp({ dev: false, frameAnyHttps: true })).toMatch(/connect-src 'self' https:;/);
   });
 });

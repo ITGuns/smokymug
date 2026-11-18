@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
@@ -61,18 +62,7 @@ type Common = { variant?: Variant; size?: Size; shape?: Shape; face?: Face; clas
 
 export function Arrow({ className }: { className?: string }) {
   return (
-    <svg
-      aria-hidden
-      viewBox="0 0 20 20"
-      className={cn("h-4 w-4 shrink-0 transition-transform duration-300 ease-out-expo group-hover/btn:translate-x-1", className)}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 10h12M11 5l5 5-5 5" />
-    </svg>
+    <ArrowRight aria-hidden className={cn("h-4 w-4 shrink-0 transition-transform duration-300 ease-out-expo group-hover/btn:translate-x-1", className)} />
   );
 }
 

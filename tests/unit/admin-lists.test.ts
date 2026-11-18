@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { CATERING_PACKAGES, EVENT_KIND_TYPES } from "@/db/seed-data/admin-lists";
 import { CATERING } from "@/db/seed-data/restaurant";
-import { EVENT_KIND_FALLBACK_ICON, EVENT_KIND_ICON, EVENT_KINDS, eventKindIcon } from "@/lib/event-kinds";
+import { Music, Star } from "lucide-react";
+import { EVENT_KIND_FALLBACK_ICON, EVENT_KINDS, eventKindIcon } from "@/lib/event-kinds";
 import { cateringPackageInput, cateringPackageOrderInput, eventInputFor, eventKindTypeAddInput } from "@/lib/validation";
 
 // Audit F11 + F12 (18 Nov 2026): the two lists Admin now edits.
@@ -55,10 +56,11 @@ describe("F11 event types", () => {
     expect(input.safeParse({ ...base, kind: "popup" }).success).toBe(false);
   });
 
-  it("keeps the drawn icons and gives a new type the star", () => {
-    expect(eventKindIcon("music")).toEqual(EVENT_KIND_ICON.music);
-    expect(eventKindIcon("brunch")).toEqual(EVENT_KIND_FALLBACK_ICON);
-    expect(eventKindIcon("constructor")).toEqual(EVENT_KIND_FALLBACK_ICON);
+  it("keeps the lucide icons and gives a new type the star", () => {
+    expect(eventKindIcon("music")).toBe(Music);
+    expect(EVENT_KIND_FALLBACK_ICON).toBe(Star);
+    expect(eventKindIcon("brunch")).toBe(Star);
+    expect(eventKindIcon("constructor")).toBe(Star);
   });
 
   it("checks a type name", () => {

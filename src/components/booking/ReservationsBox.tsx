@@ -1,11 +1,12 @@
 import { ButtonLink } from "@/components/ui/Button";
-import { NewTabCue } from "@/components/ui/NewTabCue";
+import { ReservationsFrame } from "@/components/booking/ReservationsFrame";
 
 /**
  * BK02 (board: "Integrate SpotOn Reservations basically a box with the spotOn
  * reservation interface"; in scope per Pol 3 Nov). The admin-set SpotOn link is
  * framed in a 16px card; a plain link sits under it in case SpotOn refuses to
- * be framed, and the phone covers SpotOn being down. With no link set yet the
+ * be framed, and the phone covers SpotOn being down. ReservationsFrame swaps
+ * the frame for the link and phone when the host is unreachable (18 Nov). With no link set yet the
  * card is just the phone number.
  */
 export function ReservationsBox({ url, phone }: { url: string | null; phone: string }) {
@@ -21,29 +22,5 @@ export function ReservationsBox({ url, phone }: { url: string | null; phone: str
       </div>
     );
   }
-  return (
-    <div className="mx-auto max-w-3xl">
-      <div className="overflow-hidden rounded-2xl border border-charcoal-900/10 bg-cream-50 shadow-card">
-        <iframe
-          src={url}
-          title="SpotOn reservations"
-          className="block h-[760px] w-full border-0"
-          referrerPolicy="strict-origin-when-cross-origin"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
-        />
-      </div>
-      <p className="mt-5 text-center text-[15px] text-charcoal-700">
-        Box not loading?{" "}
-        <a href={url} target="_blank" rel="noopener noreferrer" className="font-semibold text-ember-600 underline-offset-4 hover:underline">
-          Open reservations ↗
-          <NewTabCue />
-        </a>{" "}
-        or call{" "}
-        <a href={tel} className="font-semibold text-charcoal-900">
-          {phone}
-        </a>
-        .
-      </p>
-    </div>
-  );
+  return <ReservationsFrame url={url} phone={phone} tel={tel} />;
 }

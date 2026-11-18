@@ -1,5 +1,6 @@
 "use client";
 
+import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { PriceTag } from "@/components/menu/PriceTag";
 import type { PublicOrderItem } from "@/lib/data/ordering";
@@ -52,7 +53,7 @@ export function OrderItemRow({
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
           <div className="flex items-center gap-2">
             <button type="button" aria-label={`Fewer ${item.name}`} disabled={disabled || qty <= 0} onClick={() => step(-1)} className={stepBtn}>
-              <svg aria-hidden viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 10h10" /></svg>
+              <Minus aria-hidden className="h-4 w-4" />
             </button>
             <label htmlFor={inputId} className="sr-only">
               Quantity for {item.name}
@@ -76,7 +77,7 @@ export function OrderItemRow({
               )}
             />
             <button type="button" aria-label={`More ${item.name}`} disabled={disabled || qty >= item.maxQty} onClick={() => step(1)} className={stepBtn}>
-              <svg aria-hidden viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10 5v10M5 10h10" /></svg>
+              <Plus aria-hidden className="h-4 w-4" />
             </button>
           </div>
           <span id={hintId} className="text-[13px] text-charcoal-500">

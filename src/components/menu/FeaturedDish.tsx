@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import type { AvailabilityInfo } from "@/lib/availability";
 import type { ItemNode } from "@/lib/data/menu";
@@ -76,9 +77,7 @@ export function FeaturedDish({
               {customizable && (
                 <span className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-cream-100/70 transition-colors group-hover:text-ember-300">
                   Options
-                  <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M7 5l5 5-5 5" />
-                  </svg>
+                  <ChevronRight aria-hidden className="h-3.5 w-3.5" />
                 </span>
               )}
             </div>

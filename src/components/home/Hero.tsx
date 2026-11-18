@@ -1,5 +1,6 @@
 "use client";
 
+import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
@@ -120,10 +121,7 @@ export function Hero({
               {status.detail && <span>· {status.detail}</span>}
             </span>
             <Link href="/contact" className="inline-flex items-center gap-2 hover:text-cream-50">
-              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
+              <MapPin aria-hidden className="h-4 w-4" strokeWidth={1.8} />
               {addressShort}
             </Link>
           </motion.div>

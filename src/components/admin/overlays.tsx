@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef } from "react";
 import { Btn } from "./ui";
@@ -32,7 +33,7 @@ export function Drawer({ open, onClose, title, description, children, footer, wi
                 {description && <p className="mt-0.5 text-[13px] text-zinc-500">{description}</p>}
               </div>
               <button type="button" onClick={onClose} aria-label="Close" className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900">
-                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 5l10 10M15 5L5 15" /></svg>
+                <X aria-hidden className="h-4 w-4" />
               </button>
             </header>
             <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>

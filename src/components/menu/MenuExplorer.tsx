@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown, ListFilter, Search } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
@@ -130,10 +131,7 @@ export function MenuExplorer({
           <div className="flex items-center gap-2">
             <label className="relative flex-1 lg:w-72">
               <span className="sr-only">Search the menu</span>
-              <svg aria-hidden viewBox="0 0 20 20" className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-500" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <circle cx="9" cy="9" r="6" />
-                <path d="M14 14l4 4" />
-              </svg>
+              <Search aria-hidden className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-500" />
               <input
                 type="search"
                 value={filters.query}
@@ -152,9 +150,7 @@ export function MenuExplorer({
                 activeFilterCount ? "border-ember-600 bg-ember-600 text-cream-50" : "border-charcoal-900/12 bg-cream-50 text-charcoal-800 hover:border-charcoal-900/30",
               )}
             >
-              <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M3 5h14M6 10h8M8 15h4" />
-              </svg>
+              <ListFilter aria-hidden className="h-4 w-4" />
               Filters{activeFilterCount ? ` · ${activeFilterCount}` : ""}
             </button>
           </div>
@@ -272,9 +268,7 @@ export function MenuExplorer({
                               className="flex h-9 items-center gap-1.5 rounded-full px-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-charcoal-500 hover:bg-charcoal-900/5 lg:hidden"
                             >
                               {isCollapsed ? "Show" : "Hide"}
-                              <svg viewBox="0 0 20 20" className={cn("h-4 w-4 transition-transform", !isCollapsed && "rotate-180")} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                <path d="M5 8l5 5 5-5" />
-                              </svg>
+                              <ChevronDown aria-hidden className={cn("h-4 w-4 transition-transform", !isCollapsed && "rotate-180")} />
                             </button>
                           </div>
                           {!isCollapsed &&

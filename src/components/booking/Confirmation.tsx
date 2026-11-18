@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
@@ -41,7 +42,7 @@ export function Confirmation({
     <div className="mx-auto max-w-xl text-center" role="status" aria-live="polite">
       <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 260, damping: 18 }} className={`mx-auto flex h-20 w-20 items-center justify-center rounded-full text-cream-50 ${cancelled ? "bg-brick-600 shadow-glow" : "bg-ember-500 shadow-lift"}`}>
         {cancelled ? (
-          <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          <X aria-hidden className="h-9 w-9" strokeWidth={2.5} />
         ) : (
           <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <motion.path d="M5 12.5l4.5 4.5L19 7.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.25, duration: 0.5, ease: "easeOut" }} />

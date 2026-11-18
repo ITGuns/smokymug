@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Children, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 
@@ -138,14 +139,10 @@ export function Carousel({
           {showArrows && (
             <div className="flex gap-2">
               <button type="button" onClick={() => scrollTo(index - 1)} aria-label="Previous slide" className={btn} disabled={index === 0}>
-                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 4l-6 6 6 6" />
-                </svg>
+                <ChevronLeft aria-hidden className="h-4 w-4" />
               </button>
               <button type="button" onClick={() => scrollTo(index + 1)} aria-label="Next slide" className={btn} disabled={index >= count - 1}>
-                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M8 4l6 6-6 6" />
-                </svg>
+                <ChevronRight aria-hidden className="h-4 w-4" />
               </button>
             </div>
           )}

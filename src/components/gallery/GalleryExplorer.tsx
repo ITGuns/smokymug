@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -180,13 +181,13 @@ export function GalleryExplorer({ images, initialPhoto }: { images: GalleryImage
             aria-label={current.alt}
           >
             <button type="button" onClick={() => setOpen(null)} aria-label="Close" data-autofocus className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-cream-50/10 text-cream-50 backdrop-blur transition hover:bg-cream-50/20">
-              <svg viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 5l10 10M15 5L5 15" /></svg>
+              <X aria-hidden className="h-5 w-5" />
             </button>
             <button type="button" onClick={(e) => { e.stopPropagation(); step(-1); }} aria-label="Previous photo" className="absolute left-3 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 text-cream-50 backdrop-blur transition hover:bg-cream-50/20 sm:flex">
-              <svg viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4l-6 6 6 6" /></svg>
+              <ChevronLeft aria-hidden className="h-5 w-5" />
             </button>
             <button type="button" onClick={(e) => { e.stopPropagation(); step(1); }} aria-label="Next photo" className="absolute right-3 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 text-cream-50 backdrop-blur transition hover:bg-cream-50/20 sm:flex">
-              <svg viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 4l6 6-6 6" /></svg>
+              <ChevronRight aria-hidden className="h-5 w-5" />
             </button>
             <AnimatePresence mode="wait">
               <motion.figure

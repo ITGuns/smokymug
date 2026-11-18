@@ -1,5 +1,6 @@
 "use client";
 
+import { Pause, Play } from "lucide-react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { MotionConfig } from "motion/react";
 
@@ -56,13 +57,9 @@ export function MotionToggle({ className }: { className?: string }) {
       className={className}
     >
       {paused ? (
-        <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden>
-          <path d="M6 4.5v11l9-5.5-9-5.5z" />
-        </svg>
+        <Play aria-hidden className="h-4 w-4" fill="currentColor" />
       ) : (
-        <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden>
-          <path d="M5.5 4h3v12h-3zM11.5 4h3v12h-3z" />
-        </svg>
+        <Pause aria-hidden className="h-4 w-4" fill="currentColor" />
       )}
     </button>
   );

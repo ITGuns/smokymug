@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -125,9 +126,7 @@ export function EventsCalendar({
             aria-label="Previous month"
             className="flex h-11 w-11 items-center justify-center rounded-full border border-charcoal-900/15 text-charcoal-700 transition hover:border-ember-500 hover:text-ember-600"
           >
-            <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 15l-5-5 5-5" />
-            </svg>
+            <ChevronLeft aria-hidden className="h-4 w-4" />
           </Link>
           <Link
             href={`/calendar?month=${nextMonth}`}
@@ -135,9 +134,7 @@ export function EventsCalendar({
             aria-label="Next month"
             className="flex h-11 w-11 items-center justify-center rounded-full border border-charcoal-900/15 text-charcoal-700 transition hover:border-ember-500 hover:text-ember-600"
           >
-            <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M8 5l5 5-5 5" />
-            </svg>
+            <ChevronRight aria-hidden className="h-4 w-4" />
           </Link>
         </div>
       </div>
@@ -211,16 +208,7 @@ export function EventsCalendar({
                           </span>
                         )}
                       </span>
-                      <svg
-                        viewBox="0 0 20 20"
-                        className={cn("h-4 w-4 shrink-0 self-center text-charcoal-500 transition-transform", open && "rotate-180")}
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      >
-                        <path d="M5 8l5 5 5-5" />
-                      </svg>
+                      <ChevronDown aria-hidden className={cn("h-4 w-4 shrink-0 self-center text-charcoal-500 transition-transform", open && "rotate-180")} />
                     </button>
                     <AnimatePresence initial={false}>
                       {open && (
@@ -364,9 +352,7 @@ export function EventsCalendar({
                     onClick={closePopout}
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-cream-50/20 text-cream-50 transition hover:border-ember-300 hover:text-ember-300"
                   >
-                    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <path d="M5 5l10 10M15 5L5 15" />
-                    </svg>
+                    <X aria-hidden className="h-4 w-4" />
                   </button>
                 </div>
                 <ul className="mt-5 space-y-6">
