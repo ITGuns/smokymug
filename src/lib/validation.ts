@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { AVAILABILITY_TYPES, DIETARY_TAGS, HOURS_CATEGORIES, ORDER_MENUS, ORDER_REQUEST_STATUSES, RESERVATION_STATUSES } from "@/db/schema";
 import { looksLikeCardNumber, MAX_LINE_QTY, MAX_LINES } from "@/lib/ordering";
+import { isEventIcon } from "@/lib/event-icons";
 import { EVENT_KIND_KEYS } from "@/lib/event-kinds";
 import { GALLERY_TAG_KEYS } from "@/lib/gallery-tags";
 import { REVIEW_SOURCES } from "@/lib/reviews";
@@ -417,6 +418,11 @@ export const eventInputFor = (kindKeys: readonly string[]) =>
     /** B6 event type; "" = no type */
     kind: z
       .union([z.literal(""), z.null(), z.string().refine((v) => kindKeys.includes(v), "Pick a type from the list")])
+      .optional()
+      .transform((v) => (v ? v : null)),
+    /** 19 Nov 2026: the event's own calendar icon, a name from EVENT_ICONS; "" = use the type's icon */
+    icon: z
+      .union([z.literal(""), z.null(), z.string().refine((v) => isEventIcon(v), "Pick an icon from the list")])
       .optional()
       .transform((v) => (v ? v : null)),
   });

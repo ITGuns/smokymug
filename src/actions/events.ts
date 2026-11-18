@@ -10,7 +10,7 @@ import { dropUnusedUploads } from "@/lib/upload-refs";
 import { eventInputFor, fieldErrors, specialEventImagesInput, specialEventsInput } from "@/lib/validation";
 import { fail, type ActionResult } from "./types";
 
-const { events, eventKinds, specialEvents, specialEventImages } = schema;
+const { events, eventIcons, eventKinds, specialEvents, specialEventImages } = schema;
 
 async function guard(): Promise<ActionResult<never> | null> {
   try {
@@ -39,14 +39,29 @@ async function saveKind(eventId: number, kind: string | null): Promise<boolean> 
   }
 }
 
-export async function saveEvent(input: unknown): Promise<ActionResult<{ id: number; kindSkipped: boolean }>> {
+/** 19 Nov 2026: writes the event's own icon. A cleared icon stays as a null
+ *  row, so the add-only seed never puts its icon back. false = the event_icons
+ *  table is missing on this database (needs db:push). */
+async function saveIcon(eventId: number, icon: string | null): Promise<boolean> {
+  try {
+    await db.insert(eventIcons).values({ eventId, icon }).onConflictDoUpdate({ target: eventIcons.eventId, set: { icon } });
+    return true;
+  } catch (err) {
+    if (isMissingSchema(err)) return false;
+    throw err;
+  }
+}
+
+export async function saveEvent(
+  input: unknown,
+): Promise<ActionResult<{ id: number; kindSkipped: boolean; iconSkipped: boolean }>> {
   const g = await guard();
   if (g) return g;
   // F11: the type must be one of the types listed in Admin, Calendar right now
   const { types } = await readEventKindTypes();
   const parsed = eventInputFor(types.map((t) => t.key)).safeParse(input);
   if (!parsed.success) return fail("Check the highlighted fields.", { fieldErrors: fieldErrors(parsed.error) });
-  const { id, kind, ...data } = parsed.data;
+  const { id, kind, icon, ...data } = parsed.data;
   if (data.startTime && data.endTime && data.endTime <= data.startTime)
     return fail("Check the highlighted fields.", { fieldErrors: { endTime: "End must be after start" } });
 
@@ -58,8 +73,12 @@ export async function saveEvent(input: unknown): Promise<ActionResult<{ id: numb
     [row] = await db.insert(events).values(data).returning({ id: events.id });
   }
   const kindSaved = await saveKind(row.id, kind);
+  const iconSaved = await saveIcon(row.id, icon);
   revalidateContent();
-  return { ok: true, data: { id: row.id, kindSkipped: !kindSaved && kind != null } };
+  return {
+    ok: true,
+    data: { id: row.id, kindSkipped: !kindSaved && kind != null, iconSkipped: !iconSaved && icon != null },
+  };
 }
 
 export async function deleteEvent(id: number): Promise<ActionResult> {

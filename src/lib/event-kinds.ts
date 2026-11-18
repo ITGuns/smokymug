@@ -1,4 +1,4 @@
-import { Music, Star, Store, Tag, Users, type LucideIcon } from "lucide-react";
+import { Brain, Clock, Music, Star, Store, Tag, Users, type LucideIcon } from "lucide-react";
 
 /** B6 / board L6: "3 or 4 small icons that could denote a type of event -
  *  Icon design legend". Dan named no types, so these four reuse the words the
@@ -10,6 +10,10 @@ export const EVENT_KINDS = [
   { key: "special", label: "Specials" },
   { key: "popup", label: "Pop-up" },
   { key: "community", label: "Community" },
+  // 19 Nov 2026 (Pol): Dan's own list is mostly Trivia nights and hour changes. Each key is
+  // what Admin's slugify makes of the label, so typing "Trivia" or "Hours" lands on these.
+  { key: "trivia", label: "Trivia" },
+  { key: "hours", label: "Hours" },
 ] as const;
 
 export type EventKind = (typeof EVENT_KINDS)[number]["key"];
@@ -34,9 +38,12 @@ export const EVENT_KIND_ICON: Record<EventKind, LucideIcon> = {
   special: Tag,
   popup: Store,
   community: Users,
+  trivia: Brain,
+  hours: Clock,
 };
 
-/** F11: a type added in Admin has no icon of its own, so it gets a star. */
+/** F11: a type added in Admin has no icon of its own, so it gets a star. An event with
+ *  no type gets it too, so the calendar shows an icon for every event, never a dot. */
 export const EVENT_KIND_FALLBACK_ICON: LucideIcon = Star;
 
 export function eventKindIcon(key: string): LucideIcon {

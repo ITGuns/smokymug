@@ -8,13 +8,28 @@ import { ConfirmDialog, Drawer } from "@/components/admin/overlays";
 import { useToast } from "@/components/admin/toast";
 import { useAction } from "@/components/admin/useAction";
 import { Btn, Card, Checkbox, EmptyState, Field, Input, Select, Tag, Textarea } from "@/components/admin/ui";
+import { MarkerIcon } from "@/components/calendar/EventKindIcon";
+import { EVENT_ICONS, eventMarker, isEventIcon } from "@/lib/event-icons";
 import type { KindOption } from "@/lib/event-kinds";
 import { longDate, time12 } from "@/lib/format";
 
 /** NW01 admin: full CRUD for calendar events, plus the optional event type
  *  (B6, in scope per Pol 3 Nov) that picks the icon on /calendar. The types
- *  come from Event types below (F11, 18 Nov 2026). */
-export function EventsManager({ events, kinds, types, today }: { events: SiteEvent[]; kinds: Record<number, string>; types: KindOption[]; today: string }) {
+ *  come from Event types below (F11, 18 Nov 2026). 19 Nov 2026: an event can
+ *  pick its own calendar icon, so the marker shows the activity. */
+export function EventsManager({
+  events,
+  kinds,
+  icons,
+  types,
+  today,
+}: {
+  events: SiteEvent[];
+  kinds: Record<number, string>;
+  icons: Record<number, string>;
+  types: KindOption[];
+  today: string;
+}) {
   const router = useRouter();
   const labels = new Map(types.map((t) => [t.key, t.label]));
   const toast = useToast();
@@ -38,6 +53,7 @@ export function EventsManager({ events, kinds, types, today }: { events: SiteEve
   const row = (e: SiteEvent) => (
     <li key={e.id} className="flex flex-wrap items-center gap-3 px-4 py-2.5 text-[14px]">
       <span className="w-44 font-medium text-zinc-900">{longDate(e.date, { weekday: true, year: true })}</span>
+      <MarkerIcon icon={eventMarker(e.title, icons[e.id], kinds[e.id], labels.get(kinds[e.id] ?? "")).icon} className="text-zinc-500" />
       <span className="min-w-0 flex-1 truncate text-zinc-700">{e.title}</span>
       {kinds[e.id] && <Tag tone="blue">{labels.get(kinds[e.id]) ?? kinds[e.id]}</Tag>}
       {e.startTime && (
@@ -77,7 +93,17 @@ export function EventsManager({ events, kinds, types, today }: { events: SiteEve
 
       <Drawer open={editing !== null} onClose={() => setEditing(null)} title={editing === "new" ? "Add an event" : "Edit event"} width="max-w-md">
         {editing !== null && (
-          <EventForm key={editing === "new" ? "new" : editing.id} e={editing === "new" ? null : editing} kind={editing === "new" ? null : (kinds[editing.id] ?? null)} types={types} onDone={() => { setEditing(null); router.refresh(); }} />
+          <EventForm
+            key={editing === "new" ? "new" : editing.id}
+            e={editing === "new" ? null : editing}
+            kind={editing === "new" ? null : (kinds[editing.id] ?? null)}
+            icon={editing === "new" ? null : (icons[editing.id] ?? null)}
+            types={types}
+            onDone={() => {
+              setEditing(null);
+              router.refresh();
+            }}
+          />
         )}
       </Drawer>
       <ConfirmDialog
@@ -93,8 +119,21 @@ export function EventsManager({ events, kinds, types, today }: { events: SiteEve
   );
 }
 
-function EventForm({ e, kind, types, onDone }: { e: SiteEvent | null; kind: string | null; types: KindOption[]; onDone: () => void }) {
+function EventForm({
+  e,
+  kind,
+  icon,
+  types,
+  onDone,
+}: {
+  e: SiteEvent | null;
+  kind: string | null;
+  icon: string | null;
+  types: KindOption[];
+  onDone: () => void;
+}) {
   const toast = useToast();
+  const labels = new Map(types.map((t) => [t.key, t.label]));
   const [f, setF] = useState({
     title: e?.title ?? "",
     date: e?.date ?? "",
@@ -105,7 +144,10 @@ function EventForm({ e, kind, types, onDone }: { e: SiteEvent | null; kind: stri
     linkLabel: e?.linkLabel ?? "",
     active: e?.active ?? true,
     kind: kind && types.some((t) => t.key === kind) ? kind : "",
+    icon: isEventIcon(icon) ? icon : "",
   });
+  // The icon guests will see, worked out the same way as on /calendar
+  const preview = eventMarker(f.title, f.icon, f.kind, labels.get(f.kind)).icon;
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { busy, run } = useAction();
 
@@ -113,7 +155,8 @@ function EventForm({ e, kind, types, onDone }: { e: SiteEvent | null; kind: stri
     ev.preventDefault();
     const res = await run(() => saveEvent({ id: e?.id, ...f }));
     if (res.ok) {
-      if (res.data.kindSkipped) toast.success("Event saved", "The event type needs a one-time database update (npm run db:push) before it can be stored.");
+      if (res.data.kindSkipped || res.data.iconSkipped)
+        toast.success("Event saved", "The event type or icon needs a one-time database update (npm run db:push) before it can be stored.");
       else toast.success("Event saved", "Live on the website now.");
       onDone();
     } else {
@@ -130,7 +173,7 @@ function EventForm({ e, kind, types, onDone }: { e: SiteEvent | null; kind: stri
       <Field label="Date" htmlFor="e-date" error={errors.date} required>
         <Input id="e-date" type="date" value={f.date} onChange={(ev) => setF({ ...f, date: ev.target.value })} required />
       </Field>
-      <Field label="Type" htmlFor="e-kind" error={errors.kind} hint="Picks the small icon on the public calendar. Edit the list under Event types.">
+      <Field label="Type" htmlFor="e-kind" error={errors.kind} hint="Gives the event its icon unless you pick a calendar icon below. Edit the list under Event types.">
         <Select id="e-kind" value={f.kind} onChange={(ev) => setF({ ...f, kind: ev.target.value })}>
           <option value="">No type</option>
           {types.map((k) => (
@@ -139,6 +182,26 @@ function EventForm({ e, kind, types, onDone }: { e: SiteEvent | null; kind: stri
             </option>
           ))}
         </Select>
+      </Field>
+      <Field
+        label="Calendar icon"
+        htmlFor="e-icon"
+        error={errors.icon}
+        hint="The icon guests see on the public calendar. Pick the one that matches the activity, or keep the type's icon."
+      >
+        <div className="flex items-center gap-3">
+          <span aria-hidden className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700">
+            <MarkerIcon icon={preview} />
+          </span>
+          <Select id="e-icon" value={f.icon} onChange={(ev) => setF({ ...f, icon: ev.target.value })} error={!!errors.icon} className="flex-1">
+            <option value="">Use the type&apos;s icon</option>
+            {EVENT_ICONS.map((i) => (
+              <option key={i.name} value={i.name}>
+                {i.label} ({i.name})
+              </option>
+            ))}
+          </Select>
+        </div>
       </Field>
       <div className="grid grid-cols-2 gap-4">
         <Field label="Starts" htmlFor="e-start" error={errors.startTime} hint="Leave blank for all-day">

@@ -7,8 +7,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SiteEvent } from "@/db/schema";
 import { cn } from "@/lib/cn";
 import type { KindOption } from "@/lib/event-kinds";
-import { ClosedIcon, EventKindIcon } from "./EventKindIcon";
+import { ClosedIcon, MarkerIcon } from "./EventKindIcon";
 import { closedNote, type CalendarClosure } from "@/lib/calendar-closures";
+import { calendarLegend, eventMarker, markerText } from "@/lib/event-icons";
 import { longDate, parseDate, time12 } from "@/lib/format";
 import { monthGridCells, type MonthRef } from "@/lib/month-grid";
 import { NewTabCue } from "@/components/ui/NewTabCue";
@@ -31,8 +32,10 @@ type ListRow = { closure: CalendarClosure } | { event: SiteEvent };
 /** NW01: month grid (hover highlights the day square; clicking a day with
  *  events pops details out OVER the calendar, X to exit) beside a "List by
  *  date" panel whose rows drop open. On phones the list stacks on top.
- *  B6: typed events show their icon instead of a dot, with a legend.
- *  F10: closed dates from Admin, Hours show as closed days in both views. */
+ *  B6: every event shows an icon, with a legend (an untyped one shows a star, "Other").
+ *  F10: closed dates from Admin, Hours show as closed days in both views.
+ *  19 Nov 2026 (Pol: icons match the activity): an event's own icon from Admin wins
+ *  over its type's; eventMarker in event-icons.ts holds the order for every view. */
 export function EventsCalendar({
   month,
   label,
@@ -41,6 +44,7 @@ export function EventsCalendar({
   today,
   events,
   kinds = {},
+  icons = {},
   types,
   closures = [],
 }: {
@@ -51,11 +55,17 @@ export function EventsCalendar({
   today: string;
   events: SiteEvent[];
   kinds?: Record<number, string>;
+  /** Event id to its own icon name, set in Admin (19 Nov 2026). */
+  icons?: Record<number, string>;
   /** F11: the types from Admin, Calendar, in order; they fill the legend. */
   types: KindOption[];
   closures?: CalendarClosure[];
 }) {
   const labelOf = useMemo(() => new Map(types.map((t) => [t.key, t.label])), [types]);
+  // One marker per event for the grid, the list, the pop-out and the legend. markerText
+  // keeps the icon and drops the words when the type repeats the title (Trivia once).
+  const markerOf = (e: SiteEvent) => eventMarker(e.title, icons[e.id], kinds[e.id], labelOf.get(kinds[e.id] ?? ""));
+  const legend = calendarLegend(events.map(markerOf), closures.length > 0);
   const [openDate, setOpenDate] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<number | null>(null);
   /** NW01 sketch note: hovering a "List by date" row lights that day's square. */
@@ -175,6 +185,7 @@ export function EventsCalendar({
                 const e = row.event;
                 const open = expanded === e.id;
                 const range = timeRange(e);
+                const marker = markerOf(e);
                 return (
                   // Handlers on the <li> so the expanded panel and its link keep the highlight
                   <li
@@ -196,17 +207,13 @@ export function EventsCalendar({
                         <span className="block font-display text-[1.15rem] font-semibold leading-tight text-charcoal-900 transition-colors group-hover:text-ember-600">
                           {e.title}
                         </span>
-                        {(range || kinds[e.id]) && (
-                          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[13px] text-charcoal-500">
-                            {range}
-                            {kinds[e.id] && (
-                              <span className="inline-flex items-center gap-1 text-ember-600">
-                                <EventKindIcon kind={kinds[e.id]} className="h-3.5 w-3.5" />
-                                {labelOf.get(kinds[e.id])}
-                              </span>
-                            )}
+                        <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[13px] text-charcoal-500">
+                          {range}
+                          <span className={cn("inline-flex items-center gap-1", marker.source === "closed" ? "text-charcoal-500" : "text-ember-600")}>
+                            <MarkerIcon icon={marker.icon} className="h-3.5 w-3.5" />
+                            {markerText(marker, e.title)}
                           </span>
-                        )}
+                        </span>
                       </span>
                       <ChevronDown aria-hidden className={cn("h-4 w-4 shrink-0 self-center text-charcoal-500 transition-transform", open && "rotate-180")} />
                     </button>
@@ -299,36 +306,35 @@ export function EventsCalendar({
                     className={cn(base, "transition-colors hover:border-ember-500/50 hover:bg-ember-600/10")}
                   >
                     <span className={dayNum}>{cell.day}</span>
-                    {/* B6: a typed event shows its icon, an untyped one keeps the dot */}
+                    {/* B6: every event shows its icon (19 Nov, Pol: no dots, and the icon matches the activity) */}
                     <span aria-hidden className="flex flex-wrap items-center gap-1 text-ember-600">
                       {closure && <ClosedIcon className="h-3.5 w-3.5 text-charcoal-500 sm:h-4 sm:w-4" />}
-                      {dayEvents.slice(0, 3).map((e) =>
-                        kinds[e.id] ? (
-                          <EventKindIcon key={e.id} kind={kinds[e.id]} className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                        ) : (
-                          <span key={e.id} className="h-1.5 w-1.5 rounded-full bg-ember-500" />
-                        ),
-                      )}
+                      {dayEvents.slice(0, 3).map((e) => {
+                        const m = markerOf(e);
+                        return (
+                          <MarkerIcon
+                            key={e.id}
+                            icon={m.icon}
+                            className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", m.source === "closed" && "text-charcoal-500")}
+                          />
+                        );
+                      })}
                     </span>
                   </button>
                 );
               })}
             </div>
-            {/* B6 legend (board L6: "Icon design legend") */}
-            <ul aria-label="Event types" className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-charcoal-700">
-              {types.map((k) => (
-                <li key={k.key} className="inline-flex items-center gap-1.5">
-                  <EventKindIcon kind={k.key} className="text-ember-600" />
-                  {k.label}
-                </li>
-              ))}
-              {closures.length > 0 && (
-                <li className="inline-flex items-center gap-1.5">
-                  <ClosedIcon className="text-charcoal-500" />
-                  Closed
-                </li>
-              )}
-            </ul>
+            {/* B6 legend (board L6: "Icon design legend"). 19 Nov: only the icons this month draws */}
+            {legend.length > 0 && (
+              <ul aria-label="Icon key" className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-charcoal-700">
+                {legend.map((m, i) => (
+                  <li key={`${i}-${m.label}`} className="inline-flex items-center gap-1.5">
+                    <MarkerIcon icon={m.icon} className={m.source === "closed" ? "text-charcoal-500" : "text-ember-600"} />
+                    {m.label}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* NW01: clicking a day pops details out to cover the calendar; X exits */}
@@ -367,15 +373,19 @@ export function EventsCalendar({
                   )}
                   {openEvents.map((e) => {
                     const range = timeRange(e);
+                    const marker = markerOf(e);
                     return (
                       <li key={e.id}>
                         <h3 className="font-display text-2xl font-semibold leading-tight">{e.title}</h3>
-                        {kinds[e.id] && (
-                          <p className="mt-1.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ember-300">
-                            <EventKindIcon kind={kinds[e.id]} />
-                            {labelOf.get(kinds[e.id])}
-                          </p>
-                        )}
+                        <p
+                          className={cn(
+                            "mt-1.5 inline-flex items-center gap-1.5 text-[13px] font-semibold",
+                            marker.source === "closed" ? "text-cream-100/85" : "text-ember-300",
+                          )}
+                        >
+                          <MarkerIcon icon={marker.icon} />
+                          {markerText(marker, e.title)}
+                        </p>
                         {range && <p className="mt-1 font-label text-[13px] tracking-[0.16em] text-teal-300">{range}</p>}
                         {e.description && <p className="mt-2 text-[14.5px] leading-relaxed text-cream-100/85">{e.description}</p>}
                         {e.linkUrl && (

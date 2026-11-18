@@ -5,6 +5,7 @@ import { cache } from "react";
 import { db, schema } from "@/db";
 import type { SiteEvent, SpecialEventImage, SpecialEventsSettings } from "@/db/schema";
 import { isMissingSchema } from "@/lib/db-errors";
+import { isEventIcon } from "@/lib/event-icons";
 import { EVENT_KINDS, type KindOption } from "@/lib/event-kinds";
 import { CONTENT_TAG } from "./restaurant";
 
@@ -42,6 +43,20 @@ export async function readEventKinds(): Promise<Record<number, string>> {
   try {
     const rows = await db.select().from(schema.eventKinds);
     return Object.fromEntries(rows.map((r) => [r.eventId, r.kind]));
+  } catch (err) {
+    if (isMissingSchema(err)) return {};
+    throw err;
+  }
+}
+
+/** 19 Nov 2026: event id to its own calendar icon (a name on the list in
+ *  event-icons.ts). Uncached and defensive like readEventKinds: without the
+ *  event_icons table (prod before db:push) no event has one. Rows Admin cleared
+ *  (null) and names no longer on the list are left out. */
+export async function readEventIcons(): Promise<Record<number, string>> {
+  try {
+    const rows = await db.select().from(schema.eventIcons);
+    return Object.fromEntries(rows.flatMap((r) => (isEventIcon(r.icon) ? [[r.eventId, r.icon]] : [])));
   } catch (err) {
     if (isMissingSchema(err)) return {};
     throw err;

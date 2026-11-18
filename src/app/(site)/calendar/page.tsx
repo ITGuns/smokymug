@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { EventsCalendar } from "@/components/calendar/EventsCalendar";
 import { calendarClosures } from "@/lib/calendar-closures";
-import { getEventsBetween, readDateOverridesBetween, readEventKinds, readEventKindTypes } from "@/lib/data/events";
+import { getEventsBetween, readDateOverridesBetween, readEventIcons, readEventKinds, readEventKindTypes } from "@/lib/data/events";
 import { addMonths, monthBounds, monthKey, monthLabel, parseMonthParam } from "@/lib/month-grid";
 import { getSiteChrome } from "@/lib/site";
 
@@ -21,9 +21,10 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
   const [y, m] = clock.date.split("-").map(Number);
   const ref = parseMonthParam(params.month, { year: y, month: m });
   const { from, to } = monthBounds(ref);
-  const [events, allKinds, overrides, { types }] = await Promise.all([
+  const [events, allKinds, allIcons, overrides, { types }] = await Promise.all([
     getEventsBetween(from, to),
     readEventKinds(),
+    readEventIcons(),
     readDateOverridesBetween(from, to),
     readEventKindTypes(),
   ]);
@@ -32,6 +33,8 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
   // Only this month's types travel to the client, and only types still listed in Admin (F11)
   const known = new Set(types.map((t) => t.key));
   const kinds = Object.fromEntries(events.filter((e) => known.has(allKinds[e.id])).map((e) => [e.id, allKinds[e.id]]));
+  // 19 Nov 2026: and only this month's own icons (readEventIcons keeps names on the list)
+  const icons = Object.fromEntries(events.filter((e) => allIcons[e.id]).map((e) => [e.id, allIcons[e.id]]));
 
   return (
     <>
@@ -58,6 +61,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
             today={clock.date}
             events={events}
             kinds={kinds}
+            icons={icons}
             types={types}
             closures={closures}
           />

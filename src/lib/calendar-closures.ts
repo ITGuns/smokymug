@@ -6,11 +6,14 @@ export type CalendarClosure = { date: string; label: string };
 
 const SAYS_CLOSED = /\bclosed\b/i;
 
+/** An event whose title says "Closed" is a closed day, so the grid gives it the closed icon. */
+export const saysClosed = (title: string): boolean => SAYS_CLOSED.test(title);
+
 export function calendarClosures(
   overrides: readonly { date: string; closed: boolean; reason: string | null }[],
   events: readonly { date: string; title: string }[],
 ): CalendarClosure[] {
-  const saidClosed = new Set(events.filter((e) => SAYS_CLOSED.test(e.title)).map((e) => e.date));
+  const saidClosed = new Set(events.filter((e) => saysClosed(e.title)).map((e) => e.date));
   return overrides
     .filter((o) => o.closed && !saidClosed.has(o.date))
     .map((o) => ({ date: o.date, label: o.reason?.trim() || "Closed" }))

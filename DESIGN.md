@@ -108,7 +108,10 @@ Rules (2 Nov):
   the phone button keep 1.8. Sizes stay as they were: h-4 w-4 for event types
   and controls, h-5 w-5 for catering cards, 18px in the admin sidebar.
   Mapping: event types Live music Music, Specials Tag, Pop-up Store, Community
-  Users, a type added in Admin Star, closed day Ban; catering Parties
+  Users, Trivia Brain, Hours Clock (early closes and hour changes, 19 Nov), a
+  type added in Admin Star, an event with no type Star (legend "Other"; the
+  month grid shows an icon for every event, never a dot, 19 Nov), closed day
+  Ban (also an event whose title says "Closed"); catering Parties
   PartyPopper, Professional Briefcase, Holiday Gift, Full Service
   UtensilsCrossed (also the fallback for a package added in Admin). Controls
   use the plain glyphs (X, Menu, ChevronLeft/Right/Down, Search, ListFilter,
@@ -121,6 +124,23 @@ Rules (2 Nov):
   aria-hidden; the meaning is always also text or the control's aria-label.
   Not lucide: the wordmark, the favicon, the social brand marks
   (SocialLinks.tsx), the NewTabCue and decorative artwork.
+- **Event icons match the activity (19 Nov 2026, Pol's order "match the icons
+  with the context or activity")**: an event can carry its own calendar icon,
+  picked in Admin, Calendar, the event form ("Calendar icon"). The allowed
+  icons are the 24 in `src/lib/event-icons.ts` (EVENT_ICONS); the picker, the
+  server check and the calendar all read that one list, so a new icon is added
+  there and nowhere else. Stored in the `event_icons` side table (one row per
+  event, a null icon when Admin went back to the type's icon).
+  Display order, the same in the month grid, the list, the pop-out and the
+  admin list (`eventMarker`): the event's own icon, else Ban when the title
+  says "Closed", else the type's icon, else Star ("Other").
+  Legend ("Icon key"): one entry per icon and label the visible month draws,
+  in date order, then Other, then Closed last. A type with no event that
+  month is left out; an own icon is labelled with the event's title; a month
+  with nothing on it shows no legend.
+  Seeded events: Trivia Brain, Community Art Circle Palette, Walk the Block
+  Footprints, the 24 Dec early closure Clock, Closed Thanksgiving and the
+  25 and 26 Dec closures Ban. The seed only fills events with no icon row.
 
 ## 4. Layouts chosen by Dan
 

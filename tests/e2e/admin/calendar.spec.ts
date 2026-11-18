@@ -36,7 +36,7 @@ test("an admin event goes live on the public calendar and can be removed", async
   const listRow = page.getByRole("button", { name: new RegExp(TITLE) });
   await expect(listRow).toBeVisible();
   await expect(listRow).toContainText("Live music");
-  await expect(page.getByRole("list", { name: "Event types" })).toContainText("Live music");
+  await expect(page.getByRole("list", { name: "Icon key" })).toContainText("Live music");
   await listRow.click();
   await expect(page.getByText("QA: live set on the porch. Delete me.")).toBeVisible();
   await expect(page.getByRole("link", { name: /Details/ })).toHaveAttribute("href", "https://www.instagram.com/thesmokymug");

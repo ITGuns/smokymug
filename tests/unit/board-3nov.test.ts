@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import nextConfig from "../../next.config";
 import { buildCsp } from "@/lib/csp";
 import { isMissingSchema } from "@/lib/db-errors";
-import { Music, Store, Tag, Users } from "lucide-react";
+import { Brain, Clock, Music, Store, Tag, Users } from "lucide-react";
 import { EVENT_KIND_ICON, EVENT_KINDS, isEventKind } from "@/lib/event-kinds";
 import { buildInquiryEmail, inquiryMailConfig } from "@/lib/inquiry-mail";
 import { balanceColumns } from "@/lib/masonry";
@@ -41,10 +41,10 @@ describe("GA03 balanced gallery columns", () => {
 });
 
 describe("B6 event types", () => {
-  it("has 3 or 4 types, each with an icon", () => {
-    expect(EVENT_KINDS.length).toBeGreaterThanOrEqual(3);
-    expect(EVENT_KINDS.length).toBeLessThanOrEqual(4);
-    expect(EVENT_KIND_ICON).toEqual({ music: Music, special: Tag, popup: Store, community: Users });
+  // Board L6 asked for 3 or 4; Pol added Trivia and Hours on 19 Nov 2026 for Dan's own events.
+  it("has the four board types plus Trivia and Hours, each with its own icon", () => {
+    expect(EVENT_KINDS.map((k) => k.key)).toEqual(["music", "special", "popup", "community", "trivia", "hours"]);
+    expect(EVENT_KIND_ICON).toEqual({ music: Music, special: Tag, popup: Store, community: Users, trivia: Brain, hours: Clock });
     expect(new Set(EVENT_KINDS.map((k) => EVENT_KIND_ICON[k.key])).size).toBe(EVENT_KINDS.length);
   });
 

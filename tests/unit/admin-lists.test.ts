@@ -3,6 +3,8 @@ import { CATERING_PACKAGES, EVENT_KIND_TYPES } from "@/db/seed-data/admin-lists"
 import { CATERING } from "@/db/seed-data/restaurant";
 import { Music, Star } from "lucide-react";
 import { EVENT_KIND_FALLBACK_ICON, EVENT_KINDS, eventKindIcon } from "@/lib/event-kinds";
+import { slugify } from "@/lib/slug";
+import { EVENTS } from "@/db/seed-data/calendar";
 import { cateringPackageInput, cateringPackageOrderInput, eventInputFor, eventKindTypeAddInput } from "@/lib/validation";
 
 // Audit F11 + F12 (18 Nov 2026): the two lists Admin now edits.
@@ -43,8 +45,18 @@ describe("F12 catering package input", () => {
 });
 
 describe("F11 event types", () => {
-  it("seeds the four calendar types in the same order", () => {
+  it("seeds the built-in calendar types in the same order", () => {
     expect(EVENT_KIND_TYPES).toEqual(EVENT_KINDS.map((k, i) => ({ key: k.key, label: k.label, displayOrder: i })));
+  });
+
+  it("keys each built-in type the way Admin keys a typed label, so a hand-made type lands on its icon", () => {
+    expect(slugify("Trivia")).toBe("trivia");
+    expect(slugify("Hours")).toBe("hours");
+  });
+
+  it("gives every seeded event a built-in type", () => {
+    const keys = new Set<string>(EVENT_KINDS.map((k) => k.key));
+    for (const e of EVENTS) expect(keys.has(e.kind)).toBe(true);
   });
 
   it("accepts a type from the table and rejects one that is not listed", () => {

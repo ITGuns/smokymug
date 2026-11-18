@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calendarClosures, closedNote } from "@/lib/calendar-closures";
+import { calendarClosures, closedNote, saysClosed } from "@/lib/calendar-closures";
 
 // Audit F10 (18 Nov 2026): Hours closures show on /calendar without a second entry.
 
@@ -38,5 +38,14 @@ describe("closedNote", () => {
   it("does not say Closed twice", () => {
     expect(closedNote({ date: "2027-01-05", label: "Closed" })).toBe("All day");
     expect(closedNote({ date: "2027-01-09", label: "Private party" })).toBe("Closed all day");
+  });
+});
+
+describe("saysClosed", () => {
+  it("marks events whose title says Closed, and only those", () => {
+    expect(saysClosed("Closed Thanksgiving")).toBe(true);
+    expect(saysClosed("closed")).toBe(true);
+    expect(saysClosed("Early closure at 12pm")).toBe(false);
+    expect(saysClosed("Trivia")).toBe(false);
   });
 });

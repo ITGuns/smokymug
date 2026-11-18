@@ -170,7 +170,7 @@ async function seedRound16Nov(db: SeedDb, { events, dateOverrides, hours, restau
       console.log("16 Nov round: already seeded once. Events, closures, hours and links left as Admin has them.");
       return;
     }
-    await tx.insert(events).values(EVENTS);
+    await tx.insert(events).values(EVENTS.map(({ kind: _kind, icon: _icon, ...e }) => e)); // eslint-disable-line @typescript-eslint/no-unused-vars -- kind and icon go to their own tables
     const closures = await tx.insert(dateOverrides).values(DATE_OVERRIDES).onConflictDoNothing({ target: dateOverrides.date }).returning({ id: dateOverrides.id });
     await tx
       .update(siteSettings)
@@ -191,25 +191,67 @@ async function seedRound16Nov(db: SeedDb, { events, dateOverrides, hours, restau
  *  Admin owns them after that. (Delete every package and the next seed puts the
  *  four printed ones back.) Runs last: a database that has not run `db:push`
  *  yet keeps everything else the seed did and is told what to do. */
-async function seedAdminLists(db: SeedDb, { cateringPackages, eventKindTypes }: SeedSchema) {
+async function seedAdminLists(db: SeedDb, { cateringPackages, eventKindTypes, eventKinds, eventIcons, events }: SeedSchema) {
   try {
     await fillAdminLists(db, cateringPackages, eventKindTypes);
+    await fillEventKinds(db, events, eventKinds);
   } catch (err) {
     if (!isMissingSchema(err)) throw err;
     console.warn("Event types and catering packages skipped: their tables are missing. Run `npm run db:push`, then `npm run db:seed`.");
+  }
+  // Its own step, so a database with event_kinds but no event_icons yet still gets its types
+  try {
+    await fillEventIcons(db, events, eventIcons);
+  } catch (err) {
+    if (!isMissingSchema(err)) throw err;
+    console.warn("Event icons skipped: the event_icons table is missing. Run `npm run db:push`, then `npm run db:seed`.");
   }
 }
 
 async function fillAdminLists(db: SeedDb, cateringPackages: SeedSchema["cateringPackages"], eventKindTypes: SeedSchema["eventKindTypes"]) {
   await db.transaction(async (tx) => {
+    // 19 Nov 2026: the built-in types are added by key on every run, so new ones (trivia, hours)
+    // reach a database Admin has already filled. Added and renamed types are kept as they are.
     const types = await tx.select({ key: eventKindTypes.key }).from(eventKindTypes).limit(1);
-    if (!types.length) await tx.insert(eventKindTypes).values(EVENT_KIND_TYPES).onConflictDoNothing();
+    const added = await tx
+      .insert(eventKindTypes)
+      .values(EVENT_KIND_TYPES)
+      .onConflictDoNothing({ target: eventKindTypes.key })
+      .returning({ key: eventKindTypes.key });
     const packages = await tx.select({ id: cateringPackages.id }).from(cateringPackages).limit(1);
     if (!packages.length) await tx.insert(cateringPackages).values(CATERING_PACKAGES);
     console.log(
-      `Event types: ${types.length ? "kept as Admin has them" : `${EVENT_KIND_TYPES.length} added`}. Catering packages: ${packages.length ? "kept as Admin has them" : `${CATERING_PACKAGES.length} added`}.`,
+      `Event types: ${types.length ? `kept as Admin has them, ${added.length} built-in added` : `${added.length} added`}. Catering packages: ${packages.length ? "kept as Admin has them" : `${CATERING_PACKAGES.length} added`}.`,
     );
   });
+}
+
+/** 19 Nov 2026 (Pol: "use the icons on the calendar please not just dots"): each of Dan's
+ *  seeded events (same date and title) that has no type yet gets the type in EVENTS. Add-only:
+ *  a type Admin already set is kept. Events Admin added are not touched. */
+async function fillEventKinds(db: SeedDb, events: SeedSchema["events"], eventKinds: SeedSchema["eventKinds"]) {
+  const have = await db.select({ id: events.id, date: events.date, title: events.title }).from(events);
+  const kindOf = new Map(EVENTS.map((e) => [`${e.date}|${e.title}`, e.kind]));
+  const rows = have.flatMap((e) => {
+    const kind = kindOf.get(`${e.date}|${e.title}`);
+    return kind ? [{ eventId: e.id, kind }] : [];
+  });
+  const typed = rows.length ? await db.insert(eventKinds).values(rows).onConflictDoNothing().returning({ id: eventKinds.eventId }) : [];
+  console.log(`Event types on seeded events: ${typed.length} set, ${rows.length - typed.length} kept as Admin has them.`);
+}
+
+/** 19 Nov 2026 (Pol: "match the icons with the context or activity"): each of Dan's seeded
+ *  events (same date and title) with no icon row yet gets the icon in EVENTS. Add-only: an
+ *  icon Admin picked or cleared (a null row) is kept. Events Admin added are not touched. */
+async function fillEventIcons(db: SeedDb, events: SeedSchema["events"], eventIcons: SeedSchema["eventIcons"]) {
+  const have = await db.select({ id: events.id, date: events.date, title: events.title }).from(events);
+  const iconOf = new Map(EVENTS.map((e) => [`${e.date}|${e.title}`, e.icon]));
+  const rows = have.flatMap((e) => {
+    const icon = iconOf.get(`${e.date}|${e.title}`);
+    return icon ? [{ eventId: e.id, icon }] : [];
+  });
+  const set = rows.length ? await db.insert(eventIcons).values(rows).onConflictDoNothing().returning({ id: eventIcons.eventId }) : [];
+  console.log(`Event icons on seeded events: ${set.length} set, ${rows.length - set.length} kept as Admin has them.`);
 }
 
 async function seedAdmin(db: SeedDb, adminUsers: AdminTable) {

@@ -440,11 +440,24 @@ export const eventKinds = pgTable("event_kinds", {
   kind: text("kind").notNull(),
 });
 
+/** 19 Nov 2026 (Pol: "match the icons with the context or activity"): one optional icon
+ *  per event, a name from src/lib/event-icons.ts, drawn on /calendar ahead of the type's
+ *  icon. A side table for the same reason as `event_kinds`: prod may run this code before
+ *  its `db:push`, and reads fall back to "no icon". A row with a null icon means Admin set
+ *  the event back to its type's icon, so the seed never fills that event again. */
+export const eventIcons = pgTable("event_icons", {
+  eventId: integer("event_id")
+    .primaryKey()
+    .references(() => events.id, { onDelete: "cascade" }),
+  icon: text("icon"),
+});
+
 /** Audit F11 (18 Nov 2026): the list of event types the admin picks from
  *  (`event_kinds` above holds each event's pick). Keyed by slug, which is also
  *  the icon key; a key with no icon of its own gets the fallback icon. No foreign
  *  key from `event_kinds.kind`: prod runs `db:push` before the seed fills this.
- *  Admin-owned: the seed fills it only while it is empty, `db:reseed` never wipes it. */
+ *  Admin-owned: the seed adds the built-in keys that are missing (19 Nov 2026) and
+ *  leaves every other row alone; `db:reseed` never wipes it. */
 export const eventKindTypes = pgTable("event_kind_types", {
   key: text("key").primaryKey(),
   label: text("label").notNull(),
