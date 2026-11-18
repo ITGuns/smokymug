@@ -1,4 +1,4 @@
-# Prod database steps for Guns (updated 18 Nov 2026)
+# Prod database steps for Guns (updated 19 Nov 2026)
 
 Why: prod still runs the 23 Sep seed, so Dan's board copy, the 2026 menu, the
 hours updates and his 16 Nov round (Trivia Night, his November and December
@@ -23,6 +23,13 @@ screens show a "needs db:push" note until you run step 1.
 main without them, run `npm run db:push` and then a plain `npm run db:seed`
 once they are pushed: that fills the two tables and wipes nothing (see "The
 18 Nov step").
+
+19 Nov icons: the calendar now draws an icon per event (Trivia = brain, Community
+Art Circle = palette, Walk the Block = footprints, the 24 Dec early close = clock,
+closed days = ban), stored in a new `event_icons` table and picked per event in
+Admin, Calendar. It needs `db:push` too; until then the calendar shows each
+type's icon instead. After the push, a plain `npm run db:seed` sets the icons on
+Dan's seeded events and wipes nothing (see "The 19 Nov step").
 
 Do the reseed ONCE, now, before Dan starts entering content in admin. After
 that, never reseed prod again without exporting what he typed (see "What the
@@ -67,6 +74,8 @@ missing it only warns and skips them, so run `db:push` and `db:seed` again.
   `catering_packages`, with no foreign keys. If `drizzle-kit` asks whether a
   table is created or renamed from another table, pick "create table". A
   rename would turn an existing table into one of these and lose its data.
+- 19 Nov icons: one new table, `event_icons` (one row per event, foreign key
+  to `events`, removed with the event). Pick "create table" here too.
 - If it lists ANY `DROP`, `ALTER ... TYPE`, renamed column or data-loss
   warning, stop and send Pol the output.
 
@@ -135,6 +144,19 @@ If Dan ever removes every catering package (or every event type), the next
 seed puts the starting four back. To take all the catering cards off the site
 for good, hide them in Admin, Catering instead of removing them.
 
+### The 19 Nov step (event icons, adds only)
+`db:reseed` and a plain `db:seed` both end with it. It sets an icon on each of
+Dan's seeded events (same date and title) that has no icon row yet, and never
+changes a pick Admin made or cleared. Events Admin added are not touched.
+
+Expected output:
+- First run: `Event icons on seeded events: 12 set, 0 kept as Admin has them.`
+  (fewer set if an event's title or date was changed in Admin).
+- Any later run: `Event icons on seeded events: 0 set, 12 kept as Admin has
+  them.`
+- Table not pushed yet: `Event icons skipped: the event_icons table is
+  missing.` Run `npm run db:push`, then `npm run db:seed`.
+
 ## After the reseed: refresh the live site's cache
 The site caches content and the menu separately. In prod admin:
 1. Settings: change nothing, press Save (refreshes copy, hours, events,
@@ -176,6 +198,10 @@ Or in Vercel: Project Settings, Data Cache, Purge.
   - Admin, Calendar ends with an Event types card listing Live music,
     Specials, Pop-up and Community, and the Type field on an event offers the
     same four. Neither shows a "needs db:push" note.
+
+- 19 Nov: /calendar draws an icon per event (brain, palette, footprints, clock,
+  ban) with an Icon key under the grid; before the 19 Nov step it shows each
+  type's icon. The /catering inquiry slot shows a crop of Dan's board photo.
 
 ## Expected until Dan sends links or content (not bugs)
 - Gift card and loyalty buttons still go to the old Toast links. When Dan
