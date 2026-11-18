@@ -138,6 +138,9 @@ Rules (2 Nov):
   in date order, then Other, then Closed last. A type with no event that
   month is left out; an own icon is labelled with the event's title; a month
   with nothing on it shows no legend.
+  Marker sizes: 16px on phones and 20px from the sm breakpoint in the month
+  grid, 16px in the list, pop-out and legend, because on 19 Nov 2026 the 16px
+  outlines read as dots on a desktop screen.
   Seeded events: Trivia Brain, Community Art Circle Palette, Walk the Block
   Footprints, the 24 Dec early closure Clock, Closed Thanksgiving and the
   25 and 26 Dec closures Ban. The seed only fills events with no icon row.

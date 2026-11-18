@@ -174,7 +174,7 @@ export function EventsCalendar({
                         <span className="flex-1">
                           <span className="block font-display text-[1.15rem] font-semibold leading-tight text-charcoal-900">{c.label}</span>
                           <span className="mt-0.5 inline-flex items-center gap-1 text-[13px] text-charcoal-500">
-                            <ClosedIcon className="h-3.5 w-3.5" />
+                            <ClosedIcon />
                             {closedNote(c)}
                           </span>
                         </span>
@@ -210,7 +210,7 @@ export function EventsCalendar({
                         <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[13px] text-charcoal-500">
                           {range}
                           <span className={cn("inline-flex items-center gap-1", marker.source === "closed" ? "text-charcoal-500" : "text-ember-600")}>
-                            <MarkerIcon icon={marker.icon} className="h-3.5 w-3.5" />
+                            <MarkerIcon icon={marker.icon} />
                             {markerText(marker, e.title)}
                           </span>
                         </span>
@@ -306,16 +306,17 @@ export function EventsCalendar({
                     className={cn(base, "transition-colors hover:border-ember-500/50 hover:bg-ember-600/10")}
                   >
                     <span className={dayNum}>{cell.day}</span>
-                    {/* B6: every event shows its icon (19 Nov, Pol: no dots, and the icon matches the activity) */}
+                    {/* B6: every event shows its icon (19 Nov, Pol: no dots, and the icon matches the activity); 16px phones, 20px from sm */}
                     <span aria-hidden className="flex flex-wrap items-center gap-1 text-ember-600">
-                      {closure && <ClosedIcon className="h-3.5 w-3.5 text-charcoal-500 sm:h-4 sm:w-4" />}
+                      {closure && <ClosedIcon size="h-4 w-4 sm:h-5 sm:w-5" className="text-charcoal-500" />}
                       {dayEvents.slice(0, 3).map((e) => {
                         const m = markerOf(e);
                         return (
                           <MarkerIcon
                             key={e.id}
                             icon={m.icon}
-                            className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", m.source === "closed" && "text-charcoal-500")}
+                            size="h-4 w-4 sm:h-5 sm:w-5"
+                            className={m.source === "closed" ? "text-charcoal-500" : undefined}
                           />
                         );
                       })}
