@@ -1,21 +1,21 @@
 # Prod database steps for Guns (updated 19 Nov 2026)
 
-Why: prod still runs the 23 Sep seed, so Dan's board copy, the 2026 menu, the
-hours updates and his 16 Nov round (Trivia Night, his November and December
-events and closures, the SpotOn ordering and reservations links) are not live,
-and the new features from the 3-4 Nov rounds need their tables. The code
-deploys from main on every push; only the database is behind. Pol pushes code;
-you run these on your machine.
+Where things stand: the reseed ran on 18 Nov, so prod carries the 2026 menu,
+Dan's board copy, the hours updates and his 16 Nov round (Trivia Night, his
+November and December events and closures, the SpotOn ordering and
+reservations links). What prod still lacks are three tables added to main
+after that reseed: `event_kind_types` and `catering_packages` (18 Nov audit
+fixes) and `event_icons` (19 Nov). Until they exist the public calendar draws
+a plain star on every event (closed days still get the ban sign) and the new
+admin screens show a "needs db:push" note. The code deploys from main on
+every push; only the database is behind. Pol pushes code; you run these on
+your machine.
 
-Run these AFTER Pol confirms the 16 Nov round is pushed and deployed. The seed
-on main must carry it as well as the 9 Nov round (Southwestern spelling, Meat
-Market "per 1/2 lb", the breakfast and Cafe drinks windows, Sunday 8 AM); a
-reseed from an older main would need a second reseed later, which wipes Dan's
-admin entries again. If the reseed already ran from an older main, a plain
-`npm run db:seed` from the new main adds the 16 Nov round without wiping
-anything (see "The 16 Nov round step"). The site is safe in the meantime:
-every new table and column is read defensively, so pages render and new admin
-screens show a "needs db:push" note until you run step 1.
+This round is `db:push` plus a plain `db:seed`: it adds the three tables,
+fills them and wipes nothing. The reseed is done; never run `db:reseed` on
+prod again without exporting what Dan typed (see "Only if you run
+`db:reseed`"). The site is safe in the meantime: every new table and column
+is read defensively, so pages render until you run the steps.
 
 18 Nov audit fixes: event types (Admin, Calendar) and the catering packages
 (Admin, Catering) moved into two new tables, `event_kind_types` and
@@ -28,20 +28,15 @@ once they are pushed: that fills the two tables and wipes nothing (see "The
 Art Circle = palette, Walk the Block = footprints, the 24 Dec early close = clock,
 closed days = ban), stored in a new `event_icons` table and picked per event in
 Admin, Calendar. It needs `db:push` too; until then the calendar shows each
-type's icon instead. After the push, a plain `npm run db:seed` sets the icons on
+type's icon instead (a star while `event_kind_types` is missing as well).
+After the push, a plain `npm run db:seed` sets the icons on
 Dan's seeded events and wipes nothing (see "The 19 Nov step").
-
-Do the reseed ONCE, now, before Dan starts entering content in admin. After
-that, never reseed prod again without exporting what he typed (see "What the
-reseed replaces").
 
 ## Before you start
 1. Back up the prod database (Supabase dashboard backup, or `pg_dump`).
-2. Write down anything typed into prod admin since 23 Sep that you want to
-   keep from the list under "What the reseed replaces" (Settings like the
-   catering email or gift card links, booking settings and windows, gallery
-   photos and their order, menu edits). Re-enter it after the reseed. The
-   SpotOn ordering link is in the seed now, so it needs no re-entry.
+2. After `git pull`, check `git log -1` shows a 19 Nov commit (236f3dc or
+   newer), so the seed on your machine carries the icons step. Nothing to
+   write down: this round wipes nothing.
 
 ## Two traps in your .env.local
 - `drizzle-kit` uses `DIRECT_URL` first and only falls back to
@@ -55,12 +50,17 @@ reseed replaces").
 ```bash
 git pull
 npm run db:push
-npm run db:reseed
+npm run db:seed
 ```
-`db:push` comes first: the seed writes to `site_settings`, `events` and
-`date_overrides`, and stops with an error if those tables are missing. It
-also fills `event_kind_types` and `catering_packages`; if those two are
-missing it only warns and skips them, so run `db:push` and `db:seed` again.
+`db:push` comes first: it adds the new tables (`event_kind_types`,
+`catering_packages`, `event_icons`) and touches no data. `db:seed` with no
+`--force` adds only: the 16, 18 and 19 Nov steps below. It keeps the menu,
+hours, gallery, settings and everything typed in admin as they are, and
+prints what it added. Do not run `db:reseed` for this round: that wipes the
+menu and content tables listed below and reloads them from the repo. It was
+needed once for the 18 Nov menu (done); the icons round does not need it.
+If the seed warns that a table is missing, `db:push` did not run: run
+`db:push`, then `db:seed` again.
 
 ### What `db:push` should show (all additive)
 - New tables: `site_settings`, `event_kinds` (3 Nov round, if not pushed yet),
@@ -79,7 +79,7 @@ missing it only warns and skips them, so run `db:push` and `db:seed` again.
 - If it lists ANY `DROP`, `ALTER ... TYPE`, renamed column or data-loss
   warning, stop and send Pol the output.
 
-### What the reseed replaces (wiped, then reloaded from the repo)
+### Only if you run `db:reseed`: what it replaces (wiped, then reloaded from the repo)
 Menu (categories, sections, items, modifiers) and with it any menu item
 Show from / Show until schedules, hours (now with the Trivia Night row,
 Wednesday 7 to 9 PM), booking settings and windows, restaurant Settings (copy,
@@ -87,7 +87,7 @@ catering email, gift card and loyalty links, ordering link: the seed now holds
 Dan's SpotOn ordering URL), gallery photos and their order (including photos
 uploaded in admin), and the seeded review summaries.
 
-### What the reseed keeps
+### What `db:reseed` keeps
 Reservations, admin users, calendar events and the type picked on each,
 the event types list (Admin, Calendar, Event types), the catering packages
 (Admin, Catering), Special Events flyers and switch, reviews typed in admin,
@@ -157,7 +157,7 @@ Expected output:
 - Table not pushed yet: `Event icons skipped: the event_icons table is
   missing.` Run `npm run db:push`, then `npm run db:seed`.
 
-## After the reseed: refresh the live site's cache
+## After the seed: refresh the live site's cache
 The site caches content and the menu separately. In prod admin:
 1. Settings: change nothing, press Save (refreshes copy, hours, events,
    event types and catering packages). Do this even if the pages already look
