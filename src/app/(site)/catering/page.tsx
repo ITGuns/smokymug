@@ -126,7 +126,8 @@ export default async function CateringPage() {
               </div>
             </Reveal>
             <Reveal delay={0.15} className="relative mt-10 hidden aspect-[4/3] overflow-hidden rounded-2xl lg:block">
-              <Image src="/images/sausage-prep.jpg" alt="Preparing homemade smoked sausage" fill sizes="30vw" className="object-cover" />
+              {/* Dan, 17 Nov: his board photo replaces the sausage prep shot; a close crop on the brisket so it does not repeat the hero */}
+              <Image src="/images/catering-board.jpg" alt="Sliced smoked brisket with a dark bark, beside pulled pork and mac and cheese on a catering tray" fill sizes="60vw" className="origin-[88%_72%] scale-[2.2] object-cover" />
             </Reveal>
           </div>
           <Reveal delay={0.1} className="rounded-2xl bg-cream-100 p-6 text-charcoal-900 shadow-lift sm:p-8 lg:col-span-7">
