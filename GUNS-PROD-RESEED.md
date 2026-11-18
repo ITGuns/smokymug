@@ -199,9 +199,11 @@ Or in Vercel: Project Settings, Data Cache, Purge.
     Specials, Pop-up and Community, and the Type field on an event offers the
     same four. Neither shows a "needs db:push" note.
 
-- 19 Nov: /calendar draws an icon per event (brain, palette, footprints, clock,
-  ban) with an Icon key under the grid; before the 19 Nov step it shows each
-  type's icon. The /catering inquiry slot shows a crop of Dan's board photo.
+- 19 Nov: /calendar draws an icon per event (brain, palette, footprints,
+  clock, ban) with an Icon key under the grid. Until the push and seed it
+  shows a star on every event and a ban on closed days: the seed fills event
+  kinds and icons only once the 18 Nov tables exist, so this is expected, not
+  a bug. The /catering inquiry slot shows a crop of Dan's board photo.
 
 ## Expected until Dan sends links or content (not bugs)
 - Gift card and loyalty buttons still go to the old Toast links. When Dan
