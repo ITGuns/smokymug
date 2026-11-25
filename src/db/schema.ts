@@ -84,7 +84,7 @@ export const restaurantInfo = pgTable("restaurant_info", {
   cafeSummary: text("cafe_summary"),
   bbqSummary: text("bbq_summary"),
   ...timestamps,
-});
+}).enableRLS();
 
 export const hours = pgTable(
   "hours",
@@ -101,7 +101,7 @@ export const hours = pgTable(
     ...timestamps,
   },
   (t) => [uniqueIndex("hours_category_day_idx").on(t.category, t.dayOfWeek)],
-);
+).enableRLS();
 
 export const bookingSettings = pgTable("booking_settings", {
   id: integer("id").primaryKey(),
@@ -120,7 +120,7 @@ export const bookingSettings = pgTable("booking_settings", {
   occasions: jsonArray<string[]>("occasions"),
   timezone: text("timezone").notNull().default("America/New_York"),
   ...timestamps,
-});
+}).enableRLS();
 
 export const bookingWindows = pgTable(
   "booking_windows",
@@ -134,7 +134,7 @@ export const bookingWindows = pgTable(
     ...timestamps,
   },
   (t) => [index("booking_windows_day_idx").on(t.dayOfWeek)],
-);
+).enableRLS();
 
 export const dateOverrides = pgTable(
   "date_overrides",
@@ -149,7 +149,7 @@ export const dateOverrides = pgTable(
     ...timestamps,
   },
   (t) => [uniqueIndex("date_overrides_date_idx").on(t.date)],
-);
+).enableRLS();
 
 /* ------------------------------------------------------------------ */
 /* Reservations                                                        */
@@ -191,7 +191,7 @@ export const reservations = pgTable(
       .on(t.email, t.date, t.time)
       .where(sql`${t.status} in ('pending', 'confirmed')`),
   ],
-);
+).enableRLS();
 
 /* ------------------------------------------------------------------ */
 /* Menu                                                                */
@@ -214,7 +214,7 @@ export const menuCategories = pgTable(
     ...timestamps,
   },
   (t) => [uniqueIndex("menu_categories_slug_idx").on(t.slug)],
-);
+).enableRLS();
 
 export const modifierGroups = pgTable("modifier_groups", {
   id: autoId(),
@@ -227,7 +227,7 @@ export const modifierGroups = pgTable("modifier_groups", {
   displayOrder: integer("display_order").notNull().default(0),
   active: boolean("active").notNull().default(true),
   ...timestamps,
-});
+}).enableRLS();
 
 export const modifiers = pgTable(
   "modifiers",
@@ -248,7 +248,7 @@ export const modifiers = pgTable(
     ...timestamps,
   },
   (t) => [index("modifiers_group_idx").on(t.groupId)],
-);
+).enableRLS();
 
 export const menuSections = pgTable(
   "menu_sections",
@@ -267,7 +267,7 @@ export const menuSections = pgTable(
     ...timestamps,
   },
   (t) => [index("menu_sections_category_idx").on(t.categoryId), uniqueIndex("menu_sections_cat_slug_idx").on(t.categoryId, t.slug)],
-);
+).enableRLS();
 
 export const menuItems = pgTable(
   "menu_items",
@@ -301,7 +301,7 @@ export const menuItems = pgTable(
     ...timestamps,
   },
   (t) => [index("menu_items_section_idx").on(t.sectionId), uniqueIndex("menu_items_slug_idx").on(t.slug), index("menu_items_featured_idx").on(t.featured)],
-);
+).enableRLS();
 
 /** D1 / board MB03 (4 Nov 2026): optional show-from / show-until dates for
  *  limited or seasonal items. Outside them the item is left off the public
@@ -326,7 +326,7 @@ export const menuItemSchedules = pgTable(
     check("menu_item_schedules_set_check", sql`${t.showFrom} is not null or ${t.showUntil} is not null`),
     check("menu_item_schedules_order_check", sql`${t.showFrom} is null or ${t.showUntil} is null or ${t.showUntil} >= ${t.showFrom}`),
   ],
-);
+).enableRLS();
 
 export const menuItemModifierGroups = pgTable(
   "menu_item_modifier_groups",
@@ -340,7 +340,7 @@ export const menuItemModifierGroups = pgTable(
     displayOrder: integer("display_order").notNull().default(0),
   },
   (t) => [primaryKey({ columns: [t.itemId, t.groupId] })],
-);
+).enableRLS();
 
 /* ------------------------------------------------------------------ */
 /* Content                                                             */
@@ -358,7 +358,7 @@ export const galleryImages = pgTable("gallery_images", {
   displayOrder: integer("display_order").notNull().default(0),
   active: boolean("active").notNull().default(true),
   ...timestamps,
-});
+}).enableRLS();
 
 export const reviews = pgTable("reviews", {
   id: autoId(),
@@ -380,7 +380,7 @@ export const reviews = pgTable("reviews", {
   /** true = typed in admin. A reseed only replaces the seeded rows (false). */
   adminAdded: boolean("admin_added").notNull().default(false),
   ...timestamps,
-});
+}).enableRLS();
 
 export const cateringInquiries = pgTable("catering_inquiries", {
   id: autoId(),
@@ -394,7 +394,7 @@ export const cateringInquiries = pgTable("catering_inquiries", {
   message: text("message"),
   status: text("status").notNull().default("new"),
   ...timestamps,
-});
+}).enableRLS();
 
 /** NW01 (base scope): events shown on /calendar. The event type (B6 icons)
  *  lives in `event_kinds` below, not here: prod may run this code before its
@@ -416,7 +416,7 @@ export const events = pgTable(
     ...timestamps,
   },
   (t) => [index("events_date_idx").on(t.date)],
-);
+).enableRLS();
 
 /** NW02 (base scope): the Special Events page switch and its editable copy.
  *  While `enabled` is false, /special-events returns 404 (dev spec); while it
@@ -427,7 +427,7 @@ export const specialEvents = pgTable("special_events", {
   title: text("title").notNull(),
   subtitle: text("subtitle"),
   ...timestamps,
-});
+}).enableRLS();
 
 /** B6 / board L6 (in scope per Pol, 3 Nov): one optional type per event, shown
  *  as an icon on /calendar with a legend. Side table so a prod database without
@@ -438,7 +438,7 @@ export const eventKinds = pgTable("event_kinds", {
     .primaryKey()
     .references(() => events.id, { onDelete: "cascade" }),
   kind: text("kind").notNull(),
-});
+}).enableRLS();
 
 /** 19 Nov 2026 (Pol: "match the icons with the context or activity"): one optional icon
  *  per event, a name from src/lib/event-icons.ts, drawn on /calendar ahead of the type's
@@ -450,7 +450,7 @@ export const eventIcons = pgTable("event_icons", {
     .primaryKey()
     .references(() => events.id, { onDelete: "cascade" }),
   icon: text("icon"),
-});
+}).enableRLS();
 
 /** Audit F11 (18 Nov 2026): the list of event types the admin picks from
  *  (`event_kinds` above holds each event's pick). Keyed by slug, which is also
@@ -463,7 +463,7 @@ export const eventKindTypes = pgTable("event_kind_types", {
   label: text("label").notNull(),
   displayOrder: integer("display_order").notNull().default(0),
   ...timestamps,
-});
+}).enableRLS();
 
 /** Audit F12 (18 Nov 2026): the catering packages on /catering, edited in Admin,
  *  Catering. The seed fills it once from the printed copy (CATERING.categories)
@@ -480,7 +480,7 @@ export const cateringPackages = pgTable("catering_packages", {
   displayOrder: integer("display_order").notNull().default(0),
   visible: boolean("visible").notNull().default(true),
   ...timestamps,
-});
+}).enableRLS();
 
 /** Settings added 3 Nov (BK02 SpotOn box, CA03 dual paper trail). One row,
  *  id 1, in its own table so the site chrome's all-columns reads never touch
@@ -497,7 +497,7 @@ export const siteSettings = pgTable("site_settings", {
   /** CA03: extra addresses copied on every catering inquiry email. */
   inquiryCc: jsonArray<string[]>("inquiry_cc"),
   ...timestamps,
-});
+}).enableRLS();
 
 /* ------------------------------------------------------------------ */
 /* Phase 2 ordering (Pol 4 Nov 2026): order REQUESTS, never payments.   */
@@ -535,7 +535,7 @@ export const orderingSettings = pgTable(
     ...timestamps,
   },
   (t) => [check("ordering_lead_check", sql`${t.expressLeadHours} between 0 and 336 and ${t.holidayLeadHours} between 0 and 336`)],
-);
+).enableRLS();
 
 /** Express Catering packs and Holiday Preorder items. Nothing seeded; price null = "Price on request". */
 export const orderItems = pgTable(
@@ -562,7 +562,7 @@ export const orderItems = pgTable(
     check("order_items_qty_check", sql`${t.minQty} >= 1 and ${t.maxQty} >= ${t.minQty} and ${t.maxQty} <= 100`),
     check("order_items_price_check", sql`${t.price} is null or ${t.price} >= 0`),
   ],
-);
+).enableRLS();
 
 /** A guest's pickup request. PII: name, email, phone, notes. Never a payment record. */
 export const orderRequests = pgTable(
@@ -595,7 +595,7 @@ export const orderRequests = pgTable(
     check("order_requests_status_check", sql`${t.status} in ('new', 'confirmed', 'completed', 'declined', 'cancelled')`),
     check("order_requests_notify_check", sql`${t.notifyStatus} in ('pending', 'sent', 'failed', 'off', 'skipped')`),
   ],
-);
+).enableRLS();
 
 /** Line items, snapshotted: later price edits or item deletes never rewrite a request. */
 export const orderRequestLines = pgTable(
@@ -612,7 +612,7 @@ export const orderRequestLines = pgTable(
     quantity: integer("quantity").notNull(),
   },
   (t) => [index("order_request_lines_request_idx").on(t.requestId), check("order_request_lines_qty_check", sql`${t.quantity} between 1 and 100`)],
-);
+).enableRLS();
 
 /** NW02: uploaded flyers/menus shown as the Special Events image grid. */
 export const specialEventImages = pgTable("special_event_images", {
@@ -621,7 +621,7 @@ export const specialEventImages = pgTable("special_event_images", {
   alt: text("alt").notNull(),
   displayOrder: integer("display_order").notNull().default(0),
   ...timestamps,
-});
+}).enableRLS();
 
 /** Admin-uploaded images, stored in Postgres so deployments need no disk or bucket. */
 export const uploads = pgTable(
@@ -635,7 +635,7 @@ export const uploads = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex("uploads_name_idx").on(t.name)],
-);
+).enableRLS();
 
 /* ------------------------------------------------------------------ */
 /* Admin auth                                                          */
@@ -656,7 +656,7 @@ export const adminUsers = pgTable(
     ...timestamps,
   },
   (t) => [uniqueIndex("admin_users_email_idx").on(t.email)],
-);
+).enableRLS();
 
 /* ------------------------------------------------------------------ */
 /* Inferred types                                                      */
