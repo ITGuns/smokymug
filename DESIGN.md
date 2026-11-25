@@ -9,8 +9,8 @@ the board disagree, ask Genrou. Do not invent beyond it.
 
 Palette and font are **PROPOSED** (handoff Q1/Q2, Dan has not supplied hex values or
 the Roadstore file). They ship as CSS design tokens so the final values are a
-one-line change. Roadstore (demo file) has set the headings and CTAs since 9 Nov
-2026; the licensed webfont must replace it before launch (section 2).
+one-line change. Rye sets the headings and CTAs since 25 Nov 2026 (Roadstore's
+demo file did from 9 to 25 Nov); Rye needs no license (section 2).
 
 ## 1. Color tokens (PROPOSED; brick-orange scheme per Guns, amended 2 Nov 2026)
 
@@ -57,6 +57,23 @@ Rules (2 Nov):
 
 ## 2. Typography (handoff 6.2)
 
+- **Amended 25 Nov 2026 (Dan, 24 Nov: "I don't see Rye as the font. Did I miss my
+  window?"):** Rye replaces Roadstore behind `--font-western`, so Dan can see it on
+  the demo. It is self-hosted with next/font/local from
+  `src/fonts/Rye-Regular-latin.woff2` (SIL Open Font License, text in
+  `src/fonts/Rye-LICENSE-OFL.txt`; free for commercial use, so no purchase is
+  needed to launch). Rye is much wider than Roadstore, so its `@font-face` carries
+  `size-adjust: 82%`: the one value at which no public heading or button gains a
+  line at 320 to 1920 px against the Roadstore build (measured 25 Nov, 9 pages by
+  9 widths). Rye has lowercase, so headings now read in sentence case as typed.
+  Button labels (`font-western-label`) load the same file a second time without
+  size-adjust, as `--font-rye-label`: at 82% the 13 to 16 px CTA labels were smaller
+  than the nav beside them and lost Rye's inline detail on 1x screens. Label-style
+  headings (`font-label`, e.g. the menu's "Dietary key") are exempt from the
+  heading rule and stay in Bebas Neue. Western button labels are typed in Title Case.
+  Heading tracking is 0. `src/fonts/Roadstore.ttf` stays in the repo unused; it is
+  still the personal-use demo, and going back to Roadstore still needs the $45
+  license first. The 9 Nov notes below are history.
 - **Amended 9 Nov 2026 (row 16):** Roadstore replaces Rye behind
   `--font-western`, loaded with next/font/local from `src/fonts/Roadstore.ttf`,
   and now sets public page headings (h1/h2 inside `main#main`) and western
@@ -70,11 +87,13 @@ Rules (2 Nov):
   the DESIGN-STANDARD sans class). Fraunces stays the serif accent for item
   names; the Rye notes below are history.
 
-- Headings: Roadstore via `--font-western` (9 Nov 2026, above). Keep the
-  fallback stack; layout must not shift if the font fails to load.
+- Headings: Rye via `--font-western` (25 Nov 2026, above). Keep the fallback
+  stack. Known gap: the fallback (Bebas Neue) is far narrower than Rye, so if the
+  font file arrives late or fails, headings reflow to fewer lines. The file is
+  preloaded and same-origin, so this shows only on a slow or failed font request.
 - Buttons (Guns 2 Nov: "use roadhouse font on the buttons... or at least a
   children font of that"): filled CTA variants (primary/light/dark) use
-  `--font-western` (Rye from 2 Nov to 9 Nov 2026, Roadstore since). Single
+  `--font-western` (Rye from 2 Nov to 9 Nov 2026, Roadstore to 25 Nov, Rye since). Single
   400 weight, so no `font-semibold` on western buttons (faux bold). Quiet utility variants (secondary/ghost/outline:
   booking steps, cancel dialogs, downloads) keep the UI sans via the Button
   `face` default; the western subset also lacks their U+2190 back-arrow. Page CTAs

@@ -21,7 +21,7 @@ test.describe("Catering", () => {
     await page.getByLabel(/^Number of guests/).fill("40");
     await page.getByLabel(/^Service type/).selectOption("Delivery");
     await page.getByLabel(/^Tell us more/).fill("Automated QA inquiry");
-    await page.getByRole("button", { name: "Send inquiry" }).click();
+    await page.getByRole("button", { name: "Send Inquiry" }).click();
     await expect(page.getByRole("heading", { name: "We'll be in touch." })).toBeVisible();
 
     const rows = await query<{ occasion: string; guest_count: number; service_type: string }>(`select occasion, guest_count, service_type from catering_inquiries where email = $1`, [email]);
@@ -38,7 +38,7 @@ test.describe("Catering", () => {
     await page.getByLabel(/^What's the occasion/).fill("QA spam");
     await page.getByLabel(/^Service type/).selectOption("Delivery");
     await rewriteNextSubmit(page, "/catering", (a) => (a.website = "http://spam.example"));
-    await page.getByRole("button", { name: "Send inquiry" }).click();
+    await page.getByRole("button", { name: "Send Inquiry" }).click();
     // Before the fix the schema rejected the honeypot first and the bot got field errors
     await expect(page.getByRole("heading", { name: "We'll be in touch." })).toBeVisible();
     expect(await query(`select id from catering_inquiries where email = $1`, [email])).toHaveLength(0);
@@ -47,7 +47,7 @@ test.describe("Catering", () => {
   test("rejects an incomplete inquiry with field errors", async ({ page }) => {
     await page.goto("/catering#inquiry");
     await page.getByRole("textbox", { name: /^Email/ }).fill("bad");
-    await page.getByRole("button", { name: "Send inquiry" }).click();
+    await page.getByRole("button", { name: "Send Inquiry" }).click();
     await expect(page.getByText("Name is required")).toBeVisible();
     await expect(page.getByText("Enter a valid email")).toBeVisible();
     await expect(page.getByText("Choose a service type")).toBeVisible();

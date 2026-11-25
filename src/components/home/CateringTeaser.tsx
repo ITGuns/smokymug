@@ -34,7 +34,7 @@ export function CateringTeaser() {
               </ButtonLink>
             </Magnetic>
             <ButtonLink href="/catering#services" variant="dark">
-              See services
+              See Services
             </ButtonLink>
           </Reveal>
         </div>

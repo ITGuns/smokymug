@@ -9,8 +9,9 @@ import { probeUrl } from "@/lib/probe-url";
  * The SpotOn frame, server-rendered as before. On mount a probe checks the
  * reservations host is reachable; if it fails or times out (SpotOn, its CDN
  * or the visitor's network down), the frame is swapped for the plain link and
- * the phone, so nobody is left looking at a broken grey box. The /book CSP
- * allows the probe (connect-src https:, src/lib/csp.ts).
+ * the phone, so nobody is left looking at a broken grey box. The CSP allows
+ * the probe and the frame for SpotOn on every page, and for any https host on
+ * a direct load of /book (src/lib/csp.ts).
  */
 export function ReservationsFrame({ url, phone, tel }: { url: string; phone: string; tel: string }) {
   const [unreachable, setUnreachable] = useState(false);

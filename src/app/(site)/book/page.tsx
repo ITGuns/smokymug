@@ -21,7 +21,8 @@ export default async function BookPage() {
   const intro = wizard
     ? `Pick a day, tell us how many, grab a time. Parties of ${settings.largePartyThreshold} or more are confirmed by our team; BBQ can sell out early, so come hungry and on time.`
     : site.reservationsUrl
-      ? "Pick your time in the reservations box below. BBQ can sell out early, so come hungry and on time."
+      ? // Dan, 24 Nov: his words under the heading
+        "Let us know you're coming. There's excitement in anticipation."
       : "Call us to reserve. BBQ can sell out early, so come hungry and on time.";
   return (
     <>

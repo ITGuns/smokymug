@@ -28,9 +28,27 @@ test.describe("Book a Table: SpotOn reservations box (BK02)", () => {
     // The admin-set host is unknown at build time, so /book alone allows https frames
     expect(res!.headers()["content-security-policy"]).toMatch(/frame-src [^;]*https:(;|$| )/);
     await expect(page.locator('iframe[title="SpotOn reservations"]')).toHaveAttribute("src", url);
+    // Dan, 24 Nov: his line under the heading
+    await expect(page.getByText("Let us know you're coming. There's excitement in anticipation.")).toBeVisible();
     await expect(page.getByRole("link", { name: /Open reservations/ })).toHaveAttribute("href", url);
     await expect(page.getByRole("link", { name: "(804) 562-3722" }).first()).toBeVisible();
     await expect(page.getByRole("heading", { name: "When are you coming in?" })).toHaveCount(0);
+  });
+
+  test("reached by clicking Book a Table inside the site: the policy does not block the SpotOn box", async ({ page }) => {
+    // 25 Nov: the page changes without a new document, so the home page's policy applies to /book
+    await setReservationsUrl(SITE_SETTINGS.reservationsUrl);
+    await page.addInitScript(() => {
+      (window as unknown as { __csp: string[] }).__csp = [];
+      document.addEventListener("securitypolicyviolation", (e) => (window as unknown as { __csp: string[] }).__csp.push(`${e.effectiveDirective} ${e.blockedURI}`));
+    });
+    await page.goto("/");
+    await page.getByRole("banner").getByRole("link", { name: "Book a Table" }).click();
+    await page.waitForURL(/\/book$/);
+    await expect(page.getByRole("heading", { name: "Book a table." })).toBeVisible();
+    await page.waitForTimeout(2500);
+    const violations = await page.evaluate(() => (window as unknown as { __csp: string[] }).__csp);
+    expect(violations.filter((v) => /spoton/i.test(v))).toEqual([]);
   });
 
   test("unreachable host: the plain link and the phone, no frame", async ({ page }) => {

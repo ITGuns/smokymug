@@ -1,3 +1,4 @@
+import { Analytics } from "@/components/site/Analytics";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { MobileCta } from "@/components/site/MobileCta";
@@ -52,6 +53,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Footer restaurant={restaurant} hours={hours} phoneHref={phoneHref} todayDow={clock.dayOfWeek} specialsEnabled={specials.settings.enabled} />
       <MobileCta phoneHref={phoneHref} />
       <RestaurantJsonLd restaurant={restaurant} hours={hours} />
+      <Analytics />
     </MotionProvider>
   );
 }

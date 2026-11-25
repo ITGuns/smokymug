@@ -37,14 +37,18 @@ test.describe("Homepage", () => {
     await expect(banner.getByRole("link", { name: /^Email / })).toHaveAttribute("href", "mailto:thesmokymug@gmail.com");
 
     // Dan, 16 Nov: the intro headline reads in three lines
-    for (const heading of ["All Day Craft Tex Mex & BBQ Kitchen", "Best authentic wood-fired smokehouse in Richmond.", "Signature plates", "Hours", "Catering & events", "Gallery", "Gift cards & loyalty", "Visit us in Brookland Park."]) {
+    for (const heading of ["All Day Craft Tex Mex & BBQ Kitchen", "Best authentic wood-fired smokehouse in Richmond.", "Signature plates", "Hours", "Catering & events", "Gallery", "Loyalty", "Visit us in Brookland Park."]) {
       const h = page.locator("main").getByRole("heading", { name: heading, exact: true });
       await h.scrollIntoViewIfNeeded();
       await expect(h).toBeVisible();
     }
     await expect(page.getByRole("link", { name: /Hatch Chile Mac n Cheese/ })).toBeVisible();
     await expect(page.locator("footer")).toContainText("Tue–Thu");
-    await expect(page.locator("footer").getByRole("link", { name: "Gift Cards" })).toHaveAttribute("href", "https://www.toasttab.com/thesmokymug/giftcards");
+    // Dan, 24 Nov: loyalty is his SpotOn link; gift card links are still coming, so those buttons are hidden
+    await expect(page.locator("footer").getByRole("link", { name: /^Loyalty/ })).toHaveAttribute("href", "https://l.spoton.com/XGR6MV");
+    await expect(page.locator("main").getByRole("link", { name: /Join Loyalty/ })).toHaveAttribute("href", "https://l.spoton.com/XGR6MV");
+    await expect(page.getByRole("link", { name: /Gift Card/i })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /Email List/i })).toHaveCount(0);
     await expect(page.locator("footer").getByRole("link", { name: "Instagram" }).first()).toHaveAttribute("href", "https://www.instagram.com/thesmokymug");
     await expect(page.locator('iframe[title^="Map showing"]')).toBeVisible();
   });

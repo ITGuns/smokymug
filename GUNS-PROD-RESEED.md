@@ -187,7 +187,8 @@ Or in Vercel: Project Settings, Data Cache, Purge.
   - /calendar shows Dan's November and December events; Admin, Hours lists
     the four date overrides.
   - /holiday lands on /catering (a code redirect, no database part).
-  - The gift card button reads "Buy online".
+  - 25 Nov: no gift card or email-list buttons (their links are empty until Dan sends
+    new ones); the home section reads "Loyalty" and its button opens Dan's SpotOn link.
 - Nav shows Menus and Calendar (no Gallery); /menus shows the three tiles.
 - Admin shows Reviews, Orders, Gallery with "+ Add photo", and Menu items have
   a Schedule section; none of them shows a "needs db:push" note.
@@ -203,13 +204,15 @@ Or in Vercel: Project Settings, Data Cache, Purge.
   clock, ban) with an Icon key under the grid. Until the push and seed it
   shows a star on every event and a ban on closed days: the seed fills event
   kinds and icons only once the 18 Nov tables exist, so this is expected, not
-  a bug. The /catering inquiry slot shows a crop of Dan's board photo.
+  a bug. The /catering inquiry slot shows Dan's whole board photo (25 Nov; a close
+  crop before that).
 
 ## Expected until Dan sends links or content (not bugs)
-- Gift card and loyalty buttons still go to the old Toast links. When Dan
-  sends the SpotOn ones, paste them in Admin, Settings, Links AFTER the
-  reseed (the reseed reloads those fields from the seed), or tell Pol so they
-  go into the seed first.
+- 25 Nov: the loyalty button opens Dan's SpotOn link (seed and prod). The gift
+  card and email-list links are empty in the seed and in prod, so those buttons
+  are hidden. When Dan sends the new gift card links, paste them in Admin,
+  Settings, Links and tell Pol so they go into the seed too (a reseed reloads
+  those fields from the seed).
 - Express Catering and Holiday Preorders stay switched off (Admin, Menu,
   "Express + Holiday") until Dan's packs and holiday items are entered; until then the
   Express tile links to the catering inquiry and the holiday tile is not a link.

@@ -56,7 +56,7 @@ wrong, tell us and we'll change it.
 - **Catering inquiry copies.** Tell us which email addresses should get a copy of every catering inquiry (up to
   ten). Each inquiry goes to bookings.smokymug@gmail.com with those copies.
 - **Photos:** one for each menu header, and a replacement for the small photo in the home intro.
-- **Font:** the Roadstore file and its web license. Until then the buttons use Rye, the closest free match.
+- **Font:** your pick. Rye is on the demo since 25 Nov (free to use, nothing to buy). Roadstore needs its $45 web license first.
 
 ## Waiting on your links
 

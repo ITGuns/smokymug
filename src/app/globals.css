@@ -72,9 +72,11 @@
   --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
   --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
   --font-label: var(--font-bebas), "Oswald", Impact, sans-serif;
-  /* Roadstore (row 16, 9 Nov 2026): page and section headings plus CTAs. Bebas Neue
-     carries the digits and symbols the demo font leaves out (unicode-range in layout.tsx). */
-  --font-western: var(--font-roadstore), var(--font-bebas), Impact, sans-serif;
+  /* Rye (25 Nov 2026, Dan's pick to see; Roadstore 9 to 25 Nov): page and section headings
+     plus CTAs. Bebas Neue is the fallback for anything outside Rye's latin file. */
+  --font-western: var(--font-rye), var(--font-bebas), Impact, sans-serif;
+  /* Button labels: the same Rye file without the heading size-adjust (layout.tsx) */
+  --font-western-label: var(--font-rye-label), var(--font-rye), var(--font-bebas), Impact, sans-serif;
 
   --shadow-card: 0 1px 2px rgb(15 13 11 / 0.06), 0 10px 30px -12px rgb(15 13 11 / 0.25);
   --shadow-lift: 0 2px 4px rgb(15 13 11 / 0.08), 0 24px 48px -16px rgb(15 13 11 / 0.35);
@@ -281,13 +283,15 @@
   font-feature-settings: "tnum", "cv11";
 }
 
-/* Row 16 (9 Nov 2026): Roadstore is the display face for public page and section
+/* Row 16 (9 Nov 2026), Rye since 25 Nov: the western face sets public page and section
    headings. Unlayered on purpose so it beats the font-display / tracking utilities
-   those headings carry; sizes and line-heights stay with each heading. Single weight
-   and caps only, so no faux bold and a little open tracking for the condensed caps. */
-main#main :is(h1, h2) {
+   those headings carry; sizes and line-heights stay with each heading (Rye's width is
+   handled once, by size-adjust in layout.tsx). Single weight, so no faux bold; Rye is
+   a wide face with lowercase, so headings read in sentence case with no extra tracking.
+   Small eyebrow-style headings (font-label, e.g. the menu's "Dietary key") keep Bebas. */
+main#main :is(h1, h2):not(.font-label) {
   font-family: var(--font-western);
   font-weight: 400;
   font-synthesis: none;
-  letter-spacing: 0.015em;
+  letter-spacing: 0;
 }

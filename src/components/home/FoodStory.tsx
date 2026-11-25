@@ -31,7 +31,7 @@ export function FoodStory({ bbqSummary }: { bbqSummary: string | null }) {
             {bbqSummary && <p className="max-w-sm text-[15px] leading-relaxed text-cream-100/70">{bbqSummary}</p>}
             <Magnetic className="inline-block">
               <ButtonLink href="/menu" variant="light" arrow>
-                See the full menu
+                See the Full Menu
               </ButtonLink>
             </Magnetic>
           </Reveal>

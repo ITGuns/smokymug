@@ -73,7 +73,7 @@ export function CateringForm({ email, phone }: { email: string; phone: string })
         <textarea {...a11y("message")} rows={4} className="w-full rounded-2xl border border-charcoal-900/12 bg-cream-50 px-4 py-3 text-[15px] text-charcoal-900 placeholder:text-charcoal-500/60 focus:border-ember-600 focus:outline-none" value={form.message} onChange={set("message")} placeholder="Menu ideas, dietary needs, venue details, timing…" />
       </Field>
       <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
-        <Button type="submit" size="lg" disabled={status === "busy"} arrow={status !== "busy"}>{status === "busy" ? "Sending…" : "Send inquiry"}</Button>
+        <Button type="submit" size="lg" disabled={status === "busy"} arrow={status !== "busy"}>{status === "busy" ? "Sending…" : "Send Inquiry"}</Button>
         <span className="text-[13px] text-charcoal-500">Or email <a href={`mailto:${email}`} className="font-semibold text-charcoal-900">{email}</a></span>
       </div>
     </form>

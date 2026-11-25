@@ -27,10 +27,15 @@ export const RESTAURANT = {
   website: "https://www.smokymug.com",
   instagramUrl: "https://www.instagram.com/thesmokymug",
   facebookUrl: "https://www.facebook.com/thesmokymug",
-  giftCardUrl: "https://www.toasttab.com/thesmokymug/giftcards",
-  giftCardBalanceUrl: "https://www.toasttab.com/thesmokymug/findcard",
-  loyaltyUrl: "https://www.toasttab.com/thesmokymug/rewardsSignup",
-  marketingSignupUrl: "https://www.toasttab.com/thesmokymug/marketing-signup",
+  // Dan, 24 Nov: the restaurant moved from Toast to SpotOn. Loyalty is his new link. The gift card
+  // links are "having some trouble here with my vendor ... Can launch without this info", so they
+  // stay empty (the buttons hide) until he sends them; paste them in Admin, Settings. The email-list
+  // link still pointed at the old Toast list and the SpotOn loyalty sign-up collects email, so it is
+  // empty too until Dan says which list he wants.
+  giftCardUrl: null as string | null,
+  giftCardBalanceUrl: null as string | null,
+  loyaltyUrl: "https://l.spoton.com/XGR6MV" as string | null,
+  marketingSignupUrl: null as string | null,
   brunchReservationUrl: "https://host.tablesready.com/p/book/add/thesmokymug",
   // Q8 closed (Dan, 16 Nov): "Ordering Online URL". Every Order Now button follows
   // it (new tab); with no URL they fall back to /menu. Editable in Admin, Settings.

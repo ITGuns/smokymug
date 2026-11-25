@@ -117,7 +117,7 @@ test("express on: tile, Explore option and CA01 point to the page, and a full re
   await page.goto("/catering");
   // CA01: between Plan Your Event and See services
   const hero = page.locator("section").first();
-  await expect(hero.getByRole("link")).toHaveText([/Plan Your Event/, /Order Express Catering Now/, /See services/]);
+  await expect(hero.getByRole("link")).toHaveText([/Plan Your Event/, /Order Express Catering Now/, /See Services/]);
   // The full label (334px on one line) wraps at 320 instead of running out of the overflow-hidden hero
   await page.setViewportSize({ width: 320, height: 740 });
   const ca01 = (await hero.getByRole("link", { name: "Order Express Catering Now" }).boundingBox())!;

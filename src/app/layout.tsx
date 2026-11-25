@@ -12,18 +12,32 @@ const fraunces = Fraunces({
 });
 const sans = Instrument_Sans({ subsets: ["latin"], variable: "--font-sans-body", display: "swap" });
 const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas", display: "swap" });
-// Roadstore (row 16, 9 Nov 2026): display face for headings and CTAs. The dafont demo copy
-// is caps only and stamps a "personal use" mark on most digits and on & ? ! $ @ #, so the
-// unicode-range keeps only its clean glyphs; everything else falls through to Bebas Neue.
-// Personal-use demo: the foundry Standard Webfont license must be bought before launch.
-const roadstore = localFont({
-  src: "../fonts/Roadstore.ttf",
-  variable: "--font-roadstore",
+// Rye (25 Nov 2026): display face for headings and CTAs. Dan, 12 Nov: "I like Rye as well.
+// Wonder if I can get that input to see the look?"; 24 Nov: "I don't see Rye as the font. Did I
+// miss my window?". Rye is SIL Open Font licensed (src/fonts/Rye-LICENSE-OFL.txt), free for
+// commercial use, so it also lifts the Roadstore license launch gate. Self-hosted so the
+// size-adjust below is possible: Rye is far wider than the condensed Roadstore the heading
+// sizes were tuned for, and size-adjust scales its glyphs in one place instead of in every
+// heading class. Characters outside the latin file fall through to Bebas Neue.
+const rye = localFont({
+  src: "../fonts/Rye-Regular-latin.woff2",
+  weight: "400",
+  style: "normal",
+  variable: "--font-rye",
   display: "swap",
   adjustFontFallback: false,
-  declarations: [
-    { prop: "unicode-range", value: "U+0020, U+0022, U+0025, U+0027-0031, U+003A-003E, U+0041-007E, U+2013, U+2018-201D, U+2026" },
-  ],
+  declarations: [{ prop: "size-adjust", value: "82%" }],
+});
+// Same file at its natural size for button labels. The 82% above is for headings (line
+// counts); at 13 to 16px it left CTA labels smaller than the nav beside them and broke up
+// Rye's inline detail on 1x screens. This is the Rye size Dan saw on the buttons 2 to 9 Nov.
+const ryeLabel = localFont({
+  src: "../fonts/Rye-Regular-latin.woff2",
+  weight: "400",
+  style: "normal",
+  variable: "--font-rye-label",
+  display: "swap",
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
@@ -51,7 +65,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${sans.variable} ${bebas.variable} ${roadstore.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${sans.variable} ${bebas.variable} ${rye.variable} ${ryeLabel.variable}`}>
       <body>{children}</body>
     </html>
   );

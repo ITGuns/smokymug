@@ -43,6 +43,13 @@ test.describe("Other public pages & routes", () => {
     await page.goto("/this-page-does-not-exist");
     await expect(page.getByRole("heading", { name: "That page has sold out." })).toBeVisible();
 
+    // 25 Nov: addresses the old Squarespace site used still land somewhere
+    for (const [from, status, to] of [["/home-1", 308, "/"], ["/giftcards", 307, "/#programs"], ["/cart", 307, "/"], ["/holiday", 307, "/catering"]] as const) {
+      const res = await request.get(from, { maxRedirects: 0 });
+      expect(res.status(), from).toBe(status);
+      expect(res.headers()["location"], from).toBe(to);
+    }
+
     const sitemap = await (await request.get("/sitemap.xml")).text();
     for (const p of ["/menu", "/menus", "/book", "/catering", "/contact", "/gallery"]) expect(sitemap).toContain(p);
     // Phase 2: the ordering pages stay out of the static sitemap (they 404 while off)

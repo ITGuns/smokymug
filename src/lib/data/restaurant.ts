@@ -10,6 +10,11 @@ import { selectHomeReviews } from "@/lib/reviews";
 const { restaurantInfo, hours, reviews, galleryImages, bookingSettings } = schema;
 
 export const CONTENT_TAG = "content";
+/** Part of the content cache keys in this file. The live site keeps cached content across deploys until an
+ *  Admin save (or a Vercel Data Cache purge). When prod data is changed outside Admin, bump this
+ *  in the same push so the new deployment reads fresh rows.
+ *  2026-11-25: Dan's SpotOn loyalty link; gift card and email-list links emptied. */
+export const CONTENT_CACHE_VERSION = "2026-11-25";
 
 /** Uncached reads (admin) */
 export async function readRestaurant(): Promise<RestaurantInfo> {
@@ -63,8 +68,8 @@ export async function readGallery(includeInactive = false): Promise<GalleryImage
 }
 
 /** Cached reads (public site). Invalidated via revalidateTag(CONTENT_TAG). */
-export const getRestaurant = cache(unstable_cache(() => readRestaurant(), ["restaurant-info"], { tags: [CONTENT_TAG] }));
-export const getHours = cache(unstable_cache(() => readHours(), ["hours"], { tags: [CONTENT_TAG] }));
-export const getBookingSettings = cache(unstable_cache(() => readBookingSettings(), ["booking-settings"], { tags: [CONTENT_TAG] }));
-export const getReviews = cache(unstable_cache(() => readReviews(), ["reviews"], { tags: [CONTENT_TAG] }));
-export const getGallery = cache(unstable_cache(() => readGallery(), ["gallery"], { tags: [CONTENT_TAG] }));
+export const getRestaurant = cache(unstable_cache(() => readRestaurant(), ["restaurant-info", CONTENT_CACHE_VERSION], { tags: [CONTENT_TAG] }));
+export const getHours = cache(unstable_cache(() => readHours(), ["hours", CONTENT_CACHE_VERSION], { tags: [CONTENT_TAG] }));
+export const getBookingSettings = cache(unstable_cache(() => readBookingSettings(), ["booking-settings", CONTENT_CACHE_VERSION], { tags: [CONTENT_TAG] }));
+export const getReviews = cache(unstable_cache(() => readReviews(), ["reviews", CONTENT_CACHE_VERSION], { tags: [CONTENT_TAG] }));
+export const getGallery = cache(unstable_cache(() => readGallery(), ["gallery", CONTENT_CACHE_VERSION], { tags: [CONTENT_TAG] }));

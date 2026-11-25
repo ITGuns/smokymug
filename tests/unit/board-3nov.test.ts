@@ -121,7 +121,9 @@ describe("CSP", () => {
   });
 
   it("only the /book variant lets the reservations probe connect to https hosts", () => {
-    expect(buildCsp({ dev: false })).toMatch(/connect-src 'self';/);
+    // 25 Nov: site-wide connect-src is this site plus Google Analytics, never a bare https:
+    expect(buildCsp({ dev: false })).toMatch(/connect-src 'self' https:\/\/\*\.google-analytics\.com [^;]*;/);
+    expect(buildCsp({ dev: false })).not.toMatch(/connect-src[^;]* https:(;| |$)/);
     expect(buildCsp({ dev: false, frameAnyHttps: true })).toMatch(/connect-src 'self' https:;/);
   });
 });
